@@ -1,6 +1,5 @@
 -- [[ 🌌 FLOURITE SOFTWORKS V2.0 - ULTIMATE 🌌 ]]
-
-task.wait(1.5)
+task.wait(1.0)
 
 -- [[ 🛡️ SERVICIOS DEL SISTEMA ]]
 local Players = game:GetService("Players")
