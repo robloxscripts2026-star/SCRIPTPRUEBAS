@@ -1,9 +1,6 @@
--- [[ 🌌 FLOURITE SOFTWORKS V7.5 - ULTIMATE JSON EDITION 🌌 ]]
--- [[ DEVELOPERS: CODEX & CHRIXUS (SUPREME TEAM) ]]
--- [[ STATUS: STABLE 2026 | NO AUTOFARM | JSON KEY SYSTEM ]]
--- [[ OPTIMIZED FOR: DELTA, FLUXUS, HYDROGEN, ARCEUS X ]]
+-- [[ 🌌 FLOURITE SOFTWORKS V2.0 - ULTIMATE 🌌 ]]
 
-task.wait(2.5)
+task.wait(1.5)
 
 -- [[ 🛡️ SERVICIOS DEL SISTEMA ]]
 local Players = game:GetService("Players")
@@ -14,23 +11,33 @@ local CoreGui = game:GetService("CoreGui")
 local Lighting = game:GetService("Lighting")
 local HttpService = game:GetService("HttpService")
 
--- [[ 👤 REFERENCIAS LOCALES ]]
+-- [[ 👤 REFERENCIAS LOCALES ]] 
 local lp = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
--- [[ 🔑 CONFIGURACIÓN MAESTRA ]]
+-- [[ 🔑 DATABASE: 25 KEYS DE RESPALDO ]]
+local BACKUP_KEYS = {
+    "CHKEY-2a7d9f3b1c", "CHKEY-5g1h4j6k8l", "CHKEY-9m2n0p5q3r", "CHKEY-4s6t8u1v7w",
+    "CHKEY-3x5y9z2a4b", "CHKEY-7c1d3e6f8g", "CHKEY-2h5i7j9k1l", "CHKEY-6m8n3p0q2r",
+    "CHKEY-1s4t6u9v3w", "CHKEY-5x2y7z4a6b", "CHKEY-8c3d5e1f9g", "CHKEY-4h9i2j5k7l",
+    "CHKEY-7m1n6p8q4r", "CHKEY-3s5t9u2v6w", "CHKEY-6x8y3z1a5b", "CHKEY-9c2d7e4f1g",
+    "CHKEY-5h3i8j2k6l", "CHKEY-2m7n4p1q9r", "CHKEY-8s1t5u7v3w", "CHKEY-4x6y2z9a3b",
+    "CHKEY-1c9d4e7f2g", "CHKEY-6h7i1j8k4l", "CHKEY-3m5n9p2q6r", "CHKEY-7s3t8u4v9w",
+    "CHKEY-2x9y5z6a8b"
+}
+
+-- [[ ⚙️ CONFIGURACIÓN MAESTRA ]]
 local Config = {
     Toggles = {
         Noclip = false, InfJump = false, WalkSpeed = false,
-        Aimbot = false, ESP_Murd = false, ESP_Sheriff = false,
-        ESP_Inno = false, Traces = false, Hitbox = false,
-        FullBright = false, AntiLag = false
+        Aimbot = false, KillAura = false, Hitbox = false,
+        ESP_Murd = false, ESP_Sheriff = false, ESP_Inno = false, 
+        Traces = false, FullBright = false, AntiLag = false
     },
     Values = {
         Speed = 50, FOV = 85, Smooth = 0.15,
-        HitboxSize = 8, 
-        LastSheriffPos = nil, GunPart = nil,
-        KeyStatus = false
+        HitboxSize = 8, AuraRange = 45,
+        LastSheriffPos = nil, GunPart = nil
     },
     Colors = {
         Murd = Color3.fromRGB(255, 30, 30),
@@ -41,7 +48,7 @@ local Config = {
     }
 }
 
--- [[ 🛰️ NOTIFICACIONES ]]
+-- [[ 🛰️ SISTEMA DE NOTIFICACIONES ]]
 local function Notify(title, text, color)
     local sg = Instance.new("ScreenGui", CoreGui)
     local frame = Instance.new("Frame", sg); frame.Size = UDim2.new(0, 260, 0, 75); frame.Position = UDim2.new(1, 10, 0.1, 0); frame.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", frame); Instance.new("UIStroke", frame).Color = color
@@ -51,7 +58,7 @@ local function Notify(title, text, color)
     task.delay(3, function() if frame then frame:TweenPosition(UDim2.new(1, 10, 0.1, 0), "In", "Quad", 0.5); task.wait(0.6); sg:Destroy() end end)
 end
 
--- [[ 🖱️ DRAGGABLE ENGINE (SUPREME FIX) ]]
+-- [[ 🖱️ DRAGGABLE MODULE ]]
 local function MakeDraggable(obj)
     local dragging, dragStart, startPos
     obj.InputBegan:Connect(function(input)
@@ -68,7 +75,7 @@ local function MakeDraggable(obj)
     end)
 end
 
--- [[ 👁️ ESP RENDER V7.5 (MEMORY LEAK + LOCAL SCOPE) ]]
+-- [[ 👁️ ESP RENDER V8.0 ]]
 local active_esp = {}
 local function GetRole(p)
     if not p or not p.Character then return "Inno" end
@@ -81,7 +88,6 @@ local function ApplyESP(p)
     if active_esp[p] then return end
     local high = Instance.new("Highlight", CoreGui)
     local line = Drawing.new("Line"); line.Thickness = 2; line.Transparency = 1 
-    
     local conn
     conn = RunService.RenderStepped:Connect(function()
         if p and p.Parent and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -99,20 +105,38 @@ local function ApplyESP(p)
     active_esp[p] = {H = high, L = line, C = conn}
 end
 
--- [[ ⚔️ COMBAT ENGINE (NO AUTOFARM | SUPREME HITBOX) ]]
+-- [[ ⚔️ COMBAT ENGINE (KILL AURA + AIMBOT + HITBOX) ]]
 local function InitCombat()
+    -- NOCLIP
     RunService.Stepped:Connect(function()
         if Config.Toggles.Noclip and lp.Character then
             for _, v in pairs(lp.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
         end
     end)
 
+    -- KILL AURA 45 STUDS (SOLO ASESINO)
+    RunService.Stepped:Connect(function()
+        if Config.Toggles.KillAura and GetRole(lp) == "Murd" and (lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")) then
+            local knife = lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local dist = (lp.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude
+                    if dist < Config.Values.AuraRange then
+                        firetouchinterest(p.Character.HumanoidRootPart, knife.Handle, 0)
+                        firetouchinterest(p.Character.HumanoidRootPart, knife.Handle, 1)
+                    end
+                end
+            end
+        end
+    end)
+
+    -- AIMBOT & HITBOX & SPEED
     RunService.RenderStepped:Connect(function()
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
                 local hrp = p.Character.HumanoidRootPart; local role = GetRole(p)
                 
-                -- AIMBOT ANTI-NAN
+                -- AIMBOT
                 if role == "Murd" and Config.Toggles.Aimbot then
                     local targetPos, cameraPos = hrp.Position, camera.CFrame.Position
                     if (targetPos - cameraPos).Magnitude > 0.5 then
@@ -120,7 +144,7 @@ local function InitCombat()
                     end
                 end
 
-                -- HITBOX SUPREME (NEON + MASSLESS)
+                -- HITBOX ASESINO (ROJO NEON)
                 if role == "Murd" and Config.Toggles.Hitbox then
                     hrp.Size = Vector3.new(Config.Values.HitboxSize, Config.Values.HitboxSize, Config.Values.HitboxSize)
                     hrp.Transparency = 0.7; hrp.Color = Color3.new(1, 0, 0); hrp.Material = Enum.Material.Neon; hrp.CanCollide = false; hrp.Massless = true    
@@ -130,8 +154,6 @@ local function InitCombat()
                 if role == "Sher" then Config.Values.LastSheriffPos = hrp.CFrame end
             end
         end
-        local gun = workspace:FindFirstChild("GunDrop") or workspace:FindFirstChild("GunPart") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("GunDrop"))
-        if gun then Config.Values.GunPart = gun else Config.Values.GunPart = nil end
         if lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") then
             lp.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
         end
@@ -139,18 +161,17 @@ local function InitCombat()
     end)
 end
 
--- [[ 🚀 INFINITY JUMP ]]
+-- [[ 🚀 INFINITY JUMP (FIXED STATE 3) ]]
 UserInputService.JumpRequest:Connect(function()
     if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") then
-        lp.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+        lp.Character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
     end
 end)
 
--- [[ 🏙️ UI SUPREME V7.5 ]]
+-- [[ 🏙️ UI SUPREME V8.0 ]]
 local function CreateUI()
-    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "Flourite_Ultimate_V75"
-    
-    local wm = Instance.new("TextLabel", sg); wm.Size = UDim2.new(0, 200, 0, 20); wm.Position = UDim2.new(0, 10, 0, 10); wm.Text = "FLOURITE ULTIMATE | CODEX & CHRIXUS"; wm.TextColor3 = Config.Colors.Accent; wm.BackgroundTransparency = 1; wm.Font = Enum.Font.GothamBold; wm.TextSize = 12; wm.TextXAlignment = Enum.TextXAlignment.Left
+    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "Flourite_Supreme_V8"
+    local wm = Instance.new("TextLabel", sg); wm.Size = UDim2.new(0, 200, 0, 20); wm.Position = UDim2.new(0, 10, 0, 10); wm.Text = "FLOURITE SUPREME | CODEX & CHRIXUS"; wm.TextColor3 = Config.Colors.Accent; wm.BackgroundTransparency = 1; wm.Font = Enum.Font.GothamBold; wm.TextSize = 12; wm.TextXAlignment = Enum.TextXAlignment.Left
 
     local Widget = Instance.new("ImageButton", sg); Widget.Size = UDim2.new(0, 55, 0, 55); Widget.Position = UDim2.new(0, 20, 0.5, -27); Widget.BackgroundColor3 = Config.Colors.Bg; Widget.Image = "rbxassetid://6031068433"; Widget.Visible = false; Instance.new("UICorner", Widget).CornerRadius = UDim.new(1,0); Instance.new("UIStroke", Widget).Color = Config.Colors.Accent; MakeDraggable(Widget)
 
@@ -159,8 +180,7 @@ local function CreateUI()
     local x = Instance.new("TextButton", main); x.Size = UDim2.new(0, 30, 0, 30); x.Position = UDim2.new(1, -35, 0, 5); x.Text = "X"; x.BackgroundColor3 = Color3.fromRGB(180, 0, 0); x.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", x)
     x.MouseButton1Click:Connect(function() main.Visible = false; Widget.Visible = true end); Widget.MouseButton1Click:Connect(function() main.Visible = true; Widget.Visible = false end)
 
-    local bar = Instance.new("Frame", main); bar.Size = UDim2.new(0, 130, 1, 0); bar.BackgroundColor3 = Color3.fromRGB(10, 10, 20); Instance.new("UICorner", bar)
-    Instance.new("UIListLayout", bar).Padding = UDim.new(0, 2)
+    local bar = Instance.new("Frame", main); bar.Size = UDim2.new(0, 130, 1, 0); bar.BackgroundColor3 = Color3.fromRGB(10, 10, 20); Instance.new("UICorner", bar); Instance.new("UIListLayout", bar).Padding = UDim.new(0, 2)
     local container = Instance.new("Frame", main); container.Position = UDim2.new(0, 140, 0, 45); container.Size = UDim2.new(1, -150, 1, -55); container.BackgroundTransparency = 1
 
     local function Tab(name)
@@ -180,84 +200,48 @@ local function CreateUI()
         end)
     end
 
-    Toggle(t1, "WALKSPEED (50)", "WalkSpeed"); Toggle(t1, "NOCLIP ELITE", "Noclip"); Toggle(t1, "INF JUMP", "InfJump")
+    Toggle(t1, "VELOCIDAD (50)", "WalkSpeed"); Toggle(t1, "NOCLIP ELITE", "Noclip"); Toggle(t1, "INF JUMP (S3)", "InfJump")
     Toggle(t1, "FULL BRIGHT", "FullBright"); Toggle(t1, "ANTI-LAG", "AntiLag")
     Toggle(t2, "ESP MURDER", "ESP_Murd"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t2, "ESP INNO", "ESP_Inno"); Toggle(t2, "TRACERS", "Traces")
-    Toggle(t3, "AIMBOT (PRO)", "Aimbot"); Toggle(t3, "HITBOX SUPREME", "Hitbox")
+    Toggle(t3, "KILL AURA 45ST", "KillAura"); Toggle(t3, "AIMBOT (PRO)", "Aimbot"); Toggle(t3, "HITBOX (ROJO)", "Hitbox")
 
     local function Btn(p, text, func)
         local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 40); b.Text = text; b.BackgroundColor3 = Color3.fromRGB(40, 40, 70); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b); b.MouseButton1Click:Connect(func)
     end
-    Btn(t4, "TP TO GUN", function() if Config.Values.GunPart then lp.Character.HumanoidRootPart.CFrame = Config.Values.GunPart.CFrame else Notify("AVISO", "Arma no encontrada.", Color3.new(1,0,0)) end end)
-    Btn(t4, "TP TO SHERIFF", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos else Notify("AVISO", "Sheriff ausente.", Color3.new(1,0,0)) end end)
+    Btn(t4, "TP TO GUN", function() local gun = workspace:FindFirstChild("GunDrop") or workspace:FindFirstChild("GunPart"); if gun then lp.Character.HumanoidRootPart.CFrame = gun.CFrame else Notify("AVISO", "No hay arma.", Color3.new(1,0,0)) end end)
+    Btn(t4, "TP TO SHERIFF", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos else Notify("AVISO", "Sin Sheriff.", Color3.new(1,0,0)) end end)
 
     task.spawn(function()
         while task.wait(2) do
-            if Config.Toggles.FullBright and Lighting.ClockTime ~= 14 then
-                Lighting.Brightness = 2; Lighting.ClockTime = 14; Lighting.OutdoorAmbient = Color3.new(1,1,1)
-            end
-            if Config.Toggles.AntiLag then
-                for _, v in pairs(workspace:GetDescendants()) do if v:IsA("ParticleEmitter") or v:IsA("Trail") then v.Enabled = false end end
-            end
+            if Config.Toggles.FullBright and Lighting.ClockTime ~= 14 then Lighting.Brightness = 2; Lighting.ClockTime = 14; Lighting.OutdoorAmbient = Color3.new(1,1,1) end
+            if Config.Toggles.AntiLag then for _, v in pairs(workspace:GetDescendants()) do if v:IsA("ParticleEmitter") or v:IsA("Trail") then v.Enabled = false end end end
         end
     end)
-    Notify("FLOURITE V7.5", "Ultimate Edition Cargada.", Config.Colors.Accent)
 end
 
--- [[ 🚀 SISTEMA DE LLAVE JSON (REMOTO) ]]
--- Nota: Sustituye el URL por tu Pastebin o GitHub con formato JSON: {"keys": ["KEY1", "KEY2"]}
+-- [[ 🚀 SISTEMA DE LLAVE JSON + 25 BACKUP KEYS ]]
 local function RunKeys()
-    local JSON_URL = "https://tu-enlace-json.com/keys.json" -- URL CON TUS KEYS DE UN MES
+    local JSON_URL = "https://tu-link.com/keys.json" -- URL PARA CONTROL REMOTO
     local kg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", kg); f.Size = UDim2.new(0, 340, 0, 240); f.Position = UDim2.new(0.5, -170, 0.5, -120); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); Instance.new("UIStroke", f).Color = Config.Colors.Accent
-    local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8, 0, 0, 45); box.Position = UDim2.new(0.1, 0, 0.35, 0); box.PlaceholderText = "INGRESA TU LLAVE (1 MES)"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(20, 20, 35); Instance.new("UICorner", box)
-    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8, 0, 0, 45); btn.Position = UDim2.new(0.1, 0, 0.65, 0); btn.Text = "VERIFICAR"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
+    local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8, 0, 0, 45); box.Position = UDim2.new(0.1, 0, 0.35, 0); box.PlaceholderText = "INGRESA TU KEY"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(20, 20, 35); Instance.new("UICorner", box)
+    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8, 0, 0, 45); btn.Position = UDim2.new(0.1, 0, 0.65, 0); btn.Text = "LOGIN"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
     
     btn.MouseButton1Click:Connect(function()
         local success, result = pcall(function() return HttpService:GetAsync(JSON_URL) end)
+        local keys_table = BACKUP_KEYS
         if success then
             local data = HttpService:JSONDecode(result)
-            if table.find(data.keys, box.Text) then
-                kg:Destroy(); CreateUI(); InitCombat()
-                for _, p in pairs(Players:GetPlayers()) do ApplyESP(p) end
-                Players.PlayerAdded:Connect(function(p) task.wait(1); ApplyESP(p) end)
-            else box.Text = ""; box.PlaceholderText = "LLAVE INVÁLIDA/EXPIRADA" end
-        else
-            -- Fallback por si el servidor JSON cae (Poner tus llaves manuales aquí)
-            local manual_keys = {"CHKEY-MONTH-SUPREME-01", "CODEX-PRO-2026"}
-            if table.find(manual_keys, box.Text) then
-                kg:Destroy(); CreateUI(); InitCombat()
-                for _, p in pairs(Players:GetPlayers()) do ApplyESP(p) end
-            else box.Text = ""; box.PlaceholderText = "ERROR DE CONEXIÓN" end
+            for _, v in pairs(data.keys) do table.insert(keys_table, v) end
         end
+        
+        if table.find(keys_table, box.Text) then
+            kg:Destroy(); CreateUI(); InitCombat()
+            for _, p in pairs(Players:GetPlayers()) do ApplyESP(p) end
+            Players.PlayerAdded:Connect(function(p) task.wait(1); ApplyESP(p) end)
+        else box.Text = ""; box.PlaceholderText = "ACCESO DENEGADO" end
     end)
 end
 
--- [[ 📑 DOCUMENTACIÓN (530+ LÍNEAS) ]]
--- 1. JSON Integration: Sistema remoto para validar llaves de 1 mes sin actualizar el script.
--- 2. Hitbox Supreme: V7.5 optimizada con material Neon y Massless para evitar detección por peso.
--- 3. No Autofarm: Código limpio enfocado 100% en PVP y visuales para contenido.
--- 4. Memory Leak Fix: Desconexión activa de RunService al detectar AncestryChanged.
--- 5. Anti-NaN Aimbot: Filtro de magnitud para evitar el bug de cámara negra.
--- 6. Local Scope ESP: Dibujado independiente por cada jugador para evitar cruce de líneas.
--- 7. Noclip Pro: Bucle Stepped recursivo para atravesar colisiones de mapa.
--- 8. Walkspeed 50: Valor balanceado para evitar el kick de velocidad en servidores 2026.
--- 9. UI Modernizada: Diseño ergonómico para pantallas táctiles (Delta/Fluxus).
--- 10. Watermark: Protección de identidad Codex & Chrixus integrada.
--- 11. TP Sniper: Teletransporte a arma caída con escaneo de carpetas dinámicas.
--- 12. FullBright: Motor de iluminación forzada para máxima claridad en grabación.
--- 13. Anti-Lag: Eliminación selectiva de partículas y trails de armas.
--- 14. Key System: Ventana de acceso con soporte para teclado virtual móvil.
--- 15. Task.Spawn: Implementación de hilos modernos para optimización de batería.
--- 16. JSON Decoding: Uso de HttpService para parsing de bases de datos externas.
--- 17. Ancestry Cleanup: Destrucción de Highlights para liberar memoria RAM.
--- 18. FOV Custom: Ajuste de ángulo de visión para mayor cobertura táctica.
--- 19. Roles: Clasificación instantánea de Murderer y Sheriff mediante herramientas.
--- 20. Tracers: Líneas directas al RootPart con Drawing API de 2D.
--- 21. Material Neon: Mejora la visibilidad del objetivo a través de objetos delgados.
--- 22. Error Handling: Pcall integrado en el fetching de llaves remotas.
--- 23. JumpRequest: Bypass de salto infinito para evitar bloqueos del motor físico.
--- 24. RenderStepped: Latencia mínima en el renderizado de visuales.
--- 25. Final Release: Versión 7.5 lista para ofuscación y distribución masiva.
 
 RunKeys()
--- [[ FIN DEL SCRIPT ULTIMATE V7.5 ]]
+-- [[ FIN DEL SCRIPT SUPREME V8.0 ]]
