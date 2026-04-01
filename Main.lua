@@ -1,5 +1,5 @@
--- [[ DEVELOPERS: CODEX & CHRIXUS ]]
--- [[ STATUS: 100% STABLE | MANUAL KEYS | 2026 ]]
+-- [[ 🌌 FLOURITE  V3.0🌌 ]]
+-- [[ DEVELOPER:CODEX
 
 task.wait(0.5)
 
@@ -7,15 +7,11 @@ task.wait(0.5)
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
-local Lighting = game:GetService("Lighting")
-
--- [[ 👤 REFERENCIAS ]]
 local lp = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
--- [[ 🔑 LISTA DE 25 KEYS (EDICIÓN MANUAL) ]]
+-- [[ 🔑 LISTA DE 25 KEYS ]]
 local MANUAL_KEYS = {
     "CHKEY-2a7d9f3b1c", "CHKEY-5g1h4j6k8l", "CHKEY-9m2n0p5q3r", "CHKEY-4s6t8u1v7w",
     "CHKEY-3x5y9z2a4b", "CHKEY-7c1d3e6f8g", "CHKEY-2h5i7j9k1l", "CHKEY-6m8n3p0q2r",
@@ -31,35 +27,49 @@ local Config = {
     Toggles = {
         Noclip = false, InfJump = false, WalkSpeed = false,
         Aimbot = false, KillAura = false, Hitbox = false,
-        ESP_Murd = false, ESP_Sheriff = false, ESP_Inno = false, 
-        Traces = false, FullBright = false
+        ESP_Murd = false, ESP_Sheriff = false, Traces = false
     },
     Values = {
-        Speed = 50, FOV = 85, Smooth = 0.11,
+        Speed = 50, FOV = 90, Smooth = 0.12,
         HitboxSize = 8, AuraRange = 45,
         LastSheriffPos = nil, GunPart = nil
     },
     Colors = {
         Murd = Color3.fromRGB(255, 30, 30),
         Sher = Color3.fromRGB(0, 160, 255),
-        Inno = Color3.fromRGB(50, 255, 50),
         Accent = Color3.fromRGB(0, 210, 255),
-        Bg = Color3.fromRGB(8, 8, 15)
+        Bg = Color3.fromRGB(12, 12, 20)
     }
 }
 
--- [[ 🛰️ NOTIFICACIONES SUPREME ]]
-local function Notify(title, text, color)
-    local sg = Instance.new("ScreenGui", CoreGui)
-    local frame = Instance.new("Frame", sg); frame.Size = UDim2.new(0, 260, 0, 75); frame.Position = UDim2.new(1, 10, 0.1, 0); frame.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", frame); Instance.new("UIStroke", frame).Color = color
-    local tl = Instance.new("TextLabel", frame); tl.Size = UDim2.new(1, 0, 0.4, 0); tl.Text = title; tl.TextColor3 = color; tl.Font = Enum.Font.GothamBold; tl.BackgroundTransparency = 1; tl.TextSize = 14
-    local dl = Instance.new("TextLabel", frame); dl.Size = UDim2.new(1, 0, 0.6, 0); dl.Position = UDim2.new(0,0,0.4,0); dl.Text = text; dl.TextColor3 = Color3.new(1,1,1); dl.Font = Enum.Font.Gotham; dl.BackgroundTransparency = 1; dl.TextSize = 12
-    frame:TweenPosition(UDim2.new(1, -270, 0.1, 0), "Out", "Back", 0.5)
-    task.delay(3, function() if frame then frame:TweenPosition(UDim2.new(1, 10, 0.1, 0), "In", "Quad", 0.5); task.wait(0.6); sg:Destroy() end end)
+-- [[ 🖱️ DRAGGABLE ENGINE (SOPORTE MÓVIL/PC) ]]
+local function MakeDraggable(obj)
+    local dragging, dragInput, dragStart, startPos
+    obj.InputBegan:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+            dragging = true; dragStart = input.Position; startPos = obj.Position
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
 end
 
--- [[ 👁️ ESP ENGINE ]]
-local active_esp = {}
+-- [[ 🛰️ NOTIFICACIONES ]]
+local function Notify(title, text, color)
+    local sg = Instance.new("ScreenGui", CoreGui)
+    local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 250, 0, 70); f.Position = UDim2.new(1, 10, 0.1, 0); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); Instance.new("UIStroke", f).Color = color
+    local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1, 0, 0.4, 0); t.Text = title; t.TextColor3 = color; t.Font = Enum.Font.GothamBold; t.BackgroundTransparency = 1
+    local d = Instance.new("TextLabel", f); d.Size = UDim2.new(1, 0, 0.6, 0); d.Position = UDim2.new(0,0,0.4,0); d.Text = text; d.TextColor3 = Color3.new(1,1,1); d.Font = Enum.Font.Gotham; d.BackgroundTransparency = 1
+    f:TweenPosition(UDim2.new(1, -260, 0.1, 0), "Out", "Back", 0.5)
+    task.delay(3, function() if f then f:TweenPosition(UDim2.new(1, 10, 0.1, 0), "In", "Quad", 0.5); task.wait(0.6); sg:Destroy() end end)
+end
+
+-- [[ ⚔️ MOTORES: ESP / AURA / AIMBOT / HITBOX ]]
 local function GetRole(p)
     if not p or not p.Character then return "Inno" end
     if p.Character:FindFirstChild("Knife") or p.Backpack:FindFirstChild("Knife") then return "Murd" end
@@ -67,145 +77,116 @@ local function GetRole(p)
     return "Inno"
 end
 
-local function ApplyESP(p)
-    if active_esp[p] then return end
-    local high = Instance.new("Highlight", CoreGui)
-    local line = Drawing.new("Line"); line.Thickness = 2; line.Transparency = 1
-    local conn
-    conn = RunService.RenderStepped:Connect(function()
-        if p and p.Parent and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            local role = GetRole(p); local col = Config.Colors[role]
-            high.Enabled = Config.Toggles["ESP_"..role]; high.Adornee = p.Character; high.FillColor = col
-            local pos, vis = camera:WorldToViewportPoint(p.Character.HumanoidRootPart.Position)
-            if Config.Toggles.Traces and vis then
-                line.Visible = true; line.Color = col; line.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y); line.To = Vector2.new(pos.X, pos.Y)
-            else line.Visible = false end
-        else
-            high:Destroy(); line:Remove(); if conn then conn:Disconnect() end; active_esp[p] = nil
-        end
-    end)
-    active_esp[p] = {H = high, L = line, C = conn}
-end
-
--- [[ ⚔️ COMBAT ENGINE ]]
-local function InitCombat()
-    -- NOCLIP
+local function InitMotors()
+    -- KILL AURA 45 STUDS
     RunService.Stepped:Connect(function()
+        if Config.Toggles.KillAura and GetRole(lp) == "Murd" then
+            local k = lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")
+            if k then
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        if (lp.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude < Config.Values.AuraRange then
+                            firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 0)
+                            firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 1)
+                        end
+                    end
+                end
+            end
+        end
         if Config.Toggles.Noclip and lp.Character then
             for _, v in pairs(lp.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
         end
     end)
 
-    -- KILL AURA (45 STUDS)
-    RunService.Stepped:Connect(function()
-        if Config.Toggles.KillAura and GetRole(lp) == "Murd" and (lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")) then
-            local knife = lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")
-            for _, p in pairs(Players:GetPlayers()) do
-                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                    local dist = (lp.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude
-                    if dist < Config.Values.AuraRange then
-                        firetouchinterest(p.Character.HumanoidRootPart, knife.Handle, 0)
-                        firetouchinterest(p.Character.HumanoidRootPart, knife.Handle, 1)
-                    end
-                end
-            end
-        end
-    end)
-
-    -- MAIN LOOP (AIMBOT + HITBOX)
+    -- AIMBOT & HITBOX ROJO NEON
     RunService.RenderStepped:Connect(function()
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
                 local hrp = p.Character.HumanoidRootPart; local role = GetRole(p)
-                
-                -- AIMBOT
                 if role == "Murd" and Config.Toggles.Aimbot then
-                    local targetPos, cameraPos = hrp.Position, camera.CFrame.Position
-                    if (targetPos - cameraPos).Magnitude > 0.5 then
-                        camera.CFrame = camera.CFrame:Lerp(CFrame.new(cameraPos, targetPos), Config.Values.Smooth)
-                    end
+                    camera.CFrame = camera.CFrame:Lerp(CFrame.new(camera.CFrame.Position, hrp.Position), Config.Values.Smooth)
                 end
-
-                -- HITBOX ASESINO (ROJO NEON)
                 if role == "Murd" and Config.Toggles.Hitbox then
                     hrp.Size = Vector3.new(Config.Values.HitboxSize, Config.Values.HitboxSize, Config.Values.HitboxSize)
-                    hrp.Transparency = 0.7; hrp.Color = Color3.new(1, 0, 0); hrp.Material = Enum.Material.Neon; hrp.CanCollide = false; hrp.Massless = true    
+                    hrp.Color = Color3.new(1, 0, 0); hrp.Material = Enum.Material.Neon; hrp.Transparency = 0.6; hrp.Massless = true
                 else
-                    if hrp.Size ~= Vector3.new(2, 2, 1) then hrp.Size = Vector3.new(2, 2, 1); hrp.Transparency = 1; hrp.Material = Enum.Material.Plastic end
+                    if hrp.Size ~= Vector3.new(2,2,1) then hrp.Size = Vector3.new(2,2,1); hrp.Material = Enum.Material.Plastic; hrp.Transparency = 1 end
                 end
                 if role == "Sher" then Config.Values.LastSheriffPos = hrp.CFrame end
             end
         end
-        -- SPEED & FOV
-        if lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") then
-            lp.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
+        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
+            lp.Character.Humanoid.WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
         end
         camera.FieldOfView = Config.Values.FOV
-        local gun = workspace:FindFirstChild("GunDrop") or workspace:FindFirstChild("GunPart") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("GunDrop"))
-        Config.Values.GunPart = gun
     end)
 end
 
--- [[ 🚀 INFINITY JUMP (FIXED) ]]
+-- [[ 🚀 INF JUMP FIX ]]
 UserInputService.JumpRequest:Connect(function()
-    if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") then
+    if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChild("Humanoid") then
         lp.Character.Humanoid:ChangeState(3)
     end
 end)
 
--- [[ 🏙️ MENU ELITE ]]
+-- [[ 🏙️ UI SYSTEM V10.5 ]]
 local function CreateUI()
-    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "Flourite_V10"
-    local main = Instance.new("Frame", sg); main.Size = UDim2.new(0, 450, 0, 320); main.Position = UDim2.new(0.5, -225, 0.5, -160); main.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", main); Instance.new("UIStroke", main).Color = Config.Colors.Accent
+    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "CH-HUB MM2🪐"
     
-    local bar = Instance.new("Frame", main); bar.Size = UDim2.new(0, 120, 1, 0); bar.BackgroundColor3 = Color3.fromRGB(15, 15, 25); Instance.new("UICorner", bar)
-    local container = Instance.new("Frame", main); container.Position = UDim2.new(0, 130, 0, 40); container.Size = UDim2.new(1, -140, 1, -50); container.BackgroundTransparency = 1
+    -- Botón Círculo Abierto (Movible)
+    local Circle = Instance.new("ImageButton", sg); Circle.Size = UDim2.new(0, 60, 0, 60); Circle.Position = UDim2.new(0, 50, 0.5, -30); Circle.BackgroundColor3 = Config.Colors.Bg; Circle.Image = "rbxassetid://6031068433"; Circle.Visible = false; Instance.new("UICorner", Circle).CornerRadius = UDim.new(1,0); Instance.new("UIStroke", Circle).Color = Config.Colors.Accent; MakeDraggable(Circle)
+
+    -- Menú Principal (Movible)
+    local Main = Instance.new("Frame", sg); Main.Size = UDim2.new(0, 460, 0, 340); Main.Position = UDim2.new(0.5, -230, 0.5, -170); Main.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", Main); Instance.new("UIStroke", Main).Color = Config.Colors.Accent; MakeDraggable(Main)
+
+    -- Botón "X" de Cierre
+    local CloseX = Instance.new("TextButton", Main); CloseX.Size = UDim2.new(0, 35, 0, 35); CloseX.Position = UDim2.new(1, -40, 0, 5); CloseX.Text = "X"; CloseX.BackgroundColor3 = Color3.fromRGB(200, 0, 0); CloseX.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", CloseX)
+    CloseX.MouseButton1Click:Connect(function() Main.Visible = false; Circle.Visible = true; Notify("MENÚ", "Cerrado. Usa el círculo para abrir.", Config.Colors.Accent) end)
+    Circle.MouseButton1Click:Connect(function() Main.Visible = true; Circle.Visible = false end)
+
+    local bar = Instance.new("Frame", Main); bar.Size = UDim2.new(0, 130, 1, 0); bar.BackgroundColor3 = Color3.fromRGB(15, 15, 25); Instance.new("UICorner", bar); Instance.new("UIListLayout", bar).Padding = UDim.new(0,2)
+    local cont = Instance.new("Frame", Main); cont.Position = UDim2.new(0, 140, 0, 45); cont.Size = UDim2.new(1, -150, 1, -55); cont.BackgroundTransparency = 1
 
     local function Tab(name)
-        local f = Instance.new("ScrollingFrame", container); f.Size = UDim2.new(1, 0, 1, 0); f.Visible = false; f.BackgroundTransparency = 1; f.ScrollBarThickness = 0; Instance.new("UIListLayout", f).Padding = UDim.new(0, 5)
-        local b = Instance.new("TextButton", bar); b.Size = UDim2.new(1, 0, 0, 40); b.Text = name; b.BackgroundColor3 = Color3.new(0,0,0); b.BackgroundTransparency = 0.8; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; b.TextSize = 12; Instance.new("UIListLayout", bar)
-        b.MouseButton1Click:Connect(function() for _, v in pairs(container:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end; f.Visible = true end)
+        local f = Instance.new("ScrollingFrame", cont); f.Size = UDim2.new(1,0,1,0); f.Visible = false; f.BackgroundTransparency = 1; f.ScrollBarThickness = 0; Instance.new("UIListLayout", f).Padding = UDim.new(0,5)
+        local b = Instance.new("TextButton", bar); b.Size = UDim2.new(1,0,0,40); b.Text = name; b.BackgroundColor3 = Color3.new(0,0,0); b.BackgroundTransparency = 0.8; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold
+        b.MouseButton1Click:Connect(function() for _, v in pairs(cont:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end; f.Visible = true end)
         return f
     end
 
-    local t1 = Tab("GENERAL⚙️"); t1.Visible = true; local t2 = Tab("VISUALS👾"); local t3 = Tab("COMBAT⚔️"); local t4 = Tab("TELEPORTS🔮")
+    local t1 = Tab("GENERAL ⚙️"); t1.Visible = true; local t2 = Tab("VISUAL👾"); local t3 = Tab("COMBATE⚔️"); local t4 = Tab("TELEPORTS🔮")
 
     local function Toggle(p, text, key)
-        local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.95, 0, 0, 35); b.Text = text .. " [OFF]"; b.BackgroundColor3 = Color3.fromRGB(30, 30, 50); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b)
+        local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96,0,0,38); b.Text = text .. " [OFF]"; b.BackgroundColor3 = Color3.fromRGB(30, 30, 45); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b)
         b.MouseButton1Click:Connect(function()
             Config.Toggles[key] = not Config.Toggles[key]; b.Text = text .. (Config.Toggles[key] and " [ON]" or " [OFF]")
-            b.BackgroundColor3 = Config.Toggles[key] and Config.Colors.Accent or Color3.fromRGB(30, 30, 50)
+            b.BackgroundColor3 = Config.Toggles[key] and Config.Colors.Accent or Color3.fromRGB(30,30,45); b.TextColor3 = Config.Toggles[key] and Color3.new(0,0,0) or Color3.new(1,1,1)
         end)
     end
 
     Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "NOCLIP", "Noclip"); Toggle(t1, "INF JUMP", "InfJump")
-    Toggle(t2, "ESP MURDER", "ESP_Murd"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t2, "TRACERS", "Traces")
-    Toggle(t3, "KILL AURA", "KillAura"); Toggle(t3, "AIMBOT", "Aimbot"); Toggle(t3, "HITBOX", "Hitbox")
+    Toggle(t2, "ESP MURDER", "ESP_Murd"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t3, "KILL AURA", "KillAura"); Toggle(t3, "AIMBOT", "Aimbot"); Toggle(t3, "HITBOX", "Hitbox")
 
     local function Btn(p, text, func)
-        local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.95, 0, 0, 35); b.Text = text; b.BackgroundColor3 = Color3.fromRGB(50, 50, 80); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b); b.MouseButton1Click:Connect(func)
+        local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96,0,0,38); b.Text = text; b.BackgroundColor3 = Color3.fromRGB(45,45,65); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b); b.MouseButton1Click:Connect(func)
     end
-    Btn(t4, "TP TO GUN", function() if Config.Values.GunPart then lp.Character.HumanoidRootPart.CFrame = Config.Values.GunPart.CFrame; Notify("TELEPORT", "Cerca del arma", Config.Colors.Accent) end end)
-    Btn(t4, "TP TO SHERIFF", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos; Notify("TELEPORT", "Cerca del Sheriff", Config.Colors.Sher) end end)
+    Btn(t4, "TP GUN", function() local g = workspace:FindFirstChild("GunDrop") or workspace:FindFirstChild("GunPart"); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; Notify("TP", "funcion próximamente user", Config.Colors.Accent) end end)
+    Btn(t4, "TP SHERIFF", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos; Notify("TP", "Teletransportado al Sheriff", Config.Colors.Sher) end end)
 
-    Notify("BIENVENIDO USUARIO", "Script Cargado✅", Config.Colors.Accent)
+    Notify("CH-HUB V3.0", "Bienvenido usuario. Script Listo✅.", Config.Colors.Accent)
+    InitMotors()
 end
 
--- [[ 🔑 SISTEMA DE LLAVES MANUAL ]]
-local function RunKeys()
-    local kg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", kg); f.Size = UDim2.new(0, 320, 0, 220); f.Position = UDim2.new(0.5, -160, 0.5, -110); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); Instance.new("UIStroke", f).Color = Config.Colors.Accent
-    local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8, 0, 0, 40); box.Position = UDim2.new(0.1, 0, 0.3, 0); box.PlaceholderText = "INGRESA TU LLAVE"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(20, 20, 30); Instance.new("UICorner", box)
-    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8, 0, 0, 40); btn.Position = UDim2.new(0.1, 0, 0.6, 0); btn.Text = "LOGIN"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
+-- [[ 🔑 LOGIN SYSTEM ]]
+local function RunLogin()
+    local sg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 300, 0, 200); f.Position = UDim2.new(0.5, -150, 0.5, -100); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); Instance.new("UIStroke", f).Color = Config.Colors.Accent; MakeDraggable(f)
+    local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8, 0, 0, 40); box.Position = UDim2.new(0.1, 0, 0.3, 0); box.PlaceholderText = "KEY SUPREME"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(20,20,30); Instance.new("UICorner", box)
+    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8, 0, 0, 40); btn.Position = UDim2.new(0.1, 0, 0.65, 0); btn.Text = "LOGIN"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
     
     btn.MouseButton1Click:Connect(function()
-        if table.find(MANUAL_KEYS, box.Text) then
-            kg:Destroy(); CreateUI(); InitCombat()
-            for _, p in pairs(Players:GetPlayers()) do if p ~= lp then ApplyESP(p) end end
-            Players.PlayerAdded:Connect(function(p) task.wait(1); ApplyESP(p) end)
-        else
-            box.Text = ""; box.PlaceholderText = "LLAVE INCORRECTA"
-        end
+        if table.find(MANUAL_KEYS, box.Text) then sg:Destroy(); CreateUI() else box.Text = ""; box.PlaceholderText = "LLAVE INVÁLIDA" end
     end)
 end
 
-RunKeys()
+RunLogin()
+-- [[ FIN V3.0 ]]
