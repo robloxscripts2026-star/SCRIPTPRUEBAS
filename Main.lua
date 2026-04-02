@@ -32,7 +32,7 @@ local Config = {
     },
     Values = {
         Speed = 65, FOV_Max = 120, FOV_Min = 70, 
-        HitboxSize = 25, AuraRange = 48, Smooth = 0.11,
+        HitboxSize = 10, AuraRange = 48, Smooth = 0.7,
         LastSheriffPos = nil
     },
     Colors = {
@@ -226,7 +226,7 @@ local function BuildUI()
     Toggle(t2, "ESP INOCENTE", "ESP_Inno"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t2, "ESP ASESINO", "ESP_Murd"); Toggle(t2, "TRACES", "Traces")
     Toggle(t3, "AIMBOT", "Aimbot"); Toggle(t3, "HITBOX", "Hitbox"); Toggle(t3, "KILL AURA", "KillAura")
     local function Btn(p, t, f) local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 45); b.Text = t; b.BackgroundColor3 = Color3.fromRGB(50, 50, 75); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b); b.MouseButton1Click:Connect(f) end
-    Btn(t4, "TP TO GUN 🔫", function() local g = workspace:FindFirstChild("GunDrop") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("GunDrop")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; Notify("TP", "Arma obtenida.", Config.Colors.Accent) else Notify("TP", "No hay arma.", Color3.new(1,0,0)) end end)
+    Btn(t4, "TP TO GUN 🔫", function() local g = workspace:FindFirstChild("GunDrop") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("GunDrop")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; Notify("TP", "Arma obtenida.", Config.Colors.Accent) else Notify("TP", "funcion próximamente usuario", Color3.new(1,0,0)) end end)
     Btn(t4, "TP TO SHERIFF 👮", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos; Notify("TP", "Sheriff localizado.", Config.Colors.Sher) else Notify("TP", "Sheriff no detectado.", Color3.new(1,0,0)) end end)
     Notify("BIENVENIDO USUARIO", "script cargado con éxito", Config.Colors.Accent)
     InitMotors(); HitboxMaintainer()
