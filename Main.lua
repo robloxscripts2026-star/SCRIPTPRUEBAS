@@ -1,6 +1,6 @@
 --V3.0 HUB MM2
 
-task.wait(0.50)
+task.wait(1.0)
 
 -- [[ 🛠️ SERVICIOS ]]
 local Players = game:GetService("Players")
@@ -32,7 +32,7 @@ local Config = {
     },
     Values = {
         Speed = 65, FOV_Max = 120, FOV_Min = 70, 
-        HitboxSize = 25, AuraRange = 48, Smooth = 0.15,
+        HitboxSize = 25, AuraRange = 48, Smooth = 0.11,
         LastSheriffPos = nil
     },
     Colors = {
@@ -71,31 +71,48 @@ local function MakeDraggable(obj)
     end)
 end
 
--- [[ 🔍 MOTOR DE ROLES (METODO CODEX SUPREME) ]]
+-- [[ MOTOR DE ROLES (MÉTODO CODEX SUPREME) ]]
 local function GetRole(p)
     if not p or not p.Character then return "Inno" end
+    
     local char = p.Character
     local bp = p.Backpack or p:FindFirstChild("Backpack")
     
+    -- Murderer
     if char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife")) then
         return "Murd"
     end
     
+    -- Sheriff - Detector mejorado 2026
     local function CheckTool(tool)
         if not tool or not tool:IsA("Tool") then return false end
         local n = tool.Name:lower()
         return n:find("gun") or n:find("revolver") or n:find("sheriff") or 
                n:find("hero") or n:find("toy") or n:find("apoc") or 
                n:find("elderwood") or n:find("treat") or n:find("heart") or 
-               n:find("valent") or n:find("luger")
+               n:find("valent") or n:find("luger") or n:find("blaster")
     end
     
-    for _, tool in ipairs(char:GetChildren()) do if CheckTool(tool) then return "Sher" end end
-    if bp then for _, tool in ipairs(bp:GetChildren()) do if CheckTool(tool) then return "Sher" end end end
-    for _, v in ipairs(char:GetDescendants()) do if v:IsA("Tool") and CheckTool(v) then return "Sher" end end
+    -- Revisar Character
+    for _, tool in ipairs(char:GetChildren()) do
+        if CheckTool(tool) then return "Sher" end
+    end
+    
+    -- Revisar Backpack
+    if bp then
+        for _, tool in ipairs(bp:GetChildren()) do
+            if CheckTool(tool) then return "Sher" end
+        end
+    end
+    
+    -- Búsqueda profunda
+    for _, v in ipairs(char:GetDescendants()) do
+        if v:IsA("Tool") and CheckTool(v) then return "Sher" end
+    end
     
     return "Inno"
 end
+
 
 -- [[ 👾 VISUAL ENGINE ]]
 local active_esp = {}
@@ -187,7 +204,7 @@ UserInputService.JumpRequest:Connect(function() if Config.Toggles.InfJump and lp
 
 -- [[ 🏙️ UI SUPREME V18 ]]
 local function BuildUI()
-    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "SUPREME_V18"
+    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "CH-HUB MM2"
     local Circle = Instance.new("ImageButton", sg); Circle.Size = UDim2.new(0, 65, 0, 65); Circle.Position = UDim2.new(0, 30, 0.5, -32); Circle.BackgroundColor3 = Config.Colors.Bg; Circle.Image = "rbxassetid://6031068433"; Circle.Visible = false; Instance.new("UICorner", Circle).CornerRadius = UDim.new(1,0); Instance.new("UIStroke", Circle).Color = Config.Colors.Accent; MakeDraggable(Circle)
     local Main = Instance.new("Frame", sg); Main.Size = UDim2.new(0, 560, 0, 460); Main.Position = UDim2.new(0.5, -280, 0.5, -230); Main.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", Main); Instance.new("UIStroke", Main).Color = Config.Colors.Accent; MakeDraggable(Main)
     local X = Instance.new("TextButton", Main); X.Size = UDim2.new(0, 45, 0, 45); X.Position = UDim2.new(1, -50, 0, 5); X.Text = "X"; X.BackgroundColor3 = Color3.fromRGB(220, 0, 0); X.TextColor3 = Color3.new(1,1,1); X.Font = Enum.Font.GothamBold; Instance.new("UICorner", X)
@@ -205,23 +222,23 @@ local function BuildUI()
         local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 44); b.Text = t .. " [OFF]"; b.BackgroundColor3 = Color3.fromRGB(35, 35, 50); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b)
         b.MouseButton1Click:Connect(function() Config.Toggles[k] = not Config.Toggles[k]; b.Text = t .. (Config.Toggles[k] and " [ON]" or " [OFF]"); b.BackgroundColor3 = Config.Toggles[k] and Config.Colors.Accent or Color3.fromRGB(35, 35, 50); b.TextColor3 = Config.Toggles[k] and Color3.new(0,0,0) or Color3.new(1,1,1) end)
     end
-    Toggle(t1, "NOCLIP ELITE", "Noclip"); Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "INF JUMP", "InfJump")
+    Toggle(t1, "NOCLIP", "Noclip"); Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "INF JUMP", "InfJump")
     Toggle(t2, "ESP INOCENTE", "ESP_Inno"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t2, "ESP ASESINO", "ESP_Murd"); Toggle(t2, "TRACES", "Traces")
-    Toggle(t3, "AIMBOT MURDER", "Aimbot"); Toggle(t3, "HITBOX NEON", "Hitbox"); Toggle(t3, "KILL AURA", "KillAura")
+    Toggle(t3, "AIMBOT", "Aimbot"); Toggle(t3, "HITBOX", "Hitbox"); Toggle(t3, "KILL AURA", "KillAura")
     local function Btn(p, t, f) local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 45); b.Text = t; b.BackgroundColor3 = Color3.fromRGB(50, 50, 75); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b); b.MouseButton1Click:Connect(f) end
     Btn(t4, "TP TO GUN 🔫", function() local g = workspace:FindFirstChild("GunDrop") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("GunDrop")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; Notify("TP", "Arma obtenida.", Config.Colors.Accent) else Notify("TP", "No hay arma.", Color3.new(1,0,0)) end end)
     Btn(t4, "TP TO SHERIFF 👮", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos; Notify("TP", "Sheriff localizado.", Config.Colors.Sher) else Notify("TP", "Sheriff no detectado.", Color3.new(1,0,0)) end end)
-    Notify("SISTEMA V18 PRO", "Bienvenido Codex Scripts Optimizer", Config.Colors.Accent)
+    Notify("BIENVENIDO USUARIO", "script cargado con éxito", Config.Colors.Accent)
     InitMotors(); HitboxMaintainer()
 end
 
 local function RunLogin()
     local sg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 380, 0, 300); f.Position = UDim2.new(0.5, -190, 0.5, -150); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = Config.Colors.Accent; s.Thickness = 3; MakeDraggable(f)
-    local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1,0,0.3,0); t.Text = "FLOURITE SUPREME V18"; t.TextColor3 = Config.Colors.Accent; t.Font = Enum.Font.GothamBold; t.TextSize = 27; t.BackgroundTransparency = 1
+    local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1,0,0.3,0); t.Text = "CH-HUB MM2 V3.0"; t.TextColor3 = Config.Colors.Accent; t.Font = Enum.Font.GothamBold; t.TextSize = 27; t.BackgroundTransparency = 1
     local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8,0,0,55); box.Position = UDim2.new(0.1,0,0.35,0); box.PlaceholderText = "LLAVE CODEX"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(25,25,35); Instance.new("UICorner", box)
     local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8,0,0,55); btn.Position = UDim2.new(0.1,0,0.7,0); btn.Text = "ACCEDER"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
     btn.MouseButton1Click:Connect(function() if table.find(MANUAL_KEYS, box.Text) then sg:Destroy(); BuildUI() else box.Text = ""; box.PlaceholderText = "LLAVE INCORRECTA" end end)
 end
 
 RunLogin()
--- [[ FIN V18.0 - +850 LÍNEAS ]]
+
