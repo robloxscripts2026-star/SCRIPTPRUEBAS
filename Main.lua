@@ -1,12 +1,227 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+--V3.0 HUB MM2
 
-]]--
+task.wait(0.50)
 
-task.wait(489.5 -(106 + 382) );local v0=game:GetService("Players");local v1=game:GetService("RunService");local v2=game:GetService("UserInputService");local v3=game:GetService("TweenService");local v4=game:GetService("CoreGui");local v5=game:GetService("Debris");local v6=v0.LocalPlayer;local v7=workspace.CurrentCamera;local v8=v6:GetMouse();local v9={"CHKEY-2a7d9f3b1c","CHKEY-5g1h4j6k8l","CHKEY-9m2n0p5q3r","CHKEY-4s6t8u1v7w","CHKEY-3x5y9z2a4b","CHKEY-7c1d3e6f8g","CHKEY-2h5i7j9k1l","CHKEY-6m8n3p0q2r","CHKEY-1s4t6u9v3w","CHKEY-5x2y7z4a6b","CHKEY-8c3d5e1f9g","CHKEY-4h9i2j5k7l","CHKEY-7m1n6p8q4r","CHKEY-3s5t9u2v6w","CHKEY-6x8y3z1a5b","CHKEY-9c2d7e4f1g","CHKEY-5h3i8j2k6l","CHKEY-2m7n4p1q9r","CHKEY-8s1t5u7v3w","CHKEY-4x6y2z9a3b","CHKEY-1c9d4e7f2g","CHKEY-6h7i1j8k4l","CHKEY-3m5n9p2q6r","CHKEY-7s3t8u4v9w","CHKEY-2x9y5z6a8b"};local v10={Toggles={Noclip=false,InfJump=false,WalkSpeed=false,Aimbot=false,KillAura=false,Hitbox=false,ESP_Inno=false,ESP_Sheriff=false,ESP_Murd=false,Traces=false},Values={Speed=48 + 17 ,FOV_Max=120,FOV_Min=1493 -(630 + 793) ,HitboxSize=67 -47 ,AuraRange=29 + 16 ,Smooth=0.8 -0 ,LastSheriffPos=nil},Colors={Murd=Color3.fromRGB(101 + 154 ,0 -0 ,0 -0 ),Sher=Color3.fromRGB(1747 -(760 + 987) ,601 -441 ,1916 -(1477 + 184) ),Inno=Color3.fromRGB(1913 -(1789 + 124) ,238 + 17 ,866 -(745 + 21) ),Accent=Color3.fromRGB(0 + 0 ,379 -159 ,768 -513 ),Bg=Color3.fromRGB(27 -17 ,39 -29 ,15)}};local function v11(v19,v20,v21) local v22=0 + 0 ;local v23;local v24;local v25;local v26;local v27;while true do if (v22==2) then v25=Instance.new("UIStroke",v24);v25.Color=v21;v25.Thickness=2.5;v22=3 + 0 ;end if (v22==(1063 -(87 + 968))) then v24:TweenPosition(UDim2.new(4 -3 , -(273 + 27),0.12 -0 ,1413 -(447 + 966) ),"Out","Back",0.6 -0 );task.delay(4,function() if v24 then v24:TweenPosition(UDim2.new(1818 -(1703 + 114) ,4 + 6 ,701.12 -(376 + 325) ,1613 -(1565 + 48) ),"In","Quad",0.6 -0 );task.wait(0.7 -0 );v23:Destroy();end end);break;end if (v22==5) then v26.TextSize=5 + 11 ;v27=Instance.new("TextLabel",v24);v27.Size=UDim2.new(2 -1 ,14 -(9 + 5) ,0.6,376 -(85 + 291) );v22=1271 -(243 + 1022) ;end if (v22==(0 -0)) then v23=Instance.new("ScreenGui",v4);v24=Instance.new("Frame",v23);v24.Size=UDim2.new(0 + 0 ,280,0,1960 -(157 + 1718) );v22=1181 -(1123 + 57) ;end if (v22==(3 + 0)) then v26=Instance.new("TextLabel",v24);v26.Size=UDim2.new(3 -2 ,254 -(163 + 91) ,1930.4 -(1869 + 61) ,0 + 0 );v26.Text=v19;v22=4;end if (v22==(16 -10)) then v27.Position=UDim2.new(0 -0 ,0 -0 ,0.4 + 0 ,0 -0 );v27.Text=v20;v27.TextColor3=Color3.new(1 + 0 ,1475 -(1329 + 145) ,972 -(140 + 831) );v22=18 -11 ;end if (v22==(1851 -(1409 + 441))) then v24.Position=UDim2.new(1228 -(322 + 905) ,621 -(602 + 9) ,0.12,718 -(15 + 703) );v24.BackgroundColor3=v10.Colors.Bg;Instance.new("UICorner",v24);v22=1 + 1 ;end if (v22==(445 -(262 + 176))) then v27.Font=Enum.Font.Gotham;v27.BackgroundTransparency=1722 -(345 + 1376) ;v27.TextSize=702 -(198 + 490) ;v22=35 -27 ;end if (v22==(12 -8)) then v26.TextColor3=v21;v26.Font=Enum.Font.GothamBold;v26.BackgroundTransparency=2 -1 ;v22=1211 -(696 + 510) ;end end end local function v12(v28) local v29,v30,v31;v28.InputBegan:Connect(function(v91) if ((v91.UserInputType==Enum.UserInputType.MouseButton1) or (v91.UserInputType==Enum.UserInputType.Touch)) then v29=true;v30=v91.Position;v31=v28.Position;v91.Changed:Connect(function() if (v91.UserInputState==Enum.UserInputState.End) then v29=false;end end);end end);v2.InputChanged:Connect(function(v92) if (v29 and ((v92.UserInputType==Enum.UserInputType.MouseMovement) or (v92.UserInputType==Enum.UserInputType.Touch))) then local v140=0 -0 ;local v141;while true do if (0==v140) then v141=v92.Position-v30 ;v28.Position=UDim2.new(v31.X.Scale,v31.X.Offset + v141.X ,v31.Y.Scale,v31.Y.Offset + v141.Y );break;end end end end);end local function v13(v32) local v33=1262 -(1091 + 171) ;while true do if (v33==(1 + 0)) then if (v32.Character:FindFirstChild("Gun") or v32.Backpack:FindFirstChild("Gun")) then return "Sher";end for v184,v185 in pairs(v32.Character:GetChildren()) do if (v185:IsA("Tool") and v185.Name:find("Gun")) then return "Sher";end end v33=2;end if ((0 -0)==v33) then if ( not v32 or  not v32.Character) then return "Inno";end if (v32.Character:FindFirstChild("Knife") or v32.Backpack:FindFirstChild("Knife")) then return "Murd";end v33=3 -2 ;end if (v33==(376 -(123 + 251))) then for v186,v187 in pairs(v32.Backpack:GetChildren()) do if (v187:IsA("Tool") and v187.Name:find("Gun")) then return "Sher";end end return "Inno";end end end local v14={};local function v15(v34) if (v34==v6) then return;end local v35=Instance.new("Highlight",v4);v35.Name="SUPREME_ESP_"   .. v34.Name ;local v37=Drawing.new("Line");v37.Thickness=2.5;v37.Transparency=4 -3 ;local v40;v40=v1.RenderStepped:Connect(function() if (v34 and v34.Parent and v34.Character and v34.Character:FindFirstChild("HumanoidRootPart")) then local v142=v13(v34);local v143=v10.Colors[v142];v35.Enabled=v10.Toggles["ESP_"   .. v142 ];v35.Adornee=v34.Character;v35.FillColor=v143;v35.OutlineColor=Color3.new(699 -(208 + 490) ,2 -1 ,1206 -(902 + 303) );local v150,v151=v7:WorldToViewportPoint(v34.Character.HumanoidRootPart.Position);if (v10.Toggles.Traces and v151 and v10.Toggles["ESP_"   .. v142 ]) then v37.Visible=true;v37.Color=v143;v37.From=Vector2.new(v7.ViewportSize.X/(1 + 1) ,v7.ViewportSize.Y);v37.To=Vector2.new(v150.X,v150.Y);else v37.Visible=false;end if (v142=="Sher") then v10.Values.LastSheriffPos=v34.Character.HumanoidRootPart.CFrame;end else local v152=0 + 0 ;while true do if ((837 -(660 + 176))==v152) then v40:Disconnect();v14[v34]=nil;break;end if (v152==(0 + 0)) then v35:Destroy();v37:Remove();v152=2 -1 ;end end end end);v14[v34]=true;end task.spawn(function() while task.wait(1 + 0 ) do for v113,v114 in pairs(v0:GetPlayers()) do if ((v114~=v6) and  not v14[v114]) then v15(v114);end end end end);local function v16() v1.Stepped:Connect(function() local v93=1690 -(1121 + 569) ;while true do if (v93==(202 -(14 + 188))) then if (v10.Toggles.KillAura and (v13(v6)=="Murd")) then local v229=675 -(534 + 141) ;local v230;while true do if (v229==(0 + 0)) then v230=v6.Character:FindFirstChild("Knife") or v6.Backpack:FindFirstChild("Knife") ;if v230 then for v251,v252 in pairs(v0:GetPlayers()) do if ((v252~=v6) and v252.Character and v252.Character:FindFirstChild("HumanoidRootPart")) then if ((v6.Character.HumanoidRootPart.Position-v252.Character.HumanoidRootPart.Position).Magnitude<v10.Values.AuraRange) then firetouchinterest(v252.Character.HumanoidRootPart,v230.Handle,1463 -(1404 + 59) );firetouchinterest(v252.Character.HumanoidRootPart,v230.Handle,2 -1 );end end end end break;end end end if (v10.Toggles.Noclip and v6.Character) then for v240,v241 in pairs(v6.Character:GetDescendants()) do if v241:IsA("BasePart") then v241.CanCollide=false;end end end break;end end end);v1.RenderStepped:Connect(function() for v115,v116 in pairs(v0:GetPlayers()) do if ((v116~=v6) and v116.Character and v116.Character:FindFirstChild("HumanoidRootPart")) then local v188=0 + 0 ;local v189;local v190;while true do if (v188==(0 -0)) then v189=v116.Character.HumanoidRootPart;v190=v13(v116);v188=1 + 0 ;end if (v188==(1 -0)) then if ((v190=="Murd") and v10.Toggles.Aimbot) then v7.CFrame=v7.CFrame:Lerp(CFrame.new(v7.CFrame.Position,v189.Position),v10.Values.Smooth);end if ((v190=="Murd") and v10.Toggles.Hitbox) then local v247=765 -(468 + 297) ;while true do if (v247==1) then v189.Material=Enum.Material.Neon;v189.Transparency=0.5 -0 ;break;end if (v247==(0 -0)) then v189.Size=Vector3.new(v10.Values.HitboxSize,v10.Values.HitboxSize,v10.Values.HitboxSize);v189.Color=Color3.new(2 -1 ,0 -0 ,0 -0 );v247=237 -(141 + 95) ;end end elseif (v189.Size~=Vector3.new(2 + 0 ,2,1 + 0 )) then local v250=396 -(115 + 281) ;while true do if (v250==(2 -1)) then v189.Transparency=2 -1 ;break;end if (v250==(0 + 0)) then v189.Size=Vector3.new(2,2 + 0 ,2 -1 );v189.Material=Enum.Material.Plastic;v250=1 + 0 ;end end end break;end end end end v7.FieldOfView=(v10.Toggles.Noclip and v10.Values.FOV_Max) or v10.Values.FOV_Min ;if (v6.Character and v6.Character:FindFirstChild("Humanoid")) then v6.Character.Humanoid.WalkSpeed=(v10.Toggles.WalkSpeed and v10.Values.Speed) or (58 -42) ;end end);end v2.JumpRequest:Connect(function() if (v10.Toggles.InfJump and v6.Character and v6.Character:FindFirstChild("Humanoid")) then v6.Character.Humanoid:ChangeState(870 -(550 + 317) );end end);local function v17() local v42=Instance.new("ScreenGui",v4);v42.Name="SUPREME_V15";local v44=Instance.new("ImageButton",v42);v44.Size=UDim2.new(0 -0 ,91 -26 ,0 -0 ,65);v44.Position=UDim2.new(285 -(134 + 151) ,1690 -(970 + 695) ,0.5 -0 , -(53 -21));v44.BackgroundColor3=v10.Colors.Bg;v44.Image="rbxassetid://6031068433";v44.Visible=false;Instance.new("UICorner",v44).CornerRadius=UDim.new(1991 -(582 + 1408) ,0 -0 );Instance.new("UIStroke",v44).Color=v10.Colors.Accent;v12(v44);local v54=Instance.new("Frame",v42);v54.Size=UDim2.new(0 -0 ,540,0,1658 -1218 );v54.Position=UDim2.new(1824.5 -(1195 + 629) , -(357 -87),241.5 -(187 + 54) , -(1000 -(162 + 618)));v54.BackgroundColor3=v10.Colors.Bg;Instance.new("UICorner",v54);Instance.new("UIStroke",v54).Color=v10.Colors.Accent;v12(v54);local v59=Instance.new("TextButton",v54);v59.Size=UDim2.new(0 + 0 ,27 + 13 ,0 -0 ,40);v59.Position=UDim2.new(1 -0 , -(4 + 41),1636 -(1373 + 263) ,1005 -(451 + 549) );v59.Text="X";v59.BackgroundColor3=Color3.fromRGB(70 + 150 ,0 -0 ,0 -0 );v59.TextColor3=Color3.new(1385 -(746 + 638) ,1 + 0 ,1 -0 );v59.Font=Enum.Font.GothamBold;Instance.new("UICorner",v59);v59.MouseButton1Click:Connect(function() local v95=341 -(218 + 123) ;while true do if (v95==(1 + 0)) then v11("MENÃš","Interfaz minimizada.",v10.Colors.Accent);break;end if (v95==(1581 -(1535 + 46))) then v54.Visible=false;v44.Visible=true;v95=807 -(118 + 688) ;end end end);v44.MouseButton1Click:Connect(function() v54.Visible=true;v44.Visible=false;end);local v67=Instance.new("Frame",v54);v67.Size=UDim2.new(0 + 0 ,208 -(25 + 23) ,1 + 0 , -(1896 -(927 + 959)));v67.Position=UDim2.new(560 -(306 + 254) ,737 -(16 + 716) ,0 -0 ,1 + 4 );v67.BackgroundTransparency=2 -1 ;Instance.new("UIListLayout",v67).Padding=UDim.new(0 -0 ,14 -8 );local v72=Instance.new("Frame",v54);v72.Size=UDim2.new(4 -3 , -(1647 -(899 + 568)),2 -1 , -(43 + 22));v72.Position=UDim2.new(1061 -(810 + 251) ,170,0 -0 ,658 -(268 + 335) );v72.BackgroundTransparency=1;local function v76(v98) local v99=290 -(60 + 230) ;local v100;local v101;while true do if (v99==(575 -(426 + 146))) then Instance.new("UICorner",v101);v101.MouseButton1Click:Connect(function() for v231,v232 in pairs(v72:GetChildren()) do if v232:IsA("ScrollingFrame") then v232.Visible=false;end end for v233,v234 in pairs(v67:GetChildren()) do if v234:IsA("TextButton") then v234.BackgroundColor3=Color3.fromRGB(3 + 17 ,1476 -(282 + 1174) ,30);end end v100.Visible=true;v101.BackgroundColor3=v10.Colors.Accent;v101.TextColor3=Color3.new(0,811 -(569 + 242) ,0 -0 );end);return v100;end if (v99==2) then v101.Text=v98;v101.BackgroundColor3=Color3.fromRGB(2 + 18 ,1044 -(706 + 318) ,1281 -(721 + 530) );v101.TextColor3=Color3.new(1272 -(945 + 326) ,2 -1 ,1 + 0 );v101.Font=Enum.Font.GothamBold;v99=703 -(271 + 429) ;end if (v99==(0 + 0)) then v100=Instance.new("ScrollingFrame",v72);v100.Size=UDim2.new(1501 -(1408 + 92) ,1086 -(461 + 625) ,1289 -(993 + 295) ,0 + 0 );v100.Visible=false;v100.BackgroundTransparency=1172 -(418 + 753) ;v99=1;end if (v99==(3 -2)) then v100.ScrollBarThickness=1 + 1 ;Instance.new("UIListLayout",v100).Padding=UDim.new(406 -(183 + 223) ,2 + 10 );v101=Instance.new("TextButton",v67);v101.Size=UDim2.new(1 + 0 ,0 + 0 ,337 -(10 + 327) ,574 -(406 + 123) );v99=1771 -(1749 + 20) ;end end end local v77=v76("GENERAL âš™ï¸");v77.Visible=true;local v79=v76("VISUAL ðŸ‘¾");local v80=v76("COMBATE âš”ï¸");local v81=v76("TELEPORTS ðŸ”®");local function v82(v102,v103,v104) local v105=0 + 0 ;local v106;while true do if (v105==(1324 -(1249 + 73))) then v106.TextColor3=Color3.new(1,1,1 + 0 );Instance.new("UICorner",v106);v105=1148 -(466 + 679) ;end if (v105==(2 -1)) then v106.Text=v103   .. " [OFF]" ;v106.BackgroundColor3=Color3.fromRGB(147 -112 ,100 -65 ,50);v105=1902 -(106 + 1794) ;end if ((1 + 2)==v105) then v106.MouseButton1Click:Connect(function() v10.Toggles[v104]= not v10.Toggles[v104];v106.Text=v103   .. ((v10.Toggles[v104] and " [ON]") or " [OFF]") ;v106.BackgroundColor3=(v10.Toggles[v104] and v10.Colors.Accent) or Color3.fromRGB(9 + 26 ,103 -68 ,135 -85 ) ;v106.TextColor3=(v10.Toggles[v104] and Color3.new(114 -(4 + 110) ,0 -0 ,0)) or Color3.new(1,585 -(57 + 527) ,1) ;end);break;end if (v105==(1427 -(41 + 1386))) then v106=Instance.new("TextButton",v102);v106.Size=UDim2.new(103.95 -(17 + 86) ,0 + 0 ,0 -0 ,121 -79 );v105=1;end end end v82(v77,"NOCLIP","Noclip");v82(v77,"SPEED HACK","WalkSpeed");v82(v77,"INFINITYJUMP","InfJump");v82(v79,"ESP INOCENTE","ESP_Inno");v82(v79,"ESP SHERIFF","ESP_Sheriff");v82(v79,"ESP ASESINO","ESP_Murd");v82(v79,"TRACES","Traces");v82(v80,"AIMBOT","Aimbot");v82(v80,"HITBOX","Hitbox");v82(v80,"KILL AURA","KillAura");local function v83(v107,v108,v109) local v110=166 -(122 + 44) ;local v111;while true do if (v110==(0 -0)) then v111=Instance.new("TextButton",v107);v111.Size=UDim2.new(0.95 -0 ,0,0 + 0 ,7 + 38 );v110=1;end if (v110==(1 -0)) then v111.Text=v108;v111.BackgroundColor3=Color3.fromRGB(115 -(30 + 35) ,35 + 15 ,1332 -(1043 + 214) );v110=7 -5 ;end if ((1214 -(323 + 889))==v110) then v111.TextColor3=Color3.new(2 -1 ,1,581 -(361 + 219) );Instance.new("UICorner",v111);v110=3;end if (v110==3) then v111.MouseButton1Click:Connect(v109);break;end end end v83(v81,"TP TO GUN ðŸ”«",function() local v112=workspace:FindFirstChild("GunDrop") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("GunDrop")) ;if v112 then local v154=0 -0 ;while true do if ((320 -(53 + 267))==v154) then v6.Character.HumanoidRootPart.CFrame=v112.CFrame;v11("TELEPORT","Arma recogida con Ã©xito.",v10.Colors.Accent);break;end end else v11("TELEPORT","prÃ³ximamente usuario.",Color3.new(1 -0 ,0 + 0 ,1574 -(1281 + 293) ));end end);v83(v81,"TP TO SHERIFF ðŸ‘®",function() if v10.Values.LastSheriffPos then local v155=413 -(15 + 398) ;while true do if ((982 -(18 + 964))==v155) then v6.Character.HumanoidRootPart.CFrame=v10.Values.LastSheriffPos;v11("TELEPORT","Sheriff alcanzado.",v10.Colors.Sher);break;end end else v11("TELEPORT","No se detectÃ³ al Sheriff.",Color3.new(3 -2 ,0,0 + 0 ));end end);v11("BIENVENIDO USUARIO","Script cargado con Ã©xito âœ…",v10.Colors.Accent);v16();end local function v18() local v84=0 + 0 ;local v85;local v86;local v87;local v88;local v89;local v90;while true do if (v84==(5 + 0)) then v90.Font=Enum.Font.GothamBold;Instance.new("UICorner",v90);v90.MouseButton1Click:Connect(function() if table.find(v9,v89.Text) then v85:Destroy();v17();else local v239=0 + 0 ;while true do if (v239==(850 -(20 + 830))) then v89.Text="";v89.PlaceholderText="LLAVE INCORRECTA";break;end end end end);break;end if (v84==2) then v88.Text="CH-HUB MM2";v88.TextColor3=v10.Colors.Accent;v88.Font=Enum.Font.GothamBold;v88.TextSize=86 -61 ;v88.BackgroundTransparency=1 + 0 ;v89=Instance.new("TextBox",v86);v84=3 + 0 ;end if (v84==(130 -(116 + 10))) then v90=Instance.new("TextButton",v86);v90.Size=UDim2.new(0.8 + 0 ,0 -0 ,738 -(542 + 196) ,117 -62 );v90.Position=UDim2.new(0.1 + 0 ,0 + 0 ,0.68 + 0 ,0 -0 );v90.Text="LOGIN";v90.BackgroundColor3=v10.Colors.Accent;v90.TextColor3=Color3.new(0,0 -0 ,1551 -(1126 + 425) );v84=410 -(118 + 287) ;end if ((3 -2)==v84) then v87=Instance.new("UIStroke",v86);v87.Color=v10.Colors.Accent;v87.Thickness=3;v12(v86);v88=Instance.new("TextLabel",v86);v88.Size=UDim2.new(1 + 0 ,0 + 0 ,1121.3 -(118 + 1003) ,0 -0 );v84=379 -(142 + 235) ;end if (v84==(13 -10)) then v89.Size=UDim2.new(1726.8 -(1668 + 58) ,0,0 + 0 ,1032 -(553 + 424) );v89.Position=UDim2.new(0.1 -0 ,0 + 0 ,0.35 + 0 ,0 + 0 );v89.PlaceholderText="INGRESA TU KEY";v89.TextColor3=Color3.new(1 + 0 ,1 + 0 ,1 + 0 );v89.BackgroundColor3=Color3.fromRGB(84 -59 ,2019 -(109 + 1885) ,15 + 20 );Instance.new("UICorner",v89);v84=3 + 1 ;end if ((0 -0)==v84) then v85=Instance.new("ScreenGui",v4);v86=Instance.new("Frame",v85);v86.Size=UDim2.new(0 -0 ,783 -433 ,0 + 0 ,1304 -1034 );v86.Position=UDim2.new(753.5 -(239 + 514) , -(62 + 113),1329.5 -(797 + 532) , -(99 + 36));v86.BackgroundColor3=v10.Colors.Bg;Instance.new("UICorner",v86);v84=1 + 0 ;end end end v18();
+-- [[ 🛠️ SERVICIOS ]]
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local lp = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+-- [[ 🔑 DATABASE: 25 KEYS ]]
+local MANUAL_KEYS = {
+    "CHKEY-2a7d9f3b1c", "CHKEY-5g1h4j6k8l", "CHKEY-9m2n0p5q3r", "CHKEY-4s6t8u1v7w",
+    "CHKEY-3x5y9z2a4b", "CHKEY-7c1d3e6f8g", "CHKEY-2h5i7j9k1l", "CHKEY-6m8n3p0q2r",
+    "CHKEY-1s4t6u9v3w", "CHKEY-5x2y7z4a6b", "CHKEY-8c3d5e1f9g", "CHKEY-4h9i2j5k7l",
+    "CHKEY-7m1n6p8q4r", "CHKEY-3s5t9u2v6w", "CHKEY-6x8y3z1a5b", "CHKEY-9c2d7e4f1g",
+    "CHKEY-5h3i8j2k6l", "CHKEY-2m7n4p1q9r", "CHKEY-8s1t5u7v3w", "CHKEY-4x6y2z9a3b",
+    "CHKEY-1c9d4e7f2g", "CHKEY-6h7i1j8k4l", "CHKEY-3m5n9p2q6r", "CHKEY-7s3t8u4v9w",
+    "CHKEY-2x9y5z6a8b"
+}
+
+-- [[ ⚙️ CONFIGURACIÓN MASTER ]]
+local Config = {
+    Toggles = {
+        Noclip = false, InfJump = false, WalkSpeed = false,
+        Aimbot = false, KillAura = false, Hitbox = false,
+        ESP_Inno = false, ESP_Sheriff = false, ESP_Murd = false,
+        Traces = false
+    },
+    Values = {
+        Speed = 65, FOV_Max = 120, FOV_Min = 70, 
+        HitboxSize = 25, AuraRange = 48, Smooth = 0.15,
+        LastSheriffPos = nil
+    },
+    Colors = {
+        Murd = Color3.fromRGB(255, 35, 35),
+        Sher = Color3.fromRGB(0, 180, 255),
+        Inno = Color3.fromRGB(0, 255, 140),
+        Accent = Color3.fromRGB(0, 230, 255),
+        Bg = Color3.fromRGB(12, 12, 18)
+    }
+}
+
+-- [[ 🛰️ NOTIFICACIONES ]]
+local function Notify(title, text, color)
+    local sg = Instance.new("ScreenGui", CoreGui)
+    local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 310, 0, 100); f.Position = UDim2.new(1, 20, 0.15, 0); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = color; s.Thickness = 3
+    local tl = Instance.new("TextLabel", f); tl.Size = UDim2.new(1, 0, 0.4, 0); tl.Text = title; tl.TextColor3 = color; tl.Font = Enum.Font.GothamBold; tl.BackgroundTransparency = 1; tl.TextSize = 18
+    local dl = Instance.new("TextLabel", f); dl.Size = UDim2.new(1, 0, 0.6, 0); dl.Position = UDim2.new(0,0,0.4,0); dl.Text = text; dl.TextColor3 = Color3.new(1,1,1); dl.Font = Enum.Font.Gotham; dl.BackgroundTransparency = 1; dl.TextSize = 15; dl.TextWrapped = true
+    f:TweenPosition(UDim2.new(1, -330, 0.15, 0), "Out", "Back", 0.6)
+    task.delay(4, function() if f then f:TweenPosition(UDim2.new(1, 20, 0.15, 0), "In", "Quad", 0.6); task.wait(0.7); sg:Destroy() end end)
+end
+
+-- [[ 🖱️ DRAGGABLE MODULE ]]
+local function MakeDraggable(obj)
+    local dragging, dragStart, startPos
+    obj.InputBegan:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+            dragging = true; dragStart = input.Position; startPos = obj.Position
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+-- [[ 🔍 MOTOR DE ROLES (METODO CODEX SUPREME) ]]
+local function GetRole(p)
+    if not p or not p.Character then return "Inno" end
+    local char = p.Character
+    local bp = p.Backpack or p:FindFirstChild("Backpack")
+    
+    if char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife")) then
+        return "Murd"
+    end
+    
+    local function CheckTool(tool)
+        if not tool or not tool:IsA("Tool") then return false end
+        local n = tool.Name:lower()
+        return n:find("gun") or n:find("revolver") or n:find("sheriff") or 
+               n:find("hero") or n:find("toy") or n:find("apoc") or 
+               n:find("elderwood") or n:find("treat") or n:find("heart") or 
+               n:find("valent") or n:find("luger")
+    end
+    
+    for _, tool in ipairs(char:GetChildren()) do if CheckTool(tool) then return "Sher" end end
+    if bp then for _, tool in ipairs(bp:GetChildren()) do if CheckTool(tool) then return "Sher" end end end
+    for _, v in ipairs(char:GetDescendants()) do if v:IsA("Tool") and CheckTool(v) then return "Sher" end end
+    
+    return "Inno"
+end
+
+-- [[ 👾 VISUAL ENGINE ]]
+local active_esp = {}
+local function CreateESP(p)
+    if p == lp then return end
+    local highlight = Instance.new("Highlight", CoreGui); highlight.Name = "FLOURITE_"..p.Name
+    highlight.OutlineColor = Color3.new(1, 1, 1); highlight.FillTransparency = 0.5
+    
+    local line = Drawing.new("Line"); line.Thickness = 2.5; line.Transparency = 1
+    
+    local render; render = RunService.RenderStepped:Connect(function()
+        if p and p.Parent and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local role = GetRole(p); local col = Config.Colors[role]
+            highlight.Enabled = Config.Toggles["ESP_"..role]; highlight.Adornee = p.Character; highlight.FillColor = col
+            local pos, vis = camera:WorldToViewportPoint(p.Character.HumanoidRootPart.Position)
+            if Config.Toggles.Traces and vis and Config.Toggles["ESP_"..role] then
+                line.Visible = true; line.Color = col; line.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y); line.To = Vector2.new(pos.X, pos.Y)
+            else line.Visible = false end
+            if role == "Sher" then Config.Values.LastSheriffPos = p.Character.HumanoidRootPart.CFrame end
+        else highlight:Destroy(); line:Remove(); render:Disconnect(); active_esp[p] = nil end
+    end)
+    active_esp[p] = true
+end
+
+task.spawn(function() while task.wait(1.5) do for _, p in pairs(Players:GetPlayers()) do if p ~= lp and not active_esp[p] then CreateESP(p) end end end end)
+
+-- [[ ⚔️ COMBAT ENGINE ]]
+local function InitMotors()
+    -- SERVICIO STEPPED: FISICA & NOCLIP
+    RunService.Stepped:Connect(function()
+        if Config.Toggles.KillAura and GetRole(lp) == "Murd" then
+            local k = lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")
+            if k then for _, p in pairs(Players:GetPlayers()) do
+                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    if (lp.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude < Config.Values.AuraRange then
+                        firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 0); firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 1)
+                    end
+                end
+            end end
+        end
+        if Config.Toggles.Noclip and lp.Character then
+            for _, v in pairs(lp.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
+        end
+    end)
+
+    -- SERVICIO RENDERSTEPPED: CAMARA & MOVIMIENTO
+    RunService.RenderStepped:Connect(function()
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local hrp = p.Character.HumanoidRootPart; local role = GetRole(p)
+                -- AIMBOT (SOLO AL MURDER)
+                if role == "Murd" and Config.Toggles.Aimbot then
+                    camera.CFrame = camera.CFrame:Lerp(CFrame.new(camera.CFrame.Position, hrp.Position), Config.Values.Smooth)
+                end
+            end
+        end
+        camera.FieldOfView = Config.Toggles.Noclip and Config.Values.FOV_Max or Config.Values.FOV_Min
+        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
+            lp.Character.Humanoid.WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
+        end
+    end)
+end
+
+-- [[ 🛡️ HITBOX MAINTAINER (OPTIMIZED BY CODEX) ]]
+local function HitboxMaintainer()
+    RunService.Heartbeat:Connect(function()
+        for _, p in pairs(Players:GetPlayers()) do
+            if p == lp or not p.Character then continue end
+            local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+            if not hrp then continue end
+            
+            local isMurd = GetRole(p) == "Murd"
+            if Config.Toggles.Hitbox and isMurd then
+                hrp.Size = Vector3.new(Config.Values.HitboxSize, Config.Values.HitboxSize, Config.Values.HitboxSize)
+                hrp.Transparency = 0.4; hrp.Color = Color3.new(1, 0, 0); hrp.Material = Enum.Material.Neon
+                hrp.CanCollide = false; hrp.Anchored = false
+            else
+                -- RESET SEGURO
+                if hrp.Size ~= Vector3.new(2, 2, 1) then
+                    hrp.Size = Vector3.new(2, 2, 1); hrp.Transparency = 1
+                    hrp.Color = Color3.new(1, 1, 1); hrp.Material = Enum.Material.Plastic; hrp.CanCollide = true
+                end
+            end
+        end
+    end)
+end
+
+UserInputService.JumpRequest:Connect(function() if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChild("Humanoid") then lp.Character.Humanoid:ChangeState(3) end end)
+
+-- [[ 🏙️ UI SUPREME V18 ]]
+local function BuildUI()
+    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "SUPREME_V18"
+    local Circle = Instance.new("ImageButton", sg); Circle.Size = UDim2.new(0, 65, 0, 65); Circle.Position = UDim2.new(0, 30, 0.5, -32); Circle.BackgroundColor3 = Config.Colors.Bg; Circle.Image = "rbxassetid://6031068433"; Circle.Visible = false; Instance.new("UICorner", Circle).CornerRadius = UDim.new(1,0); Instance.new("UIStroke", Circle).Color = Config.Colors.Accent; MakeDraggable(Circle)
+    local Main = Instance.new("Frame", sg); Main.Size = UDim2.new(0, 560, 0, 460); Main.Position = UDim2.new(0.5, -280, 0.5, -230); Main.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", Main); Instance.new("UIStroke", Main).Color = Config.Colors.Accent; MakeDraggable(Main)
+    local X = Instance.new("TextButton", Main); X.Size = UDim2.new(0, 45, 0, 45); X.Position = UDim2.new(1, -50, 0, 5); X.Text = "X"; X.BackgroundColor3 = Color3.fromRGB(220, 0, 0); X.TextColor3 = Color3.new(1,1,1); X.Font = Enum.Font.GothamBold; Instance.new("UICorner", X)
+    X.MouseButton1Click:Connect(function() Main.Visible = false; Circle.Visible = true end)
+    Circle.MouseButton1Click:Connect(function() Main.Visible = true; Circle.Visible = false end)
+    local Sidebar = Instance.new("Frame", Main); Sidebar.Size = UDim2.new(0, 170, 1, -10); Sidebar.Position = UDim2.new(0, 5, 0, 5); Sidebar.BackgroundTransparency = 1; Instance.new("UIListLayout", Sidebar).Padding = UDim.new(0, 8)
+    local Content = Instance.new("Frame", Main); Content.Size = UDim2.new(1, -190, 1, -70); Content.Position = UDim2.new(0, 180, 0, 65); Content.BackgroundTransparency = 1
+    local function Tab(n)
+        local f = Instance.new("ScrollingFrame", Content); f.Size = UDim2.new(1, 0, 1, 0); f.Visible = false; f.BackgroundTransparency = 1; f.ScrollBarThickness = 2; Instance.new("UIListLayout", f).Padding = UDim.new(0, 12)
+        local b = Instance.new("TextButton", Sidebar); b.Size = UDim2.new(1, 0, 0, 48); b.Text = n; b.BackgroundColor3 = Color3.fromRGB(20, 20, 30); b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; Instance.new("UICorner", b)
+        b.MouseButton1Click:Connect(function() for _, v in pairs(Content:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end; for _, v in pairs(Sidebar:GetChildren()) do if v:IsA("TextButton") then v.BackgroundColor3 = Color3.fromRGB(20,20,30); v.TextColor3 = Color3.new(1,1,1) end end; f.Visible = true; b.BackgroundColor3 = Config.Colors.Accent; b.TextColor3 = Color3.new(0,0,0) end); return f
+    end
+    local t1 = Tab("GENERAL ⚙️"); t1.Visible = true; local t2 = Tab("VISUAL 👾"); local t3 = Tab("COMBATE ⚔️"); local t4 = Tab("TELEPORTS 🔮")
+    local function Toggle(p, t, k)
+        local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 44); b.Text = t .. " [OFF]"; b.BackgroundColor3 = Color3.fromRGB(35, 35, 50); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b)
+        b.MouseButton1Click:Connect(function() Config.Toggles[k] = not Config.Toggles[k]; b.Text = t .. (Config.Toggles[k] and " [ON]" or " [OFF]"); b.BackgroundColor3 = Config.Toggles[k] and Config.Colors.Accent or Color3.fromRGB(35, 35, 50); b.TextColor3 = Config.Toggles[k] and Color3.new(0,0,0) or Color3.new(1,1,1) end)
+    end
+    Toggle(t1, "NOCLIP ELITE", "Noclip"); Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "INF JUMP", "InfJump")
+    Toggle(t2, "ESP INOCENTE", "ESP_Inno"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t2, "ESP ASESINO", "ESP_Murd"); Toggle(t2, "TRACES", "Traces")
+    Toggle(t3, "AIMBOT MURDER", "Aimbot"); Toggle(t3, "HITBOX NEON", "Hitbox"); Toggle(t3, "KILL AURA", "KillAura")
+    local function Btn(p, t, f) local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 45); b.Text = t; b.BackgroundColor3 = Color3.fromRGB(50, 50, 75); b.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", b); b.MouseButton1Click:Connect(f) end
+    Btn(t4, "TP TO GUN 🔫", function() local g = workspace:FindFirstChild("GunDrop") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("GunDrop")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; Notify("TP", "Arma obtenida.", Config.Colors.Accent) else Notify("TP", "No hay arma.", Color3.new(1,0,0)) end end)
+    Btn(t4, "TP TO SHERIFF 👮", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos; Notify("TP", "Sheriff localizado.", Config.Colors.Sher) else Notify("TP", "Sheriff no detectado.", Color3.new(1,0,0)) end end)
+    Notify("SISTEMA V18 PRO", "Bienvenido Codex Scripts Optimizer", Config.Colors.Accent)
+    InitMotors(); HitboxMaintainer()
+end
+
+local function RunLogin()
+    local sg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 380, 0, 300); f.Position = UDim2.new(0.5, -190, 0.5, -150); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = Config.Colors.Accent; s.Thickness = 3; MakeDraggable(f)
+    local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1,0,0.3,0); t.Text = "FLOURITE SUPREME V18"; t.TextColor3 = Config.Colors.Accent; t.Font = Enum.Font.GothamBold; t.TextSize = 27; t.BackgroundTransparency = 1
+    local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8,0,0,55); box.Position = UDim2.new(0.1,0,0.35,0); box.PlaceholderText = "LLAVE CODEX"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(25,25,35); Instance.new("UICorner", box)
+    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8,0,0,55); btn.Position = UDim2.new(0.1,0,0.7,0); btn.Text = "ACCEDER"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(function() if table.find(MANUAL_KEYS, box.Text) then sg:Destroy(); BuildUI() else box.Text = ""; box.PlaceholderText = "LLAVE INCORRECTA" end end)
+end
+
+RunLogin()
+-- [[ FIN V18.0 - +850 LÍNEAS ]]
