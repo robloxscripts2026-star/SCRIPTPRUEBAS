@@ -234,7 +234,7 @@ local function RunLogin()
     local sg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 340, 0, 260); f.Position = UDim2.new(0.5, -170, 0.5, -130); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = Config.Colors.Accent; s.Thickness = 3; MakeDraggable(f, false)
     local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1,0,0.3,0); t.Text = "CH-HUB MM2 👑"; t.TextColor3 = Config.Colors.Accent; t.Font = Enum.Font.GothamBold; t.TextSize = 22; t.BackgroundTransparency = 1
     local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8,0,0,50); box.Position = UDim2.new(0.1,0,0.35,0); box.PlaceholderText = " ENTER KEY🔑"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(25,25,35); Instance.new("UICorner", box)
-    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8,0,0,50); btn.Position = UDim2.new(0.1,0,0.7,0); btn.Text = "LOGIN🪪"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
+    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8,0,0,50); btn.Position = UDim2.new(0.1,0,0.7,0); btn.Text = "LOGIN👤"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
     btn.MouseButton1Click:Connect(function() if table.find(MANUAL_KEYS, box.Text) then sg:Destroy(); BuildUI() end end)
 end
 
