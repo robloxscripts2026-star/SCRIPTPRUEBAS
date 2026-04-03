@@ -1,5 +1,4 @@
--- [[ NUEVO: MINI UI 360x340 & POSITION LOCKER ]]
-
+--MM2 HUB V3.0
 task.wait(0.5)
 
 -- [[ 🛠️ SERVICIOS ]]
@@ -31,8 +30,8 @@ local Config = {
         Traces = false, UILocked = false
     },
     Values = {
-        Speed = 65, FOV_Max = 120, FOV_Min = 70, 
-        HitboxSize = 25, AuraRange = 48, Smooth = 0.12,
+        Speed = 50, FOV_Max = 120, FOV_Min = 70, 
+        HitboxSize = 10, AuraRange = 48, Smooth = 0.8,
         LastSheriffPos = nil
     },
     Colors = {
@@ -54,13 +53,11 @@ local function Notify(title, text, color)
     task.delay(3.5, function() if f then f:TweenPosition(UDim2.new(1, 20, 0.15, 0), "In", "Quad", 0.5); task.wait(0.6); sg:Destroy() end end)
 end
 
--- [[ 🖱️ DRAGGABLE ENGINE CON LOCK ]]
-local function MakeDraggable(obj, isToggleButton)
+-- [[ 🖱️ DRAGGABLE ENGINE (FIXED) ]]
+local function MakeDraggable(obj, isFloatingFrame)
     local dragging, dragStart, startPos
     obj.InputBegan:Connect(function(input)
-        -- Si es el botón de toggle y está bloqueado, no permitir arrastrar
-        if isToggleButton and Config.Toggles.UILocked then return end
-        
+        if isFloatingFrame and Config.Toggles.UILocked then return end
         if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
             dragging = true; dragStart = input.Position; startPos = obj.Position
             input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
@@ -105,10 +102,7 @@ local function CreateESP(p)
     end)
 end
 
-for _, v in pairs(Players:GetPlayers()) do if v ~= lp then CreateESP(v) end end
-Players.PlayerAdded:Connect(function(v) if v ~= lp then CreateESP(v) end end)
-
--- [[ ⚔️ COMBAT ENGINE ]]
+-- [[ ⚔️ COMBAT ENGINE (AUTO-SHOOT RESTORED) ]]
 local function CheckVisibility(target)
     local ray = Ray.new(camera.CFrame.Position, (target.Position - camera.CFrame.Position).Unit * 500)
     local hit, pos = workspace:FindPartOnRayWithIgnoreList(ray, {lp.Character, camera})
@@ -122,8 +116,12 @@ local function InitMotors()
                 local hrp = p.Character.HumanoidRootPart
                 if GetRole(p) == "Murderer" and Config.Toggles.Aimbot then
                     camera.CFrame = camera.CFrame:Lerp(CFrame.new(camera.CFrame.Position, hrp.Position), Config.Values.Smooth)
+                    
+                    -- AUTO-SHOOT LÓGICA
                     local gun = lp.Character:FindFirstChild("Gun")
-                    if gun and CheckVisibility(hrp) then gun:Activate() end
+                    if gun and CheckVisibility(hrp) then
+                        gun:Activate()
+                    end
                 end
             end
         end
@@ -132,6 +130,7 @@ local function InitMotors()
             lp.Character.Humanoid.WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
         end
     end)
+    
     RunService.Stepped:Connect(function()
         if Config.Toggles.KillAura and GetRole(lp) == "Murderer" then
             local k = lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")
@@ -169,11 +168,18 @@ local function HitboxMaintainer()
     end)
 end
 
--- [[ 🏙️ UI MINI SUPREME V20 ]]
+-- [[ 🚀 INFINITY JUMP (TU VERSIÓN) ]]
+UserInputService.JumpRequest:Connect(function()
+    if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChild("Humanoid") then
+        lp.Character.Humanoid:ChangeState(3)
+    end
+end)
+
+-- [[ 🏙️ UI MINI SUPREME V21 ]]
 local function BuildUI()
-    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "CH-HUB MM2 👑"
+    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "MINI_SUPREME_V21"
     
-    -- CONTENEDOR DE BOTONES FLOTANTES
+    -- CONTENEDOR TOGGLE / LOCK (DRAGGABLE)
     local FloatingFrame = Instance.new("Frame", sg); FloatingFrame.Size = UDim2.new(0, 150, 0, 35); FloatingFrame.Position = UDim2.new(0, 50, 0.5, 0); FloatingFrame.BackgroundTransparency = 1; MakeDraggable(FloatingFrame, true)
     
     local ToggleBtn = Instance.new("TextButton", FloatingFrame); ToggleBtn.Size = UDim2.new(0, 70, 1, 0); ToggleBtn.Text = "TOGGLE"; ToggleBtn.BackgroundColor3 = Config.Colors.Bg; ToggleBtn.TextColor3 = Config.Colors.Accent; ToggleBtn.Font = Enum.Font.GothamBold; Instance.new("UICorner", ToggleBtn); Instance.new("UIStroke", ToggleBtn).Color = Config.Colors.Accent
@@ -190,7 +196,7 @@ local function BuildUI()
         Config.Toggles.UILocked = not Config.Toggles.UILocked
         LockBtn.Text = Config.Toggles.UILocked and "UNLOCK" or "LOCK"
         LockBtn.TextColor3 = Config.Toggles.UILocked and Config.Colors.Murd or Color3.new(1,1,1)
-        Notify("SISTEMA", Config.Toggles.UILocked and "Botón bloqueado." or "Botón desbloqueado.", Config.Colors.Accent)
+        Notify("SISTEMA💾", Config.Toggles.UILocked and "Toggle Bloqueado." or "Toggle Desbloqueado.", Config.Colors.Accent)
     end)
 
     local Sidebar = Instance.new("Frame", Main); Sidebar.Size = UDim2.new(0, 110, 1, -10); Sidebar.Position = UDim2.new(0, 5, 0, 5); Sidebar.BackgroundTransparency = 1; Instance.new("UIListLayout", Sidebar).Padding = UDim.new(0, 5)
@@ -209,7 +215,7 @@ local function BuildUI()
         b.MouseButton1Click:Connect(function() Config.Toggles[k] = not Config.Toggles[k]; b.Text = t .. (Config.Toggles[k] and " [ON]" or " [OFF]"); b.BackgroundColor3 = Config.Toggles[k] and Config.Colors.Accent or Color3.fromRGB(35, 35, 45); b.TextColor3 = Config.Toggles[k] and Color3.new(0,0,0) or Color3.new(1,1,1) end)
     end
 
-    Toggle(t1, "NOCLIP", "Noclip"); Toggle(t1, "SPEED", "WalkSpeed"); Toggle(t1, "INFJUMP", "InfJump"); Toggle(t1, "FOV", "FOV_Toggle")
+    Toggle(t1, "NOCLIP", "Noclip"); Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "INFJUMP", "InfJump"); Toggle(t1, "FOV", "FOV_Toggle")
     Toggle(t2, "ESP INOCENTE", "ESP_Inno"); Toggle(t2, "ESP SERIFF", "ESP_Sheriff"); Toggle(t2, "ESP ASESINO", "ESP_Murd"); Toggle(t2, "TRACES", "Traces")
     Toggle(t3, "AIM/SHOOT", "Aimbot"); Toggle(t3, "HITBOX", "Hitbox"); Toggle(t3, "AURAKILL", "KillAura")
     
@@ -217,15 +223,18 @@ local function BuildUI()
     Btn(t4, "TP GUN 🔫", function() local g = workspace:FindFirstChild("Gun") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("Gun")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; Notify("TP", "Gun recogida.", Config.Colors.Accent) end end)
     Btn(t4, "TP SHERIFF 👮", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos; Notify("TP", "Sheriff alcanzado.", Config.Colors.Sher) end end)
 
-    Notify("SISTEMA OVERDRIVE👾", "Bienvenio usuario 👤", Config.Colors.Accent)
+    for _, v in pairs(Players:GetPlayers()) do if v ~= lp then CreateESP(v) end end
+    Players.PlayerAdded:Connect(function(v) if v ~= lp then CreateESP(v) end end)
+
+    Notify("OVERDRIVE CARGADO✅", "Bienvenido usuario 👤", Config.Colors.Accent)
     InitMotors(); HitboxMaintainer()
 end
 
 local function RunLogin()
     local sg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 340, 0, 260); f.Position = UDim2.new(0.5, -170, 0.5, -130); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = Config.Colors.Accent; s.Thickness = 3; MakeDraggable(f, false)
     local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1,0,0.3,0); t.Text = "CH-HUB MM2 👑"; t.TextColor3 = Config.Colors.Accent; t.Font = Enum.Font.GothamBold; t.TextSize = 22; t.BackgroundTransparency = 1
-    local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8,0,0,50); box.Position = UDim2.new(0.1,0,0.35,0); box.PlaceholderText = "ENTER KEY🔑"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(25,25,35); Instance.new("UICorner", box)
-    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8,0,0,50); btn.Position = UDim2.new(0.1,0,0.7,0); btn.Text = "LOGIN👤"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
+    local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8,0,0,50); box.Position = UDim2.new(0.1,0,0.35,0); box.PlaceholderText = " ENTER KEY🔑"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(25,25,35); Instance.new("UICorner", box)
+    local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8,0,0,50); btn.Position = UDim2.new(0.1,0,0.7,0); btn.Text = "LOGIN🪪"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
     btn.MouseButton1Click:Connect(function() if table.find(MANUAL_KEYS, box.Text) then sg:Destroy(); BuildUI() end end)
 end
 
