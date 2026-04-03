@@ -225,7 +225,7 @@ UserInputService.JumpRequest:Connect(function() if Config.Toggles.InfJump and lp
 
 -- [[ 🏙️ UI SUPREME V3.0 ]]
 local function BuildUI()
-    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "SUPREME_V19"
+    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "CH-HUB MM2 👑"
     local Circle = Instance.new("ImageButton", sg); Circle.Size = UDim2.new(0, 65, 0, 65); Circle.Position = UDim2.new(0, 30, 0.5, -32); Circle.BackgroundColor3 = Config.Colors.Bg; Circle.Image = "rbxassetid://6031068433"; Circle.Visible = false; Instance.new("UICorner", Circle).CornerRadius = UDim.new(1,0); Instance.new("UIStroke", Circle).Color = Config.Colors.Accent; MakeDraggable(Circle)
     local Main = Instance.new("Frame", sg); Main.Size = UDim2.new(0, 560, 0, 460); Main.Position = UDim2.new(0.5, -280, 0.5, -230); Main.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", Main); Instance.new("UIStroke", Main).Color = Config.Colors.Accent; MakeDraggable(Main)
     local X = Instance.new("TextButton", Main); X.Size = UDim2.new(0, 45, 0, 45); X.Position = UDim2.new(1, -50, 0, 5); X.Text = "X"; X.BackgroundColor3 = Color3.fromRGB(220, 0, 0); X.TextColor3 = Color3.new(1,1,1); X.Font = Enum.Font.GothamBold; Instance.new("UICorner", X)
@@ -248,7 +248,7 @@ local function BuildUI()
         b.MouseButton1Click:Connect(function() Config.Toggles[k] = not Config.Toggles[k]; b.Text = t .. (Config.Toggles[k] and " [ON]" or " [OFF]"); b.BackgroundColor3 = Config.Toggles[k] and Config.Colors.Accent or Color3.fromRGB(35, 35, 50); b.TextColor3 = Config.Toggles[k] and Color3.new(0,0,0) or Color3.new(1,1,1) end)
     end
     
-    Toggle(t1, "NOCLIP ELITE", "Noclip"); Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "INF JUMP", "InfJump"); Toggle(t1, "FOV 12", "FOV_Toggle")
+    Toggle(t1, "NOCLIP", "Noclip"); Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "INF JUMP", "InfJump"); Toggle(t1, "FOV 12", "FOV_Toggle")
     Toggle(t2, "ESP INOCENTE", "ESP_Inno"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t2, "ESP ASESINO", "ESP_Murd"); Toggle(t2, "TRACES", "Traces")
     Toggle(t3, "AUTO AIM ", "Aimbot"); Toggle(t3, "HITBOX", "Hitbox"); Toggle(t3, "KILL AURA", "KillAura")
     
@@ -256,7 +256,7 @@ local function BuildUI()
     Btn(t4, "TP TO GUN 🔫", function() local g = workspace:FindFirstChild("Gun") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("Gun")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; Notify("TP", "Arma obtenida.", Config.Colors.Accent) else Notify("TP", "No hay arma en el suelo.", Color3.new(1,0,0)) end end)
     Btn(t4, "TP TO SHERIFF 👮", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos; Notify("TP", "Sheriff localizado.", Config.Colors.Sher) else Notify("TP", "Sheriff no detectado.", Color3.new(1,0,0)) end end)
     
-    Notify("SISTEMA OVERDRIVE", "Codex Scripts Supreme V19 Activado", Config.Colors.Accent)
+    Notify("SISTEMA OVERDRIVE🌌", "bienvenido usuario👤", Config.Colors.Accent)
     InitMotors(); HitboxMaintainer()
 end
 
