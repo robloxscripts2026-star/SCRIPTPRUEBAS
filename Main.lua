@@ -31,7 +31,7 @@ local Config = {
     },
     Values = {
         Speed = 65, FOV_Max = 120, FOV_Min = 70, 
-        HitboxSize = 10, AuraRange = 120, Smooth = 0.5,
+        HitboxSize = 10, AuraRange = 2000, Smooth = 0.5,
         LastSheriffPos = nil
     },
     Colors = {
