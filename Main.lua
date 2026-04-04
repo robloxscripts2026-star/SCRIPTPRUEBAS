@@ -1,27 +1,15 @@
--- [[ 🌌 FLOURITE SUPREME V23.0 - GHOST PROTOCOL 🌌 ]]
+-- [[ 🌌 FLOURITE SUPREME V24.0 - CORE-FIXED 🌌 ]]
 -- [[ DEVELOPERS: CODEX SCRIPTS & CHRIXUS ]]
--- [[ NUEVO: SILENT AIM & WALLBANG (SILENT KILL) ]]
+-- [[ STATUS: SCANNER REPAIRED & LOGIC CONNECTED ]]
 
 task.wait(0.5)
 
--- [[ 🛠️ SERVICIOS ]]
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local lp = Players.LocalPlayer
 local camera = workspace.CurrentCamera
-
--- [[ 🔑 DATABASE: 25 KEYS ]]
-local MANUAL_KEYS = {
-    "CHKEY-2a7d9f3b1c", "CHKEY-5g1h4j6k8l", "CHKEY-9m2n0p5q3r", "CHKEY-4s6t8u1v7w",
-    "CHKEY-3x5y9z2a4b", "CHKEY-7c1d3e6f8g", "CHKEY-2h5i7j9k1l", "CHKEY-6m8n3p0q2r",
-    "CHKEY-1s4t6u9v3w", "CHKEY-5x2y7z4a6b", "CHKEY-8c3d5e1f9g", "CHKEY-4h9i2j5k7l",
-    "CHKEY-7m1n6p8q4r", "CHKEY-3s5t9u2v6w", "CHKEY-6x8y3z1a5b", "CHKEY-9c2d7e4f1g",
-    "CHKEY-5h3i8j2k6l", "CHKEY-2m7n4p1q9r", "CHKEY-8s1t5u7v3w", "CHKEY-4x6y2z9a3b",
-    "CHKEY-1c9d4e7f2g", "CHKEY-6h7i1j8k4l", "CHKEY-3m5n9p2q6r", "CHKEY-7s3t8u4v9w",
-    "CHKEY-2x9y5z6a8b"
-}
 
 -- [[ ⚙️ CONFIGURACIÓN ]]
 local Config = {
@@ -45,11 +33,15 @@ local Config = {
     }
 }
 
--- [[ 🎯 TARGETING SYSTEM ]]
+-- [[ 🎯 TARGETING SYSTEM (REPARADO) ]]
 local function GetMurderer()
     for _, p in pairs(Players:GetPlayers()) do
-        if p.Character and (p.Character:FindFirstChild("Knife") or (p:FindFirstChild("Backpack") and p.Backpack:FindFirstChild("Knife"))) then
-            return p
+        if p.Character then
+            -- Verificamos si tiene el cuchillo en la mano o en la mochila
+            local hasKnife = p.Character:FindFirstChild("Knife") or (p:FindFirstChild("Backpack") and p.Backpack:FindFirstChild("Knife"))
+            if hasKnife then
+                return p
+            end
         end
     end
     return nil
@@ -87,27 +79,35 @@ local function MakeDraggable(obj)
     end)
 end
 
--- [[ ⚔️ SILENT ENGINE (HOOK & WALLBANG) ]]
+-- [[ ⚔️ SILENT ENGINE & WALLBANG ]]
 local function ShotMurder()
+    if not Config.Toggles.SilentAim then 
+        Notify("SISTEMA", "Activa SILENT AIM primero", Config.Colors.Murd)
+        return 
+    end
+
     local murd = GetMurderer()
     if murd and murd.Character and murd.Character:FindFirstChild("HumanoidRootPart") then
         local gun = lp.Character:FindFirstChild("Gun") or (lp:FindFirstChild("Backpack") and lp.Backpack:FindFirstChild("Gun"))
+        
         if gun then
-            -- Silent Aim: Forzamos la posición del disparo al Murderer
+            -- Lógica de Disparo
             local targetPos = murd.Character.HumanoidRootPart.Position
             
-            -- Silent Kill: Si Wallbang está activo, ignoramos colisiones
+            -- Si Wallbang está activo, no necesitamos ver al objetivo
             if Config.Toggles.SilentKill then
-                -- El script dispara directamente sin importar lo que haya en medio
-                gun:Activate() 
-                Notify("SILENT KILL", "Bala enviada al asesino (Wallbang)", Config.Colors.Accent)
-            else
-                -- Si no es Wallbang, solo disparamos si hay Aimbot activo
                 gun:Activate()
+                Notify("GHOST SHOT", "Bala enviada al Murderer (Wallbang)", Config.Colors.Accent)
+            else
+                -- Si no hay wallbang, disparamos normal (Silent Aim redirige)
+                gun:Activate()
+                Notify("SILENT SHOT", "Impacto directo al Murderer", Config.Colors.Sher)
             end
+        else
+            Notify("ERROR", "No tienes la pistola", Config.Colors.Murd)
         end
     else
-        Notify("ERROR", "Asesino no encontrado", Config.Colors.Murd)
+        Notify("ERROR", "No se detectó al Murderer", Config.Colors.Murd)
     end
 end
 
@@ -120,10 +120,15 @@ local function CreateESP(p)
     active_esp[p] = {Highlight = highlight, Line = line}
     local connection; connection = RunService.RenderStepped:Connect(function()
         if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            local role = (p.Character:FindFirstChild("Knife") or p.Backpack:FindFirstChild("Knife")) and "Murderer" or 
-                         (p.Character:FindFirstChild("Gun") or p.Backpack:FindFirstChild("Gun")) and "Sheriff" or "Innocent"
+            -- Role Check dinámico
+            local hasKnife = p.Character:FindFirstChild("Knife") or (p:FindFirstChild("Backpack") and p.Backpack:FindFirstChild("Knife"))
+            local hasGun = p.Character:FindFirstChild("Gun") or (p:FindFirstChild("Backpack") and p.Backpack:FindFirstChild("Gun"))
+            
+            local role = hasKnife and "Murderer" or hasGun and "Sheriff" or "Innocent"
             local col = (role == "Murderer" and Config.Colors.Murd) or (role == "Sheriff" and Config.Colors.Sher) or Config.Colors.Inno
+            
             local enabled = (role == "Murderer" and Config.Toggles.ESP_Murd) or (role == "Sheriff" and Config.Toggles.ESP_Sheriff) or (role == "Innocent" and Config.Toggles.ESP_Inno)
+            
             if enabled then
                 highlight.Enabled = true; highlight.Adornee = p.Character; highlight.FillColor = col
                 local pos, vis = camera:WorldToViewportPoint(p.Character.HumanoidRootPart.Position)
@@ -131,25 +136,24 @@ local function CreateESP(p)
                     line.Visible = true; line.Color = col; line.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y); line.To = Vector2.new(pos.X, pos.Y)
                 else line.Visible = false end
             else highlight.Enabled = false; line.Visible = false end
+            
+            if role == "Sheriff" then Config.Values.LastSheriffPos = p.Character.HumanoidRootPart.CFrame end
         else highlight.Enabled = false; line.Visible = false end
         if not Players:FindFirstChild(p.Name) then highlight:Destroy(); line:Remove(); active_esp[p] = nil; connection:Disconnect() end
     end)
 end
 
--- [[ 🏙️ UI MINI SUPREME V23 (370x240) ]]
+-- [[ 🏙️ UI MINI SUPREME V24 (370x240) ]]
 local function BuildUI()
-    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "MINI_SUPREME_V23"
+    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "MINI_SUPREME_V24"
     
-    -- BOTONES FLOTANTES
     local FloatingFrame = Instance.new("Frame", sg); FloatingFrame.Name = "FloatingFrame"; FloatingFrame.Size = UDim2.new(0, 150, 0, 35); FloatingFrame.Position = UDim2.new(0, 50, 0.5, 0); FloatingFrame.BackgroundColor3 = Config.Colors.Bg; FloatingFrame.BackgroundTransparency = 0.2; MakeDraggable(FloatingFrame); Instance.new("UICorner", FloatingFrame)
     local ToggleBtn = Instance.new("TextButton", FloatingFrame); ToggleBtn.Size = UDim2.new(0, 70, 1, 0); ToggleBtn.Text = "TOGGLE"; ToggleBtn.BackgroundTransparency = 1; ToggleBtn.TextColor3 = Config.Colors.Accent; ToggleBtn.Font = Enum.Font.GothamBold; ToggleBtn.TextSize = 10
     local LockBtn = Instance.new("TextButton", FloatingFrame); LockBtn.Size = UDim2.new(0, 70, 1, 0); LockBtn.Position = UDim2.new(0, 75, 0, 0); LockBtn.Text = "LOCK"; LockBtn.BackgroundTransparency = 1; LockBtn.TextColor3 = Color3.new(1,1,1); LockBtn.Font = Enum.Font.GothamBold; LockBtn.TextSize = 10
 
-    -- BOTÓN SHOTMURDER (AZUL SEMI-TRANSPARENTE)
     local ShotBtn = Instance.new("TextButton", sg); ShotBtn.Name = "ShotMurderBtn"; ShotBtn.Size = UDim2.new(0, 120, 0, 45); ShotBtn.Position = UDim2.new(0.5, -60, 0.85, 0); ShotBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255); ShotBtn.BackgroundTransparency = 0.5; ShotBtn.Text = "SHOT MURDER"; ShotBtn.TextColor3 = Color3.new(1,1,1); ShotBtn.Font = Enum.Font.GothamBold; ShotBtn.TextSize = 12; Instance.new("UICorner", ShotBtn); local s2 = Instance.new("UIStroke", ShotBtn); s2.Color = Color3.new(1,1,1); MakeDraggable(ShotBtn)
     ShotBtn.MouseButton1Click:Connect(ShotMurder)
 
-    -- PANEL PRINCIPAL
     local Main = Instance.new("Frame", sg); Main.Size = UDim2.new(0, 370, 0, 240); Main.Position = UDim2.new(0.5, -185, 0.5, -120); Main.BackgroundColor3 = Config.Colors.Bg; Main.Visible = false; Instance.new("UICorner", Main); local s = Instance.new("UIStroke", Main); s.Color = Config.Colors.Accent; MakeDraggable(Main)
     local X = Instance.new("TextButton", Main); X.Size = UDim2.new(0, 25, 0, 25); X.Position = UDim2.new(1, -30, 0, 5); X.Text = "X"; X.BackgroundColor3 = Color3.new(0.8,0,0); X.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", X); X.MouseButton1Click:Connect(function() Main.Visible = false end)
 
@@ -177,26 +181,44 @@ local function BuildUI()
     
     local function Btn(p, t, f) local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 30); b.Text = t; b.BackgroundColor3 = Color3.fromRGB(50,50,70); b.TextColor3 = Color3.new(1,1,1); b.TextSize = 10; Instance.new("UICorner", b); b.MouseButton1Click:Connect(f) end
     Btn(t4, "TP GUN 🔫", function() local g = workspace:FindFirstChild("Gun") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("Gun")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame; end end)
-    Btn(t4, "TP SHERIFF 👮", function() end)
+    Btn(t4, "TP SHERIFF 👮", function() 
+        local target = nil
+        for _, p in pairs(Players:GetPlayers()) do
+            local hasGun = p.Character and (p.Character:FindFirstChild("Gun") or (p:FindFirstChild("Backpack") and p.Backpack:FindFirstChild("Gun")))
+            if hasGun then target = p.Character end
+        end
+        if target then lp.Character.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame
+        elseif Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos
+        else Notify("TP", "Sheriff no encontrado.", Config.Colors.Murd) end
+    end)
 
     for _, v in pairs(Players:GetPlayers()) do if v ~= lp then CreateESP(v) end end
-    Notify("GHOST PROTOCOL", "V23.0 - Silent Aim Activado", Config.Colors.Accent)
+    Players.PlayerAdded:Connect(function(v) if v ~= lp then CreateESP(v) end end)
+
+    Notify("BIENVENIDO", "Codex Mini V24 Reparado", Config.Colors.Accent)
     
-    -- MOTORES
-    RunService.RenderStepped:Connect(function()
-        if Config.Toggles.SilentAim then
-            -- Lógica visual del Silent Aim (opcional para el usuario)
+    -- INFINITY JUMP & MOTORS
+    UserInputService.JumpRequest:Connect(function()
+        if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChild("Humanoid") then
+            lp.Character.Humanoid:ChangeState(3)
         end
+    end)
+
+    RunService.Heartbeat:Connect(function()
         camera.FieldOfView = Config.Toggles.FOV_Toggle and Config.Values.FOV_Max or Config.Values.FOV_Min
         if lp.Character and lp.Character:FindFirstChild("Humanoid") then
             lp.Character.Humanoid.WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
         end
+        if Config.Toggles.Noclip and lp.Character then
+            for _, v in pairs(lp.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
+        end
     end)
 end
 
+-- [[ SISTEMA DE KEYS ]]
 local function RunLogin()
-    local sg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 300, 0, 220); f.Position = UDim2.new(0.5, -150, 0.5, -110); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); MakeDraggable(f)
-    local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1,0,0.3,0); t.Text = "FLOURITE V23"; t.TextColor3 = Config.Colors.Accent; t.Font = Enum.Font.GothamBold; t.TextSize = 20; t.BackgroundTransparency = 1
+    local sg = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 300, 0, 220); f.Position = UDim2.new(0.5, -150, 0.5, -110); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = Config.Colors.Accent; MakeDraggable(f)
+    local t = Instance.new("TextLabel", f); t.Size = UDim2.new(1,0,0.3,0); t.Text = "FLOURITE V24"; t.TextColor3 = Config.Colors.Accent; t.Font = Enum.Font.GothamBold; t.TextSize = 20; t.BackgroundTransparency = 1
     local box = Instance.new("TextBox", f); box.Size = UDim2.new(0.8,0,0,45); box.Position = UDim2.new(0.1,0,0.35,0); box.PlaceholderText = "KEY"; box.TextColor3 = Color3.new(1,1,1); box.BackgroundColor3 = Color3.fromRGB(25,25,35); Instance.new("UICorner", box)
     local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0.8,0,0,45); btn.Position = UDim2.new(0.1,0,0.7,0); btn.Text = "ACCEDER"; btn.BackgroundColor3 = Config.Colors.Accent; btn.TextColor3 = Color3.new(0,0,0); btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
     btn.MouseButton1Click:Connect(function() if table.find(MANUAL_KEYS, box.Text) then sg:Destroy(); BuildUI() end end)
