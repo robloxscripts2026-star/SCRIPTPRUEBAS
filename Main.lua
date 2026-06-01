@@ -1,69 +1,43 @@
--- [[ 👑 CH-HUB MM2 V3.2 SUPREME ]] --
--- [[ OPTIMIZADO - SILENT AIM + MAGIC BULLETS ]] --
-
-task.wait(0.5)
-
--- [[ 🛠️ SERVICIOS ]]
+-- [[ 🛠️ SERVICIOS DE INTERFAZ ]]
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local lp = Players.LocalPlayer
-local camera = workspace.CurrentCamera
 
--- [[ ⚙️ CONFIGURACIÓN ]]
-local Config = {
-    Toggles = {
-        Noclip = false, InfJump = false, WalkSpeed = false, FOV_Toggle = false,
-        SilentAim = false, KillAura = false, Hitbox = false,
-        ESP_Inno = false, ESP_Sheriff = false, ESP_Murd = false,
-        Traces = false, UILocked = false
-    },
-    Values = {
-        Speed = 50, FOV_Max = 120, FOV_Min = 70, 
-        AuraRange = 48, LastSheriffPos = nil, Smooth = 0.8
-    },
+-- [[ ⚙️ CONFIGURACIÓN VISUAL (ESTILO FLUENT) ]]
+local VisualConfig = {
     Colors = {
-        Murd = Color3.fromRGB(255, 35, 35),
-        Sher = Color3.fromRGB(0, 180, 255),
-        Inno = Color3.fromRGB(0, 255, 140),
-        Accent = Color3.fromRGB(0, 230, 255),
-        Bg = Color3.fromRGB(15, 15, 20)
+        Bg = Color3.fromRGB(18, 18, 24),          -- Fondo oscuro premium
+        SidebarBg = Color3.fromRGB(24, 24, 32),   -- Lateral ligeramente más claro
+        CardBg = Color3.fromRGB(28, 28, 38),      -- Fondo de los botones/tarjetas
+        Accent = Color3.fromRGB(0, 210, 255),     -- Cyan brillante (Acento)
+        Text = Color3.fromRGB(245, 245, 255),     -- Texto principal
+        MutedText = Color3.fromRGB(140, 145, 160),-- Texto secundario
+        ToggleOn = Color3.fromRGB(0, 210, 255),   -- Switch Encendido
+        ToggleOff = Color3.fromRGB(45, 45, 60),   -- Switch Apagado
+        Murd = Color3.fromRGB(255, 60, 60)         -- Color Rojo de bloqueo
+    },
+    States = {
+        MainVisible = false,
+        UILocked = false
     }
 }
 
--- [[ 🎯 LÓGICA DE ROLES ]]
-local function GetRole(p)
-    if not p or not p.Character then return "Innocent" end
-    if p.Character:FindFirstChild("Knife") or p.Backpack:FindFirstChild("Knife") then return "Murderer" end
-    if p.Character:FindFirstChild("Gun") or p.Backpack:FindFirstChild("Gun") then return "Sheriff" end
-    return "Innocent"
+-- Destruir interfaz anterior si existe para evitar duplicados al testear
+if CoreGui:FindFirstChild("MM2_FLUENT_MENU") then
+    CoreGui.MM2_FLUENT_MENU:Destroy()
 end
 
-local function GetMurderer()
-    for _, v in pairs(Players:GetPlayers()) do
-        if GetRole(v) == "Murderer" and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-            return v.Character.HumanoidRootPart
-        end
-    end
-    return nil
-end
+local sg = Instance.new("ScreenGui", CoreGui)
+sg.Name = "MM2_FLUENT_MENU"
+sg.ResetOnSpawn = false
 
--- [[ 🛰️ NOTIFICACIONES ]]
-local function Notify(title, text, color)
-    local sg = Instance.new("ScreenGui", CoreGui)
-    local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 280, 0, 85); f.Position = UDim2.new(1, 20, 0.15, 0); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = color; s.Thickness = 2.5
-    local tl = Instance.new("TextLabel", f); tl.Size = UDim2.new(1, 0, 0.4, 0); tl.Text = title; tl.TextColor3 = color; tl.Font = Enum.Font.GothamBold; tl.BackgroundTransparency = 1; tl.TextSize = 16
-    local dl = Instance.new("TextLabel", f); dl.Size = UDim2.new(1, 0, 0.6, 0); dl.Position = UDim2.new(0,0,0.4,0); dl.Text = text; dl.TextColor3 = Color3.new(1,1,1); dl.Font = Enum.Font.Gotham; dl.BackgroundTransparency = 1; dl.TextSize = 13; dl.TextWrapped = true
-    f:TweenPosition(UDim2.new(1, -300, 0.15, 0), "Out", "Back", 0.5)
-    task.delay(3.5, function() if f then f:TweenPosition(UDim2.new(1, 20, 0.15, 0), "In", "Quad", 0.5); task.wait(0.6); sg:Destroy() end end)
-end
-
--- [[ 🖱️ DRAGGABLE ENGINE ]]
+-- [[ 🖱️ MOTOR DRAGGABLE OPTIMIZADO (CON TWEEN) ]]
 local function MakeDraggable(obj, isFloatingFrame)
     local dragging, dragStart, startPos
     obj.InputBegan:Connect(function(input)
-        if isFloatingFrame and Config.Toggles.UILocked then return end
+        if isFloatingFrame and VisualConfig.States.UILocked then return end
         if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
             dragging = true; dragStart = input.Position; startPos = obj.Position
             input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
@@ -72,132 +46,285 @@ local function MakeDraggable(obj, isFloatingFrame)
     UserInputService.InputChanged:Connect(function(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
-            obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            TweenService:Create(obj, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = targetPos}):Play()
         end
     end)
 end
 
--- [[ 🛡️ SILENT AIM & MAGIC BULLETS ENGINE ]]
-local oldNamecall
-oldNamecall = hookmetatable(game, "__namecall", function(self, ...)
-    local method = getnamecallmethod()
-    local args = {...}
-    if Config.Toggles.SilentAim and method == "FindPartOnRayWithIgnoreList" then
-        local target = GetMurderer()
-        if target then
-            args[1] = Ray.new(camera.CFrame.Position, (target.Position - camera.CFrame.Position).Unit * 1000)
-            return oldNamecall(self, unpack(args))
+-- [[ 🚀 EFECTO TÁCTIL (BOUNCE SHOT) ]]
+local function AddTouchFeedback(btn)
+    btn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            TweenService:Create(btn, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(btn.Size.X.Scale, btn.Size.X.Offset - 4, btn.Size.Y.Scale, btn.Size.Y.Offset - 4)}):Play()
         end
+    end)
+    btn.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            TweenService:Create(btn, TweenInfo.new(0.1, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(btn.Size.X.Scale, btn.Size.X.Offset + 4, btn.Size.Y.Scale, btn.Size.Y.Offset + 4)}):Play()
+        end
+    end)
+end
+
+
+-- [[ 📱 CONTENEDOR TOGGLE / LOCK (BOTONES MÁS GRANDES) ]]
+local FloatingFrame = Instance.new("Frame", sg)
+FloatingFrame.Size = UDim2.new(0, 180, 0, 45) -- Más alto y ancho para mejor Hitbox táctil
+FloatingFrame.Position = UDim2.new(0, 30, 0.4, 0)
+FloatingFrame.BackgroundTransparency = 1
+MakeDraggable(FloatingFrame, true)
+
+-- Botón TOGGLE
+local ToggleBtn = Instance.new("TextButton", FloatingFrame)
+ToggleBtn.Size = UDim2.new(0, 85, 1, 0)
+ToggleBtn.Text = "TOGGLE"
+ToggleBtn.BackgroundColor3 = VisualConfig.Colors.Bg
+ToggleBtn.TextColor3 = VisualConfig.Colors.Accent
+ToggleBtn.Font = Enum.Font.GothamBold
+ToggleBtn.TextSize = 13
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 10)
+local strokeT = Instance.new("UIStroke", ToggleBtn); strokeT.Color = VisualConfig.Colors.Accent; strokeT.Thickness = 1.8
+AddTouchFeedback(ToggleBtn)
+
+-- Botón LOCK
+local LockBtn = Instance.new("TextButton", FloatingFrame)
+LockBtn.Size = UDim2.new(0, 85, 1, 0)
+LockBtn.Position = UDim2.new(0, 95, 0, 0)
+LockBtn.Text = "LOCK"
+LockBtn.BackgroundColor3 = VisualConfig.Colors.Bg
+LockBtn.TextColor3 = Color3.new(1,1,1)
+LockBtn.Font = Enum.Font.GothamBold
+LockBtn.TextSize = 13
+Instance.new("UICorner", LockBtn).CornerRadius = UDim.new(0, 10)
+local strokeL = Instance.new("UIStroke", LockBtn); strokeL.Color = Color3.fromRGB(80, 80, 100); strokeL.Thickness = 1.8
+AddTouchFeedback(LockBtn)
+
+
+-- [[ 🌌 PANEL MAIN (380 x 300) ]]
+local Main = Instance.new("Frame", sg)
+Main.Size = UDim2.new(0, 380, 0, 300)
+Main.Position = UDim2.new(0.5, 0, 0.5, 0)
+Main.AnchorPoint = Vector2.new(0.5, 0.5) -- Abre y cierra desde su centro perfectamente
+Main.BackgroundColor3 = VisualConfig.Colors.Bg
+Main.ClipsDescendants = true
+Main.Visible = false
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 16) -- Bordes más redondos y estéticos
+local MainStroke = Instance.new("UIStroke", Main); MainStroke.Color = VisualConfig.Colors.CardBg; MainStroke.Thickness = 1.5
+MakeDraggable(Main, false)
+
+-- Botón Cerrar (X) Estilizado
+local X = Instance.new("TextButton", Main)
+X.Size = UDim2.new(0, 26, 0, 26)
+X.Position = UDim2.new(1, -34, 0, 10)
+X.Text = "×"
+X.TextSize = 22
+X.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+X.TextColor3 = VisualConfig.Colors.MutedText
+X.Font = Enum.Font.Gotham
+Instance.new("UICorner", X).CornerRadius = UDim.new(1, 0)
+X.MouseEnter:Connect(function() X.TextColor3 = Color3.new(1,1,1); X.BackgroundColor3 = VisualConfig.Colors.Murd end)
+X.MouseLeave:Connect(function() X.TextColor3 = VisualConfig.Colors.MutedText; X.BackgroundColor3 = Color3.fromRGB(35, 35, 45) end)
+
+-- Título del Menú
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(0, 200, 0, 45)
+Title.Position = UDim2.new(0, 15, 0, 0)
+Title.Text = "MINI SUPREME V21"
+Title.TextColor3 = VisualConfig.Colors.Text
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.BackgroundTransparency = 1
+
+-- [[ 🗂️ DIVISIÓN: SIDEBAR Y CONTENIDO ]]
+local Sidebar = Instance.new("Frame", Main)
+Sidebar.Size = UDim2.new(0, 115, 1, -55)
+Sidebar.Position = UDim2.new(0, 10, 0, 45)
+Sidebar.BackgroundColor3 = VisualConfig.Colors.SidebarBg
+Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 12)
+local SideLayout = Instance.new("UIListLayout", Sidebar); SideLayout.Padding = UDim.new(0, 6); SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+local Content = Instance.new("Frame", Main)
+Content.Size = UDim2.new(1, -150, 1, -55)
+Content.Position = UDim2.new(0, 135, 0, 45)
+Content.BackgroundTransparency = 1
+
+-- [[ 🎴 CREADOR DE PESTAÑAS (TAB SYSTEM) ]]
+local tabs = {}
+local activeTab = nil
+
+local function CreateTab(name)
+    local f = Instance.new("ScrollingFrame", Content)
+    f.Size = UDim2.new(1, 0, 1, 0)
+    f.Visible = false
+    f.BackgroundTransparency = 1
+    f.ScrollBarThickness = 2
+    f.ScrollBarImageColor3 = VisualConfig.Colors.CardBg
+    local scrollLayout = Instance.new("UIListLayout", f); scrollLayout.Padding = UDim.new(0, 8)
+    
+    local b = Instance.new("TextButton", Sidebar)
+    b.Size = UDim2.new(0, 103, 0, 36)
+    b.Text = "  " .. name
+    b.BackgroundColor3 = Color3.new(0,0,0)
+    b.BackgroundTransparency = 1
+    b.TextColor3 = VisualConfig.Colors.MutedText
+    b.TextSize = 11
+    b.Font = Enum.Font.GothamBold
+    b.TextXAlignment = Enum.TextXAlignment.Left
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+    
+    -- Indicador visual izquierdo estilo Windows 11 Fluent
+    local indicator = Instance.new("Frame", b)
+    indicator.Size = UDim2.new(0, 3, 0, 16)
+    indicator.Position = UDim2.new(0, 0, 0.5, -8)
+    indicator.BackgroundColor3 = VisualConfig.Colors.Accent
+    indicator.BorderSizePixel = 0
+    indicator.Visible = false
+    Instance.new("UICorner", indicator)
+
+    b.MouseButton1Click:Connect(function()
+        for _, v in pairs(tabs) do
+            v.Frame.Visible = false
+            v.Button.TextColor3 = VisualConfig.Colors.MutedText
+            v.Button.BackgroundTransparency = 1
+            v.Indicator.Visible = false
+        end
+        f.Visible = true
+        b.TextColor3 = VisualConfig.Colors.Text
+        b.BackgroundColor3 = VisualConfig.Colors.CardBg
+        b.BackgroundTransparency = 0.4
+        indicator.Visible = true
+    end)
+    
+    table.insert(tabs, {Frame = f, Button = b, Indicator = indicator})
+    if #tabs == 1 then
+        f.Visible = true
+        b.TextColor3 = VisualConfig.Colors.Text
+        b.BackgroundColor3 = VisualConfig.Colors.CardBg
+        b.BackgroundTransparency = 0.4
+        indicator.Visible = true
     end
-    return oldNamecall(self, ...)
+    return f
+end
+
+local t1 = CreateTab("GENERAL ⚙️")
+local t2 = CreateTab("VISUAL 👾")
+local t3 = CreateTab("COMBAT ⚔️")
+local t4 = CreateTab("TELEPORT 🔮")
+
+-- [[ 🎛️ COMPONENTES FLUENT (BOTONES Y SWITCHES GRANDES) ]]
+
+-- Función para Toggles de Encendido/Apagado estilo Switch Cápsula
+local function AddFluentToggle(parent, text)
+    local card = Instance.new("Frame", parent)
+    card.Size = UDim2.new(0.96, 0, 0, 42) -- Más alto, más cómodo para dedos
+    card.BackgroundColor3 = VisualConfig.Colors.CardBg
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
+    
+    local label = Instance.new("TextLabel", card)
+    label.Size = UDim2.new(0.7, 0, 1, 0)
+    label.Position = UDim2.new(0, 12, 0, 0)
+    label.Text = text
+    label.TextColor3 = VisualConfig.Colors.Text
+    label.Font = Enum.Font.GothamMedium
+    label.TextSize = 12
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.BackgroundTransparency = 1
+    
+    -- El switch exterior (Fondo de la píldora)
+    local switch = Instance.new("TextButton", card)
+    switch.Size = UDim2.new(0, 36, 0, 20)
+    switch.Position = UDim2.new(1, -46, 0.5, -10)
+    switch.Text = ""
+    switch.BackgroundColor3 = VisualConfig.Colors.ToggleOff
+    Instance.new("UICorner", switch).CornerRadius = UDim.new(1, 0)
+    
+    -- El círculo interior del switch
+    local circle = Instance.new("Frame", switch)
+    circle.Size = UDim2.new(0, 14, 0, 14)
+    circle.Position = UDim2.new(0, 3, 0.5, -7)
+    circle.BackgroundColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", circle).CornerRadius = UDim.new(1, 0)
+    
+    local state = false
+    switch.MouseButton1Click:Connect(function()
+        state = not state
+        local targetColor = state and VisualConfig.Colors.ToggleOn or VisualConfig.Colors.ToggleOff
+        local targetPos = state and UDim2.new(0, 19, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
+        
+        TweenService:Create(switch, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetColor}):Play()
+        TweenService:Create(circle, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = targetPos}):Play()
+    end)
+end
+
+-- Función para Botones Simples de Acción (Teleports)
+local function AddFluentButton(parent, text)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0.96, 0, 0, 42)
+    btn.BackgroundColor3 = Color3.fromRGB(38, 40, 55)
+    btn.Text = "   " .. text
+    btn.TextColor3 = VisualConfig.Colors.Text
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextSize = 12
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+    
+    local arrow = Instance.new("TextLabel", btn)
+    arrow.Size = UDim2.new(0, 20, 1, 0)
+    arrow.Position = UDim2.new(1, -30, 0, 0)
+    arrow.Text = "→"
+    arrow.TextSize = 16
+    arrow.TextColor3 = VisualConfig.Colors.MutedText
+    arrow.Font = Enum.Font.Gotham
+    arrow.BackgroundTransparency = 1
+    
+    AddTouchFeedback(btn)
+    
+    btn.MouseButton1Click:Connect(function()
+        -- Aquí irá la acción visual al presionarse más adelante
+    end)
+end
+
+-- [[ 📝 AGREGANDO LOS NOMBRES DE LAS FUNCIONES DIRECTO AL MAQUETADO ]]
+AddFluentToggle(t1, "NOCLIP")
+AddFluentToggle(t1, "SPEED HACK")
+AddFluentToggle(t1, "INFJUMP")
+AddFluentToggle(t1, "FOV")
+
+AddFluentToggle(t2, "ESP INOCENTE")
+AddFluentToggle(t2, "ESP SHERIFF")
+AddFluentToggle(t2, "ESP ASESINO")
+AddFluentToggle(t2, "TRACES")
+
+AddFluentToggle(t3, "AIM/SHOOT")
+AddFluentToggle(t3, "HITBOX")
+AddFluentToggle(t3, "AURAKILL")
+
+AddFluentButton(t4, "TP GUN 🔫")
+AddFluentButton(t4, "TP SHERIFF 👮")
+
+-- [[ ⚡ ACCIONES DE APERTURA Y CIERRE CON ANIMACIÓN ]]
+ToggleBtn.MouseButton1Click:Connect(function()
+    VisualConfig.States.MainVisible = not VisualConfig.States.MainVisible
+    if VisualConfig.States.MainVisible then
+        Main.Size = UDim2.new(0, 0, 0, 0)
+        Main.Visible = true
+        TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 380, 0, 300)}):Play()
+    else
+        TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+        task.delay(0.2, function() Main.Visible = false end)
+    end
 end)
 
--- [[ 👁️ ESP MOTOR (IGUAL AL ORIGINAL) ]]
-local active_esp = {}
-local function CreateESP(p)
-    if p == lp or active_esp[p] then return end
-    local highlight = Instance.new("Highlight", CoreGui); highlight.OutlineTransparency = 0; highlight.FillTransparency = 0.4
-    active_esp[p] = highlight
-    RunService.RenderStepped:Connect(function()
-        if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            local role = GetRole(p); local col = (role == "Murderer" and Config.Colors.Murd) or (role == "Sheriff" and Config.Colors.Sher) or Config.Colors.Inno
-            local enabled = (role == "Murderer" and Config.Toggles.ESP_Murd) or (role == "Sheriff" and Config.Toggles.ESP_Sheriff) or (role == "Innocent" and Config.Toggles.ESP_Inno)
-            highlight.Enabled = enabled; highlight.Adornee = p.Character; highlight.FillColor = col
-            if role == "Sheriff" then Config.Values.LastSheriffPos = p.Character.HumanoidRootPart.CFrame end
-        else highlight.Enabled = false end
-    end)
-end
+X.MouseButton1Click:Connect(function()
+    VisualConfig.States.MainVisible = false
+    TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+    task.delay(0.2, function() Main.Visible = false end)
+end)
 
--- [[ 🏙️ UI MINI SUPREME V3.2 ]]
-local function BuildUI()
-    local sg = Instance.new("ScreenGui", CoreGui); sg.Name = "CH_HUB_V32"
-    
-    -- CONTENEDOR TOGGLE / LOCK
-    local FloatingFrame = Instance.new("Frame", sg); FloatingFrame.Size = UDim2.new(0, 150, 0, 35); FloatingFrame.Position = UDim2.new(0, 50, 0.5, 0); FloatingFrame.BackgroundTransparency = 1; MakeDraggable(FloatingFrame, true)
-    local ToggleBtn = Instance.new("TextButton", FloatingFrame); ToggleBtn.Size = UDim2.new(0, 70, 1, 0); ToggleBtn.Text = "TOGGLE"; ToggleBtn.BackgroundColor3 = Config.Colors.Bg; ToggleBtn.TextColor3 = Config.Colors.Accent; ToggleBtn.Font = Enum.Font.GothamBold; Instance.new("UICorner", ToggleBtn); Instance.new("UIStroke", ToggleBtn).Color = Config.Colors.Accent
-    local LockBtn = Instance.new("TextButton", FloatingFrame); LockBtn.Size = UDim2.new(0, 70, 1, 0); LockBtn.Position = UDim2.new(0, 75, 0, 0); LockBtn.Text = "LOCK"; LockBtn.BackgroundColor3 = Config.Colors.Bg; LockBtn.TextColor3 = Color3.new(1,1,1); LockBtn.Font = Enum.Font.GothamBold; Instance.new("UICorner", LockBtn); Instance.new("UIStroke", LockBtn).Color = Color3.new(1,1,1)
-
-    -- BOTÓN SHOTMURDER (FLOTANTE)
-    local ShotBtn = Instance.new("TextButton", sg); ShotBtn.Size = UDim2.new(0, 120, 0, 45); ShotBtn.Position = UDim2.new(0.8, 0, 0.8, 0); ShotBtn.Text = "SHOTMURDER"; ShotBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0); ShotBtn.TextColor3 = Color3.new(1,1,1); ShotBtn.Font = Enum.Font.GothamBold; ShotBtn.Visible = false; Instance.new("UICorner", ShotBtn); MakeDraggable(ShotBtn, false)
-    ShotBtn.MouseButton1Click:Connect(function()
-        local gun = lp.Character:FindFirstChild("Gun") or lp.Backpack:FindFirstChild("Gun")
-        if gun then lp.Character.Humanoid:EquipTool(gun); task.wait(0.05); gun:Activate() end
-    end)
-
-    -- PANEL PRINCIPAL
-    local Main = Instance.new("Frame", sg); Main.Size = UDim2.new(0, 360, 0, 340); Main.Position = UDim2.new(0.5, -180, 0.5, -170); Main.BackgroundColor3 = Config.Colors.Bg; Main.Visible = false; Instance.new("UICorner", Main); Instance.new("UIStroke", Main).Color = Config.Colors.Accent; MakeDraggable(Main, false)
-    
-    ToggleBtn.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible end)
-    LockBtn.MouseButton1Click:Connect(function() 
-        Config.Toggles.UILocked = not Config.Toggles.UILocked
-        LockBtn.Text = Config.Toggles.UILocked and "UNLOCK" or "LOCK"
-        LockBtn.TextColor3 = Config.Toggles.UILocked and Config.Colors.Murd or Color3.new(1,1,1)
-    end)
-
-    local Sidebar = Instance.new("Frame", Main); Sidebar.Size = UDim2.new(0, 110, 1, -10); Sidebar.Position = UDim2.new(0, 5, 0, 5); Sidebar.BackgroundTransparency = 1; Instance.new("UIListLayout", Sidebar).Padding = UDim.new(0, 5)
-    local Content = Instance.new("Frame", Main); Content.Size = UDim2.new(1, -125, 1, -50); Content.Position = UDim2.new(0, 120, 0, 45); Content.BackgroundTransparency = 1
-
-    local function Tab(n)
-        local f = Instance.new("ScrollingFrame", Content); f.Size = UDim2.new(1, 0, 1, 0); f.Visible = false; f.BackgroundTransparency = 1; f.ScrollBarThickness = 1; Instance.new("UIListLayout", f).Padding = UDim.new(0, 8)
-        local b = Instance.new("TextButton", Sidebar); b.Size = UDim2.new(1, 0, 0, 38); b.Text = n; b.BackgroundColor3 = Color3.fromRGB(25,25,30); b.TextColor3 = Color3.new(1,1,1); b.TextSize = 10; b.Font = Enum.Font.GothamBold; Instance.new("UICorner", b)
-        b.MouseButton1Click:Connect(function() for _, v in pairs(Content:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end; f.Visible = true end); return f
-    end
-
-    local t1 = Tab("GENERAL ⚙️"); t2 = Tab("VISUAL 👾"); t3 = Tab("COMBAT ⚔️"); t4 = Tab("TELEPORT 🔮"); t1.Visible = true
-
-    local function Toggle(p, t, k)
-        local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 35); b.Text = t .. " [OFF]"; b.BackgroundColor3 = Color3.fromRGB(35, 35, 45); b.TextColor3 = Color3.new(1,1,1); b.TextSize = 11; Instance.new("UICorner", b)
-        b.MouseButton1Click:Connect(function() 
-            Config.Toggles[k] = not Config.Toggles[k]
-            b.Text = t .. (Config.Toggles[k] and " [ON]" or " [OFF]")
-            b.BackgroundColor3 = Config.Toggles[k] and Config.Colors.Accent or Color3.fromRGB(35, 35, 45)
-            b.TextColor3 = Config.Toggles[k] and Color3.new(0,0,0) or Color3.new(1,1,1)
-            if k == "SilentAim" then ShotBtn.Visible = Config.Toggles[k] end
-        end)
-    end
-
-    -- GENERAL
-    Toggle(t1, "NOCLIP", "Noclip"); Toggle(t1, "SPEED HACK", "WalkSpeed"); Toggle(t1, "INF JUMP", "InfJump"); Toggle(t1, "FOV", "FOV_Toggle")
-    -- VISUAL
-    Toggle(t2, "ESP INOCENTE", "ESP_Inno"); Toggle(t2, "ESP SHERIFF", "ESP_Sheriff"); Toggle(t2, "ESP ASESINO", "ESP_Murd")
-    -- COMBAT
-    Toggle(t3, "SILENT AIM", "SilentAim"); Toggle(t3, "KILL AURA", "KillAura")
-    -- TELEPORT
-    local function Btn(p, t, f) local b = Instance.new("TextButton", p); b.Size = UDim2.new(0.96, 0, 0, 35); b.Text = t; b.BackgroundColor3 = Color3.fromRGB(50,50,70); b.TextColor3 = Color3.new(1,1,1); b.TextSize = 11; Instance.new("UICorner", b); b.MouseButton1Click:Connect(f) end
-    Btn(t4, "TP GUN 🔫", function() local g = workspace:FindFirstChild("Gun") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("Gun")); if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame end end)
-    Btn(t4, "TP SHERIFF 👮", function() if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos end end)
-
-    -- MOTORES
-    RunService.Stepped:Connect(function()
-        if Config.Toggles.Noclip and lp.Character then
-            for _, v in pairs(lp.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
-        end
-        if Config.Toggles.KillAura and GetRole(lp) == "Murderer" then
-            local k = lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")
-            if k then for _, p in pairs(Players:GetPlayers()) do
-                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                    if (lp.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude < Config.Values.AuraRange then
-                        firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 0); firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 1)
-                    end
-                end
-            end end
-        end
-    end)
-
-    RunService.RenderStepped:Connect(function()
-        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
-            lp.Character.Humanoid.WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
-        end
-        camera.FieldOfView = Config.Toggles.FOV_Toggle and Config.Values.FOV_Max or 70
-    end)
-
-    UserInputService.JumpRequest:Connect(function()
-        if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChild("Humanoid") then lp.Character.Humanoid:ChangeState(3) end
-    end)
-
-    for _, v in pairs(Players:GetPlayers()) do CreateESP(v) end
-    Players.PlayerAdded:Connect(CreateESP)
-    Notify("V3.2 CARGADA ✅", "Bienvenido de nuevo", Config.Colors.Accent)
-end
-
-BuildUI() -- Llama a tu función de login aquí si prefieres
+LockBtn.MouseButton1Click:Connect(function()
+    VisualConfig.States.UILocked = not VisualConfig.States.UILocked
+    LockBtn.Text = VisualConfig.States.UILocked and "UNLOCK" or "LOCK"
+    LockBtn.TextColor3 = VisualConfig.States.UILocked and VisualConfig.Colors.Murd or Color3.new(1,1,1)
+    strokeL.Color = VisualConfig.States.UILocked and VisualConfig.Colors.Murd or Color3.fromRGB(80, 80, 100)
+end)
