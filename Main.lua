@@ -125,7 +125,11 @@ local function InitMotors()
                 end
             end
         end
+    end) -- Cierra el RenderStepped
+end -- Cierra la función InitMotors
+
         camera.FieldOfView = Config.Toggles.FOV_Toggle and Config.Values.FOV_Max or Config.Values.FOV_Min
+        Camera.FieldOfView = Config.Toggles.FOV_Toggle and Config.Values.FOV_Max or Config.Values.FOV_Min
         if lp.Character and lp.Character:FindFirstChild("Humanoid") then
             lp.Character.Humanoid.WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
         end
@@ -148,7 +152,7 @@ local function InitMotors()
     end)
 end
 
--- [[ 🛡️ HITBOX ]]
+-- [[ 🛡️ HITBOX OPTIMIZADO ]]
 local function HitboxMaintainer()
     RunService.Heartbeat:Connect(function()
         for _, p in pairs(Players:GetPlayers()) do
@@ -159,14 +163,16 @@ local function HitboxMaintainer()
                     hrp.Size = Vector3.new(Config.Values.HitboxSize, Config.Values.HitboxSize, Config.Values.HitboxSize)
                     hrp.Transparency = 0.4; hrp.Color = Color3.new(1, 0, 0); hrp.Material = Enum.Material.Neon; hrp.CanCollide = false
                 else
+                    -- Solo resetea si el tamaño fue alterado para no sobrecargar el Heartbeat
                     if hrp.Size ~= Vector3.new(2, 2, 1) then
-                        hrp.Size = Vector3.new(2, 2, 1); hrp.Transparency = 1; hrp.Material = Enum.Material.Plastic; hrp.CanCollide = true
+                        hrp.Size = Vector3.new(2, 2, 1); hrp.Transparency = 1; hrp.CanCollide = true
                     end
                 end
             end
         end
     end)
 end
+
 
 -- [[ 🚀 INFINITY JUMP (TU VERSIÓN) ]]
 UserInputService.JumpRequest:Connect(function()
@@ -314,7 +320,12 @@ local function CreateTab(name)
     f.ScrollBarThickness = 2
     f.ScrollBarImageColor3 = VisualConfig.Colors.CardBg
     local scrollLayout = Instance.new("UIListLayout", f); scrollLayout.Padding = UDim.new(0, 8)
-    
+
+local scrollLayout = Instance.new("UIListLayout", f); scrollLayout.Padding = UDim.new(0, 8)
+f.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y) -- 💡 esto sirve para que el menú se ajuste solo xd
+
+
+
     local b = Instance.new("TextButton", Sidebar)
     b.Size = UDim2.new(0, 103, 0, 36)
     b.Text = "  " .. name
@@ -365,7 +376,7 @@ local t3 = CreateTab("COMBAT ⚔️")
 local t4 = CreateTab("TELEPORT 🔮")
 
 -- [[ 🎛️ CREADORES DE COMPONENTES INTERACTIVOS ]]
-local function AddFluentToggle(parent, text)
+local function AddFluentToggle(parent, text,key)
     local card = Instance.new("Frame", parent)
     card.Size = UDim2.new(0.96, 0, 0, 42) 
     card.BackgroundColor3 = VisualConfig.Colors.CardBg
@@ -394,9 +405,12 @@ local function AddFluentToggle(parent, text)
     circle.BackgroundColor3 = Color3.new(1, 1, 1)
     Instance.new("UICorner", circle).CornerRadius = UDim.new(1, 0)
     
-    local state = false
+    
     switch.MouseButton1Click:Connect(function()
-        state = not state
+         Config.Toggles[key] = not Config.Toggles[key]
+    local state = Config.Toggles[key]
+
+            
         local targetColor = state and VisualConfig.Colors.ToggleOn or VisualConfig.Colors.ToggleOff
         local targetPos = state and UDim2.new(0, 19, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
         
@@ -405,7 +419,7 @@ local function AddFluentToggle(parent, text)
     end)
 end
 
-local function AddFluentButton(parent, text)
+local function AddFluentButton(parent, text,callback)
     local btn = Instance.new("TextButton", parent)
     btn.Size = UDim2.new(0.96, 0, 0, 42)
     btn.BackgroundColor3 = Color3.fromRGB(38, 40, 55)
@@ -424,27 +438,40 @@ local function AddFluentButton(parent, text)
     arrow.TextColor3 = VisualConfig.Colors.MutedText
     arrow.Font = Enum.Font.Gotham
     arrow.BackgroundTransparency = 1
+
+        
+     AddTouchFeedback(btn)
+    if callback then
+        btn.MouseButton1Click:Connect(callback)
+    end
+    end
     
-    AddTouchFeedback(btn)
-end
+
 
 -- MAQUETADO DE BOTONES
-AddFluentToggle(t1, "NOCLIP")
-AddFluentToggle(t1, "SPEED HACK")
-AddFluentToggle(t1, "INFJUMP")
-AddFluentToggle(t1, "FOV")
+AddFluentToggle(t1, "NOCLIP", "Noclip")
+AddFluentToggle(t1, "SPEED HACK", "WalkSpeed")
+AddFluentToggle(t1, "INFJUMP", "InfJump")
+AddFluentToggle(t1, "FOV", "FOV_Toggle")
 
-AddFluentToggle(t2, "ESP INOCENTE")
-AddFluentToggle(t2, "ESP SHERIFF")
-AddFluentToggle(t2, "ESP ASESINO")
-AddFluentToggle(t2, "TRACES")
+AddFluentToggle(t2, "ESP INOCENTE", "ESP_Inno")
+AddFluentToggle(t2, "ESP SHERIFF", "ESP_Sheriff")
+AddFluentToggle(t2, "ESP ASESINO", "ESP_Murd")
+AddFluentToggle(t2, "TRACES", "Traces")
 
-AddFluentToggle(t3, "AIM/SHOOT")
-AddFluentToggle(t3, "HITBOX")
-AddFluentToggle(t3, "AURAKILL")
+AddFluentToggle(t3, "AIM/SHOOT", "Aimbot")
+AddFluentToggle(t3, "HITBOX", "Hitbox")
+AddFluentToggle(t3, "AURAKILL", "KillAura")
 
-AddFluentButton(t4, "TP GUN 🔫")
-AddFluentButton(t4, "TP SHERIFF 👮")
+AddFluentButton(t4, "TP GUN 🔫", function()
+    local g = workspace:FindFirstChild("Gun") or (workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("Gun"))
+    if g then lp.Character.HumanoidRootPart.CFrame = g.CFrame end
+end)
+
+AddFluentButton(t4, "TP SHERIFF 👮", function()
+    if Config.Values.LastSheriffPos then lp.Character.HumanoidRootPart.CFrame = Config.Values.LastSheriffPos end
+end)
+)
 
 
 -- [[ 📱 CONTENEDOR FLOTANTE DE ARRASTRE Y CONTROL ]]
