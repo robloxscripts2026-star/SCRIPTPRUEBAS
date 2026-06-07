@@ -21,43 +21,60 @@ local MANUAL_KEYS = {
     "CHKEY-2x9y5z6a8b"
 }
 
--- [[ ⚙️ CONFIGURACIÓN ]]
-local Config = {
-    Toggles = {
-        Noclip = false, InfJump = false, WalkSpeed = false, FOV_Toggle = false,
-        Aimbot = false, KillAura = false, Hitbox = false,
-        ESP_Inno = false, ESP_Sheriff = false, ESP_Murd = false,
-        Traces = false, UILocked = false
+-- [[ ⚙️ CONFIGURACIÓN GLOBAL (UNIFICADA) ]]
+local VisualConfig = {
+    States = {
+        MainVisible = false,
+        UILocked = false,       -- Reemplaza a Config.Toggles.UILocked
+        Noclip = false, 
+        InfJump = false, 
+        WalkSpeed = false, 
+        FOV_Toggle = false,
+        Aimbot = false, 
+        KillAura = false, 
+        Hitbox = false,
+        ESP_Inno = false, 
+        ESP_Sheriff = false, 
+        ESP_Murd = false,
+        Traces = false
     },
     Values = {
-        Speed = 50, FOV_Max = 120, FOV_Min = 70, 
-        HitboxSize = 10, AuraRange = 48, Smooth = 0.8,
+        Speed = 50, 
+        FOV_Max = 120, 
+        FOV_Min = 70, 
+        HitboxSize = 10, 
+        AuraRange = 48, 
+        Smooth = 0.8,
         LastSheriffPos = nil
     },
     Colors = {
-        Murd = Color3.fromRGB(255, 35, 35),
-        Sher = Color3.fromRGB(0, 180, 255),
-        Inno = Color3.fromRGB(0, 255, 140),
-        Accent = Color3.fromRGB(0, 230, 255),
-        Bg = Color3.fromRGB(15, 15, 20)
+        --  paleta premium de azules y los roles de MM2🥵
+        Bg = Color3.fromRGB(25, 26, 36),          -- Navy oscuro
+        SidebarBg = Color3.fromRGB(20, 21, 28),   -- Navy profundo
+        CardBg = Color3.fromRGB(32, 34, 46),      -- Azul grisáceo
+        Accent = Color3.fromRGB(115, 140, 250),   -- Azul pastel brillante
+        Murd = Color3.fromRGB(255, 75, 75),       -- Rojo Murder
+        Sher = Color3.fromRGB(0, 180, 255),       -- Azul Sheriff
+        Inno = Color3.fromRGB(0, 255, 140)        -- Verde Inocente
     }
 }
 
 -- [[ 🛰️ NOTIFICACIONES ]]
 local function Notify(title, text, color)
     local sg = Instance.new("ScreenGui", CoreGui)
-    local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 280, 0, 85); f.Position = UDim2.new(1, 20, 0.15, 0); f.BackgroundColor3 = Config.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = color; s.Thickness = 2.5
+    local f = Instance.new("Frame", sg); f.Size = UDim2.new(0, 280, 0, 85); f.Position = UDim2.new(1, 20, 0.15, 0); f.BackgroundColor3 = VisualConfig.Colors.Bg; Instance.new("UICorner", f); local s = Instance.new("UIStroke", f); s.Color = color; s.Thickness = 2.5
     local tl = Instance.new("TextLabel", f); tl.Size = UDim2.new(1, 0, 0.4, 0); tl.Text = title; tl.TextColor3 = color; tl.Font = Enum.Font.GothamBold; tl.BackgroundTransparency = 1; tl.TextSize = 16
     local dl = Instance.new("TextLabel", f); dl.Size = UDim2.new(1, 0, 0.6, 0); dl.Position = UDim2.new(0,0,0.4,0); dl.Text = text; dl.TextColor3 = Color3.new(1,1,1); dl.Font = Enum.Font.Gotham; dl.BackgroundTransparency = 1; dl.TextSize = 13; dl.TextWrapped = true
     f:TweenPosition(UDim2.new(1, -300, 0.15, 0), "Out", "Back", 0.5)
     task.delay(3.5, function() if f then f:TweenPosition(UDim2.new(1, 20, 0.15, 0), "In", "Quad", 0.5); task.wait(0.6); sg:Destroy() end end)
 end
 
--- [[ 🖱️ DRAGGABLE ENGINE (FIXED) ]]
+-- [[ 🖱️ DRAGGABLE ENGINE  ]]
 local function MakeDraggable(obj, isFloatingFrame)
     local dragging, dragStart, startPos
     obj.InputBegan:Connect(function(input)
-        if isFloatingFrame and Config.Toggles.UILocked then return end
+        -- Corregido: Ahora lee perfectamente VisualConfig.States.UILocked sin crashear
+        if isFloatingFrame and VisualConfig.States.UILocked then return end
         if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
             dragging = true; dragStart = input.Position; startPos = obj.Position
             input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
@@ -102,55 +119,94 @@ local function CreateESP(p)
     end)
 end
 
--- [[ ⚔️ COMBAT ENGINE (AUTO-SHOOT RESTORED) ]]
-local function CheckVisibility(target)
-    local ray = Ray.new(camera.CFrame.Position, (target.Position - camera.CFrame.Position).Unit * 500)
-    local hit, pos = workspace:FindPartOnRayWithIgnoreList(ray, {lp.Character, camera})
-    return hit and hit:IsDescendantOf(target.Parent)
+-- [[ 
+-- [[ ⚔️ AIMBOT  (OPTIMIZADO Y CORREGIDO) ]]
+
+-- Función de visibilidad moderna usando la API actual de Roblox
+local function CheckVisibility(targetPart)
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterInstanceLabels = {lp.Character, camera}
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+
+    local origin = camera.CFrame.Position
+    local direction = (targetPart.Position - origin).Unit * 500
+    
+    local raycastResult = workspace:Raycast(origin, direction, raycastParams)
+    
+    if raycastResult then
+        return raycastResult.Instance:IsDescendantOf(targetPart.Parent)
+    end
+    return false
 end
 
+-- Variable de control para evitar que el Auto-Shot se trabe o sature el juego
+local lastShotTime = 0
+local shotCooldown = 0.5 -- Tiempo en segundos entre cada disparo
+
 local function InitMotors()
+    -- Bucle principal para Aimbot, Auto-Shot y FOV/Speed dinámicos
     RunService.RenderStepped:Connect(function()
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                local hrp = p.Character.HumanoidRootPart
-                if GetRole(p) == "Murderer" and Config.Toggles.Aimbot then
-                    camera.CFrame = camera.CFrame:Lerp(CFrame.new(camera.CFrame.Position, hrp.Position), Config.Values.Smooth)
+        -- 1. CONTROL DE FOV Y WALKSPEED INTERNO
+        camera.FieldOfView = VisualConfig.States.FOV_Toggle and VisualConfig.Values.FOV_Max or VisualConfig.Values.FOV_Min
+        
+        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
+            lp.Character.Humanoid.WalkSpeed = VisualConfig.States.WalkSpeed and VisualConfig.Values.Speed or 16
+        end
+
+        -- 2. LÓGICA DE AIMBOT Y AUTO-SHOT
+        if VisualConfig.States.Aimbot then
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local hrp = p.Character.HumanoidRootPart
                     
-                    -- AUTO-SHOOT LÓGICA
-                    local gun = lp.Character:FindFirstChild("Gun")
-                    if gun and CheckVisibility(hrp) then
-                        gun:Activate()
+                    -- Enfoca fijamente al Murderer
+                    if GetRole(p) == "Murderer" then
+                        camera.CFrame = camera.CFrame:Lerp(CFrame.new(camera.CFrame.Position, hrp.Position), VisualConfig.Values.Smooth)
+                        
+                        -- Auto-Shot inteligente con Cooldown para evitar bloqueos
+                        local gun = lp.Character:FindFirstChild("Gun") or lp.Backpack:FindFirstChild("Gun")
+                        if gun and CheckVisibility(hrp) then
+                            if os.clock() - lastShotTime >= shotCooldown then
+                                lastShotTime = os.clock()
+                                -- Equipa el arma si está en el backpack
+                                if gun.Parent == lp.Backpack then
+                                    lp.Character.Humanoid:EquipTool(gun)
+                                end
+                                gun:Activate()
+                            end
+                        end
                     end
                 end
             end
         end
-    end) -- Cierra el RenderStepped
-end -- Cierra la función InitMotors
-
-        camera.FieldOfView = Config.Toggles.FOV_Toggle and Config.Values.FOV_Max or Config.Values.FOV_Min
-        Camera.FieldOfView = Config.Toggles.FOV_Toggle and Config.Values.FOV_Max or Config.Values.FOV_Min
-        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
-            lp.Character.Humanoid.WalkSpeed = Config.Toggles.WalkSpeed and Config.Values.Speed or 16
-        end
     end)
-    
+
+    -- Bucle secundario para KillAura y Noclip
     RunService.Stepped:Connect(function()
-        if Config.Toggles.KillAura and GetRole(lp) == "Murderer" then
+        if VisualConfig.States.KillAura and GetRole(lp) == "Murderer" then
             local k = lp.Character:FindFirstChild("Knife") or lp.Backpack:FindFirstChild("Knife")
-            if k then for _, p in pairs(Players:GetPlayers()) do
-                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                    if (lp.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude < Config.Values.AuraRange then
-                        firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 0); firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 1)
+            if k then 
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        if (lp.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude < VisualConfig.Values.AuraRange then
+                            firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 0)
+                            firetouchinterest(p.Character.HumanoidRootPart, k.Handle, 1)
+                        end
                     end
-                end
-            end end
+                end 
+            end
         end
-        if Config.Toggles.Noclip and lp.Character then
-            for _, v in pairs(lp.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
+        
+        if VisualConfig.States.Noclip and lp.Character then
+            for _, v in pairs(lp.Character:GetDescendants()) do 
+                if v:IsA("BasePart") then 
+                    v.CanCollide = false 
+                end 
+            end
         end
     end)
 end
+
 
 -- [[ 🛡️ HITBOX OPTIMIZADO ]]
 local function HitboxMaintainer()
@@ -174,7 +230,7 @@ local function HitboxMaintainer()
 end
 
 
--- [[ 🚀 INFINITY JUMP (TU VERSIÓN) ]]
+-- [[ 🚀 INFINITY JUMP ]]
 UserInputService.JumpRequest:Connect(function()
     if Config.Toggles.InfJump and lp.Character and lp.Character:FindFirstChild("Humanoid") then
         lp.Character.Humanoid:ChangeState(3)
@@ -182,7 +238,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 
 -- ==========================================================
---               MINI SUPREME V21 - TOTAL FIXED (FLUENT)
+--               MENU MEJORADO ALA VRG XD
 -- ==========================================================
 task.wait(0.1)
 
@@ -290,7 +346,7 @@ X.MouseLeave:Connect(function() X.TextColor3 = VisualConfig.Colors.MutedText; X.
 local Title = Instance.new("TextLabel", Main)
 Title.Size = UDim2.new(0, 200, 0, 45)
 Title.Position = UDim2.new(0, 15, 0, 0)
-Title.Text = "MINI SUPREME V21"
+Title.Text = "CHRISS HACK MM2"
 Title.TextColor3 = VisualConfig.Colors.Text
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 14
