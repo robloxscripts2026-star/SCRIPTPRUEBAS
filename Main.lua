@@ -776,6 +776,40 @@ local function CreateESP(player)
         end
     end)
 end
+-- ========================================================
+-- APUNTADORES GLOBALES AUTOMÁTICOS (CORRECCIÓN DE INGRESO)
+-- ========================================================
+
+-- Función interna para gestionar de forma segura la aparición del personaje
+local function MonitorPlayer(player)
+    if player == LocalPlayer then return end
+
+    -- Conector principal cada vez que el jugador reaparezca (Spawn o muerte)
+    player.CharacterAdded:Connect(function(character)
+        -- Esperas preventivas seguras para asegurar existencia física en Workspace
+        local root = character:WaitForChild("HumanoidRootPart", 10)
+        local head = character:WaitForChild("Head", 10)
+        local humanoid = character:WaitForChild("Humanoid", 10)
+        
+        if root and head and humanoid then
+            task.wait(0.2) -- Micro-retraso premium para evitar desajustes de accesorios y lag de red
+            CreateESP(player)
+        end
+    end)
+
+    -- CHEQUEO DE SEGURIDAD: Si el jugador ya entró y su personaje ya existía antes de que corriera el evento
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        CreateESP(player)
+    end
+end
+
+-- 1. Escuchar de forma activa y en tiempo real a todo jugador NUEVO que se una al servidor
+Players.PlayerAdded:Connect(MonitorPlayer)
+
+-- 2. Aplicar inmediatamente el detector a todos los jugadores que YA estaban dentro del servidor
+for _, player in pairs(Players:GetPlayers()) do
+    MonitorPlayer(player)
+end
 
 -- Conexión robusta para jugadores actuales y futuros
 for _, player in pairs(Players:GetPlayers()) do
