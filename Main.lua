@@ -641,17 +641,16 @@ task.spawn(function()
     TweenService:Create(OpenBtn, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 50, 0, 50)}):Play()
 end)
 
-
 -- ==========================================
--- SISTEMA DE ESP COMPLETO (ULTRA-ALTA CALIDAD & FIABLE)
+-- SISTEMA DE ESP COMPLETO (Estructura Fina y Corregida)
 -- ==========================================
 
 local function CreateESP(player)
-    -- Inicialización de librerías nativas de alta velocidad
+    -- [PASO 1] Creamos los objetos visuales UNA SOLA VEZ (Fuera del bucle para evitar lag)
     local box = Drawing.new("Square")
     box.Visible = false
-    box.Thickness = 1.8
-    box.Color = Theme.Visuals
+    box.Thickness = 1.0     -- Fino y elegante
+    box.Color = Color3.fromRGB(255, 0, 0) -- Rojo Puro
     box.Filled = false
 
     local nameText = Drawing.new("Text")
@@ -676,12 +675,13 @@ local function CreateESP(player)
 
     local traceLine = Drawing.new("Line")
     traceLine.Visible = false
-    traceLine.Thickness = 1
-    traceLine.Color = Theme.Visuals
+    traceLine.Thickness = 1.0 
+    traceLine.Color = Color3.fromRGB(255, 0, 0) -- Rojo Puro
 
+    -- [PASO 2] Conectamos el bucle que únicamente actualiza las posiciones
     local connection
     connection = RunService.RenderStepped:Connect(function()
-        -- SISTEMA SEGURO: Verificamos minuciosamente que el personaje esté cargado por completo
+        -- Verificamos que el personaje y sus partes existan en este frame
         if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head") and player.Character:FindFirstChildOfClass("Humanoid") then
             local character = player.Character
             local rootPart = character.HumanoidRootPart
@@ -689,24 +689,23 @@ local function CreateESP(player)
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             local camera = workspace.CurrentCamera
 
-            -- Filtro de renderizado en pantalla (Frustum Check de alta fidelidad)
+            -- Convertimos la posición 3D a la pantalla 2D
             local vector, onScreen = camera:WorldToViewportPoint(rootPart.Position)
             
             if onScreen then
-                -- Cálculo geométrico de alta fidelidad basado en distancias entre articulaciones reales
-                -- Esto previene fallos si el BoundingBox da nulo por lag de accesorios
+                -- Calculamos la distancia real
                 local distance = (camera.CFrame.Position - rootPart.Position).Magnitude
                 
-                -- Proyectamos la posición exacta por encima de la cabeza y por debajo de los pies
+                -- Proyectamos la cabeza y los pies
                 local topPos, topOnScreen = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 1.8, 0))
                 local bottomPos, bottomOnScreen = camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0))
 
                 if topOnScreen and bottomOnScreen then
-                    -- Ajuste dinámico de escala impecable
+                    -- Ajuste de dimensiones de la caja
                     local boxHeight = math.abs(topPos.Y - bottomPos.Y)
                     local boxWidth = boxHeight * 0.60 
 
-                    -- === CONTROL DE ESP BOX ===
+                    -- === LÓGICA DE ESP BOX ===
                     if Config.ESPBox then
                         box.Visible = true
                         box.Position = Vector2.new(vector.X - (boxWidth / 2), topPos.Y)
@@ -715,7 +714,7 @@ local function CreateESP(player)
                         box.Visible = false
                     end
 
-                    -- === CONTROL DE ESP NAME ===
+                    -- === LÓGICA DE ESP NAME ===
                     if Config.ESPName then
                         nameText.Visible = true
                         nameText.Position = Vector2.new(vector.X, topPos.Y - 16)
@@ -724,7 +723,7 @@ local function CreateESP(player)
                         nameText.Visible = false
                     end
 
-                    -- === CONTROL DE ESP DISTANCIA ===
+                    -- === LÓGICA DE ESP DISTANCIA ===
                     if Config.ESPDist then
                         distText.Visible = true
                         distText.Position = Vector2.new(vector.X, bottomPos.Y + 4)
@@ -733,7 +732,7 @@ local function CreateESP(player)
                         distText.Visible = false
                     end
 
-                    -- === CONTROL DE ESP HEALTH ===
+                    -- === LÓGICA DE ESP HEALTH (BARRA DE VIDA) ===
                     if Config.ESPHealth then
                         healthBar.Visible = true
                         local healthPercentage = math.clamp(humanoid.Health / humanoid.MaxHealth, 0, 1)
@@ -741,16 +740,14 @@ local function CreateESP(player)
                         
                         healthBar.From = Vector2.new(barX, bottomPos.Y)
                         healthBar.To = Vector2.new(barX, bottomPos.Y - (boxHeight * healthPercentage))
-                        -- Interpolación de color premium de verde a rojo líquida
                         healthBar.Color = Color3.fromHSV((healthPercentage * 120) / 360, 1, 1)
                     else
                         healthBar.Visible = false
                     end
 
-                    -- === CONTROL DE TRACES (LÍNEAS DESDE ARRIBA COREGIDAS) ===
+                    -- === LÓGICA DE TRACES (LÍNEAS DESDE ARRIBA) ===
                     if Config.Traces then
                         traceLine.Visible = true
-                        -- Coordenada Y puesta en 0 para que nazcan desde la parte superior central de tu pantalla
                         traceLine.From = Vector2.new(camera.ViewportSize.X / 2, 0)
                         traceLine.To = Vector2.new(vector.X, topPos.Y)
                     else
@@ -758,7 +755,7 @@ local function CreateESP(player)
                     end
                 end
             else
-                -- Ocultar elementos de dibujo de forma segura si el jugador sale de foco
+                -- Si no está en pantalla, ocultamos los dibujos temporalmente
                 box.Visible = false
                 nameText.Visible = false
                 distText.Visible = false
@@ -766,7 +763,7 @@ local function CreateESP(player)
                 traceLine.Visible = false
             end
         else
-            -- Limpieza de memoria (Anti-Crash y Cero Lag)
+            -- Si muere o se sale del juego, destruimos los dibujos para liberar memoria
             box:Destroy()
             nameText:Destroy()
             distText:Destroy()
@@ -776,6 +773,9 @@ local function CreateESP(player)
         end
     end)
 end
+
+
+
 -- ========================================================
 -- APUNTADORES GLOBALES AUTOMÁTICOS (CORRECCIÓN DE INGRESO)
 -- ========================================================
