@@ -14,44 +14,6 @@ end)
 
 
 
--- BYPASS 
-
-
-local isA = game.IsA 
-
-local oldIndex
-oldIndex = hookmetamethod(game, "__index", newcclosure(function(self, key)
-    -- Si el que pregunta no es nuestro script y el personaje existe
-    if not checkcaller() and Character then
-        -- Usamos la variable externa 'isA' para que no se llame a sí misma
-        if isA(self, "Humanoid") then
-            if key == "WalkSpeed" then
-                return 16
-            end
-            if key == "JumpPower" then
-                return 50
-            end
-        end
-        
-        if isA(self, "BasePart") and self.Name == "HumanoidRootPart" then
-            if key == "Velocity" or key == "AssemblyLinearVelocity" then
-                return Vector3.new(0, 0, 0)
-            end
-        end
-    end
-
-    return oldIndex(self, key)
-end))
-
-local oldNewIndex
-oldNewIndex = hookmetamethod(game, "__newindex", newcclosure(function(self, key, value)
-    if not checkcaller() and Character and isA(self, "Humanoid") then
-        if key == "WalkSpeed" and (Config and Config.SpeedEnabled) then 
-            return -- Bloquea que el juego intente bajarte la velocidad
-        end
-    end
-    return oldNewIndex(self, key, value)
-end))
 
 -- Configuración de Estado General
 local Config = {
@@ -875,7 +837,7 @@ Players.PlayerAdded:Connect(function(player)
 end)
 
 
--- BYPASS 
+-- BYPASS ULTRA MEGA PRO MAX 🗣️🔥🔥🔥
 
 
 local Players = game:GetService("Players")
@@ -887,22 +849,22 @@ local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character:WaitForChild("HumanoidRootPart")
 
--- Mantener referencias actualizadas cuando reaparezcas (evita que deje de funcionar tras morir)
+
 LocalPlayer.CharacterAdded:Connect(function(char)
     Character = char
     Humanoid = char:WaitForChild("Humanoid")
     RootPart = char:WaitForChild("HumanoidRootPart")
 end)
 
--- 1. BYPASS ANTI-DETECCIÓN 
+--  BYPASS ANTI-DETECCIÓN 🔥
 task.spawn(function()
     while task.wait(0.1) do
         if Character and Humanoid and RootPart then
             if Config.Fly or Config.SpeedEnabled then
-                -- Engaña a los scripts de baneo del juego haciéndoles creer que estás corriendo normal en el suelo
+        
                 Humanoid:ChangeState(Enum.HumanoidStateType.Running)
                 
-                -- Si el Anti-Cheat del servidor detecta picos bruscos de velocidad, limpiamos la fuerza física
+                
                 local velocity = RootPart.AssemblyLinearVelocity
                 if velocity.Magnitude > 350 then
                     RootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
@@ -912,24 +874,24 @@ task.spawn(function()
     end
 end)
 
--- CONTROL DEL SPEED HACK (
+-- CONTROL DEL SPEED HACK 
 RunService.Heartbeat:Connect(function()
     if Character and Humanoid and RootPart and Config.SpeedEnabled then
         local MoveDirection = Humanoid.MoveDirection
         if MoveDirection.Magnitude > 0 then
-            -- Forzamos que se mantenga en el rango de velocidad que me pediste (Mínimo 60, Máximo 100)
+            
             local speed = math.clamp(Config.SpeedValue, 60, 100)
-            -- Sincronizamos con la dirección de avance en coordenadas CFrame
+        
             RootPart.CFrame = RootPart.CFrame + (MoveDirection * (speed / 100))
         end
     end
 end)
 
--- 3. CONTROL DEL FLY (Joystick Táctil de Alta Fidelidad de Roblox)
+-- 3. CONTROL  FLY
 local FlyGyro, FlyVelocity
 RunService.RenderStepped:Connect(function()
     if Config.Fly and Character and RootPart and Humanoid then
-        -- Desactivamos la gravedad del motor creando fuerzas físicas locales
+        -- 
         if not FlyGyro or not FlyGyro.Parent then
             FlyGyro = Instance.new("BodyGyro")
             FlyGyro.Name = "EnforceFlyGyro"
@@ -950,11 +912,11 @@ RunService.RenderStepped:Connect(function()
         
         local moveDirection = Humanoid.MoveDirection
         if moveDirection.Magnitude > 0 then
-            -- Moverse usando el Joystick físico del celular, subiendo/bajando según mires con la cámara
-            local lookVector = camera.CFrame.LookVector
-            local targetVelocity = moveDirection * 50 -- Ajusta el 50 si quieres que vuele más rápido o lento
             
-            -- Si apuntas la cámara al cielo y avanzas, el script te impulsa hacia arriba
+            local lookVector = camera.CFrame.LookVector
+            local targetVelocity = moveDirection * 50 
+            
+            
             if lookVector.Y > 0.2 then
                 targetVelocity = targetVelocity + Vector3.new(0, lookVector.Y * 40, 0)
             elseif lookVector.Y < -0.2 then
@@ -963,11 +925,11 @@ RunService.RenderStepped:Connect(function()
             
             FlyVelocity.velocity = targetVelocity
         else
-            -- Si no tocas el Joystick, el personaje se queda totalmente estático suspendido
+            
             FlyVelocity.velocity = Vector3.new(0, 0, 0)
         end
     else
-        -- Limpieza absoluta de fuerzas físicas al apagar el botón (Evita bugs)
+    
         if RootPart:FindFirstChild("EnforceFlyGyro") then RootPart.EnforceFlyGyro:Destroy() end
         if RootPart:FindFirstChild("EnforceFlyVelocity") then RootPart.EnforceFlyVelocity:Destroy() end
         FlyGyro = nil
@@ -975,7 +937,7 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- 4. NOCLIP INDETECTABLE
+--  NOCLIP 
 RunService.Stepped:Connect(function()
     if Config.Noclip and Character then
         for _, part in pairs(Character:GetChildren()) do
@@ -986,7 +948,7 @@ RunService.Stepped:Connect(function()
     end
 end)
 
--- 5. INFINITY JUMP 
+-- INFINITY JUMP 
 UserInputService.JumpRequest:Connect(function()
     if Config.InfJump and Character and Humanoid then
         
