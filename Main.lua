@@ -6,6 +6,53 @@ local Players = game:GetService("Players")
 
 local LocalPlayer = Players.LocalPlayer
 
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+-- BYPASS DE MEMORIA METABLE HOOCK
+
+local mt = getrawmetatable(game)
+local oldIndex = mt.__index
+local oldNewIndex = mt.__newindex
+setreadonly(mt, false)
+
+-- 1. Engañamos al juego cuando INTENTE LEER tus datos (__index)
+mt.__index = newcclosure(function(self, key)
+    
+    if not checkcaller() and Character and self:IsA("Humanoid") then
+        -- Si intentan leer tu velocidad, siempre les decimos que es la normal (16)
+        if key == "WalkSpeed" then
+            return 16
+        end
+        -- Si intentan leer tu fuerza de salto, les decimos que es la normal (50)
+        if key == "JumpPower" then
+            return 50
+        end
+    end
+    
+    -- 
+    if not checkcaller() and Character and self:IsA("BasePart") and self.Name == "HumanoidRootPart" then
+        if key == "Velocity" or key == "AssemblyLinearVelocity" then
+            
+            return Vector3.new(0, 0, 0)
+        end
+    end
+
+    return oldIndex(self, key)
+end)
+
+-- 
+mt.__newindex = newcclosure(function(self, key, value)
+    
+    if not checkcaller() and Character and self:IsA("Humanoid") then
+        if key == "WalkSpeed" and (Config and Config.SpeedEnabled) then 
+            return 
+        end
+    end
+    return oldNewIndex(self, key, value)
+end)
+
+setreadonly(mt, true)
+
 -- Configuración de Estado General
 local Config = {
     SpeedValue = 16, SpeedEnabled = false, InfJump = false, Noclip = false, Fly = false,
@@ -942,7 +989,7 @@ end)
 -- 5. INFINITY JUMP 
 UserInputService.JumpRequest:Connect(function()
     if Config.InfJump and Character and Humanoid then
-        -- Forzamos al motor a creer que estamos saltando desde el suelo en cada pulsación del botón de salto
+        
         Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
     end
 end)
