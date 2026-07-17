@@ -14,23 +14,29 @@ end)
 
 
 
--- BYPASSR HOOKMETAMETHOD 
+-- BYPASS 
+
+
+local isA = game.IsA 
 
 local oldIndex
 oldIndex = hookmetamethod(game, "__index", newcclosure(function(self, key)
-    -- 
-    if not checkcaller() and Character and self:IsA("Humanoid") then
-        if key == "WalkSpeed" then
-            return 16
+    -- Si el que pregunta no es nuestro script y el personaje existe
+    if not checkcaller() and Character then
+        -- Usamos la variable externa 'isA' para que no se llame a sí misma
+        if isA(self, "Humanoid") then
+            if key == "WalkSpeed" then
+                return 16
+            end
+            if key == "JumpPower" then
+                return 50
+            end
         end
-        if key == "JumpPower" then
-            return 50
-        end
-    end
-    
-    if not checkcaller() and Character and self:IsA("BasePart") and self.Name == "HumanoidRootPart" then
-        if key == "Velocity" or key == "AssemblyLinearVelocity" then
-            return Vector3.new(0, 0, 0)
+        
+        if isA(self, "BasePart") and self.Name == "HumanoidRootPart" then
+            if key == "Velocity" or key == "AssemblyLinearVelocity" then
+                return Vector3.new(0, 0, 0)
+            end
         end
     end
 
@@ -39,14 +45,13 @@ end))
 
 local oldNewIndex
 oldNewIndex = hookmetamethod(game, "__newindex", newcclosure(function(self, key, value)
-    if not checkcaller() and Character and self:IsA("Humanoid") then
+    if not checkcaller() and Character and isA(self, "Humanoid") then
         if key == "WalkSpeed" and (Config and Config.SpeedEnabled) then 
-            return 
+            return -- Bloquea que el juego intente bajarte la velocidad
         end
     end
     return oldNewIndex(self, key, value)
 end))
-
 
 -- Configuración de Estado General
 local Config = {
