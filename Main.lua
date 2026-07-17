@@ -8,6 +8,11 @@ local LocalPlayer = Players.LocalPlayer
 
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
+LocalPlayer.CharacterAdded:Connect(function(newChar)
+    Character = newChar
+end)
+
+
 -- BYPASS DE MEMORIA METABLE HOOCK
 
 local mt = getrawmetatable(game)
