@@ -641,16 +641,16 @@ task.spawn(function()
     TweenService:Create(OpenBtn, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 50, 0, 50)}):Play()
 end)
 
--- ==========================================
--- SISTEMA DE ESP COMPLETO (Estructura Fina y Corregida)
--- ==========================================
+
+-- SISTEMA  ESP 
+
 
 local function CreateESP(player)
-    -- [PASO 1] Creamos los objetos visuales UNA SOLA VEZ (Fuera del bucle para evitar lag)
+    
     local box = Drawing.new("Square")
     box.Visible = false
-    box.Thickness = 1.0     -- Fino y elegante
-    box.Color = Color3.fromRGB(255, 0, 0) -- Rojo Puro
+    box.Thickness = 1.0     
+    box.Color = Color3.fromRGB(255, 0, 0) --rojo
     box.Filled = false
 
     local nameText = Drawing.new("Text")
@@ -678,10 +678,9 @@ local function CreateESP(player)
     traceLine.Thickness = 1.0 
     traceLine.Color = Color3.fromRGB(255, 0, 0) -- Rojo Puro
 
-    -- [PASO 2] Conectamos el bucle que únicamente actualiza las posiciones
     local connection
     connection = RunService.RenderStepped:Connect(function()
-        -- Verificamos que el personaje y sus partes existan en este frame
+    
         if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head") and player.Character:FindFirstChildOfClass("Humanoid") then
             local character = player.Character
             local rootPart = character.HumanoidRootPart
@@ -689,23 +688,22 @@ local function CreateESP(player)
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             local camera = workspace.CurrentCamera
 
-            -- Convertimos la posición 3D a la pantalla 2D
+            
             local vector, onScreen = camera:WorldToViewportPoint(rootPart.Position)
             
             if onScreen then
                 -- Calculamos la distancia real
                 local distance = (camera.CFrame.Position - rootPart.Position).Magnitude
                 
-                -- Proyectamos la cabeza y los pies
                 local topPos, topOnScreen = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 1.8, 0))
                 local bottomPos, bottomOnScreen = camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0))
 
                 if topOnScreen and bottomOnScreen then
-                    -- Ajuste de dimensiones de la caja
+                    -- dimensiones de la caja
                     local boxHeight = math.abs(topPos.Y - bottomPos.Y)
                     local boxWidth = boxHeight * 0.60 
 
-                    -- === LÓGICA DE ESP BOX ===
+                    --  ESP BOX 
                     if Config.ESPBox then
                         box.Visible = true
                         box.Position = Vector2.new(vector.X - (boxWidth / 2), topPos.Y)
@@ -714,7 +712,7 @@ local function CreateESP(player)
                         box.Visible = false
                     end
 
-                    -- === LÓGICA DE ESP NAME ===
+                    --   ESP NAME 
                     if Config.ESPName then
                         nameText.Visible = true
                         nameText.Position = Vector2.new(vector.X, topPos.Y - 16)
@@ -723,7 +721,7 @@ local function CreateESP(player)
                         nameText.Visible = false
                     end
 
-                    -- === LÓGICA DE ESP DISTANCIA ===
+                    --   ESP DISTANCIA
                     if Config.ESPDist then
                         distText.Visible = true
                         distText.Position = Vector2.new(vector.X, bottomPos.Y + 4)
@@ -732,7 +730,7 @@ local function CreateESP(player)
                         distText.Visible = false
                     end
 
-                    -- === LÓGICA DE ESP HEALTH (BARRA DE VIDA) ===
+                    -- ESP HEALT
                     if Config.ESPHealth then
                         healthBar.Visible = true
                         local healthPercentage = math.clamp(humanoid.Health / humanoid.MaxHealth, 0, 1)
@@ -745,7 +743,7 @@ local function CreateESP(player)
                         healthBar.Visible = false
                     end
 
-                    -- === LÓGICA DE TRACES (LÍNEAS DESDE ARRIBA) ===
+                    -- LÓGICA DE TRACES 
                     if Config.Traces then
                         traceLine.Visible = true
                         traceLine.From = Vector2.new(camera.ViewportSize.X / 2, 0)
@@ -755,7 +753,7 @@ local function CreateESP(player)
                     end
                 end
             else
-                -- Si no está en pantalla, ocultamos los dibujos temporalmente
+            
                 box.Visible = false
                 nameText.Visible = false
                 distText.Visible = false
@@ -763,7 +761,7 @@ local function CreateESP(player)
                 traceLine.Visible = false
             end
         else
-            -- Si muere o se sale del juego, destruimos los dibujos para liberar memoria
+            -- Si muere o se sale del juego, se eliminan los dibujos 
             box:Destroy()
             nameText:Destroy()
             distText:Destroy()
@@ -776,9 +774,9 @@ end
 
 
 
--- ========================================================
--- APUNTADORES GLOBALES AUTOMÁTICOS (CORRECCIÓN DE INGRESO)
--- ========================================================
+
+--  A.P GB👀
+
 
 -- Función interna para gestionar de forma segura la aparición del personaje
 local function MonitorPlayer(player)
@@ -797,16 +795,16 @@ local function MonitorPlayer(player)
         end
     end)
 
-    -- CHEQUEO DE SEGURIDAD: Si el jugador ya entró y su personaje ya existía antes de que corriera el evento
+
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         CreateESP(player)
     end
 end
 
--- 1. Escuchar de forma activa y en tiempo real a todo jugador NUEVO que se una al servidor
+-- Escuchar de forma activa y en tiempo real a todo jugador NUEVO que se una al servidor
 Players.PlayerAdded:Connect(MonitorPlayer)
 
--- 2. Aplicar inmediatamente el detector a todos los jugadores que YA estaban dentro del servidor
+-- Aplicar inmediatamente el detector a todos los jugadores que YA estaban dentro del servidor
 for _, player in pairs(Players:GetPlayers()) do
     MonitorPlayer(player)
 end
