@@ -13,6 +13,7 @@ LocalPlayer.CharacterAdded:Connect(function(newChar)
 end)
 
 
+
 -- BYPASS DE MEMORIA METABLE HOOCK
 
 local mt = getrawmetatable(game)
