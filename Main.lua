@@ -706,33 +706,56 @@ AddButton(TabMisc, "Server Hop", Theme.Misc)
 AddButton(TabMisc, "Rejoin Server", Theme.Misc)
 
 
--- LÓGICA DE RASTREO  DEL AIMBOT
+-- SISTEMA DE AIMBOT 
 
 local Camera = workspace.CurrentCamera
-local GuiService = game:GetService("GuiService")
+local CurrentTarget = nil 
 
+local function GetTargetBone(character)
+    if Config.AimPart == "Head" then
+        return character:FindFirstChild("Head")
+    elseif Config.AimPart == "Neck" then
+        
+        return character:FindFirstChild("UpperTorso") or character:FindFirstChild("Head")
+    elseif Config.AimPart == "Torso" then
+    
+        return character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso") or character:FindFirstChild("HumanoidRootPart")
+    end
+    return character:FindFirstChild("Head") 
+end
 
 local function GetClosestPlayer()
+
+    if CurrentTarget and CurrentTarget.Parent and CurrentTarget.Parent:FindFirstChildOfClass("Humanoid") then
+        local Humanoid = CurrentTarget.Parent:FindFirstChildOfClass("Humanoid")
+        if Humanoid.Health > 0 then
+            local ScreenPosition, OnScreen = Camera:WorldToViewportPoint(CurrentTarget.Position)
+            if OnScreen then
+                local MousePosition = UserInputService:GetMouseLocation()
+                local Distance = (Vector3.new(ScreenPosition.X, ScreenPosition.Y, 0) - Vector3.new(MousePosition.X, MousePosition.Y, 0)).Magnitude
+                if Distance < Config.FOVRadius then
+                    return CurrentTarget -- Mantiene el candado
+                end
+            end
+        end
+    end
+
+    
     local ClosestTarget = nil
     local MaxDistance = Config.FOVRadius
 
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character then
             local TargetChar = player.Character
-            
-            local TargetPart = TargetChar:FindFirstChild(Config.AimPart)
+            local TargetPart = GetTargetBone(TargetChar) -- Busca dinámicamente R6 o R15
             local Humanoid = TargetChar:FindFirstChildOfClass("Humanoid")
 
-            
             if TargetPart and Humanoid and Humanoid.Health > 0 then
-                
                 local ScreenPosition, OnScreen = Camera:WorldToViewportPoint(TargetPart.Position)
 
                 if OnScreen then
-                    
                     local MousePosition = UserInputService:GetMouseLocation()
                     local Distance = (Vector3.new(ScreenPosition.X, ScreenPosition.Y, 0) - Vector3.new(MousePosition.X, MousePosition.Y, 0)).Magnitude
-
 
                     if Distance < MaxDistance then
                         MaxDistance = Distance
@@ -742,8 +765,11 @@ local function GetClosestPlayer()
             end
         end
     end
+    
+    CurrentTarget = ClosestTarget 
     return ClosestTarget
 end
+
 
 RunService.RenderStepped:Connect(function()
     if Config.AimbotEnabled then
@@ -752,23 +778,30 @@ RunService.RenderStepped:Connect(function()
         
             Camera.CFrame = CFrame.new(Camera.CFrame.Position, Target.Position)
         end
+    else
+        CurrentTarget = nil 
     end
 end)
 
--- Círculo visual del FOV (Anillo)
+
+-- CONFIGURACIOM DEL FOV
 local FOVCircle = Drawing.new("Circle")
+FOVCircle.Visible = false
 FOVCircle.Color = Theme.Combat
-FOVCircle.Thickness = 1.5
+FOVCircle.Thickness = 2
+FOVCircle.NumSides = 60 
 FOVCircle.Filled = false
 FOVCircle.Transparency = 1
 
 RunService.RenderStepped:Connect(function()
-    
-    FOVCircle.Radius = Config.FOVRadius
-    FOVCircle.Visible = Config.FOVEnabled
-    FOVCircle.Position = UserInputService:GetMouseLocation()
+    if Config.FOVEnabled then
+        FOVCircle.Radius = Config.FOVRadius
+        FOVCircle.Position = UserInputService:GetMouseLocation()
+        FOVCircle.Visible = true
+    else
+        FOVCircle.Visible = false
+    end
 end)
-
 
 
 --  EJECUCIÓN CRONOMETRADA 
