@@ -706,10 +706,16 @@ AddButton(TabMisc, "Server Hop", Theme.Misc)
 AddButton(TabMisc, "Rejoin Server", Theme.Misc)
 
 
--- SISTEMA DE AIMBOT  LOCK 
 
+
+-- SISTEMA DE AIMBOT
+
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 local Camera = workspace.CurrentCamera
 local TargetPlayer = nil 
+
 
 local function GetTargetBone(character)
     if Config.AimPart == "Head" then
@@ -722,9 +728,7 @@ local function GetTargetBone(character)
     return character:FindFirstChild("Head")
 end
 
-
 local function GetClosestPlayer()
-    
     if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChildOfClass("Humanoid") then
         local Hum = TargetPlayer.Character:FindFirstChildOfClass("Humanoid")
         local Part = GetTargetBone(TargetPlayer.Character)
@@ -732,12 +736,11 @@ local function GetClosestPlayer()
         if Hum.Health > 0 and Part then
             local _, OnScreen = Camera:WorldToViewportPoint(Part.Position)
             if OnScreen then
-                return Part 
+                return Part
             end
         end
     end
 
-    
     TargetPlayer = nil
     local ClosestPart = nil
     local MaxDistance = Config.FOVRadius
@@ -755,7 +758,6 @@ local function GetClosestPlayer()
                     local MousePosition = UserInputService:GetMouseLocation()
                     local Distance = (Vector3.new(ScreenPosition.X, ScreenPosition.Y, 0) - Vector3.new(MousePosition.X, MousePosition.Y, 0)).Magnitude
 
-                
                     if Distance < MaxDistance then
                         MaxDistance = Distance
                         ClosestPart = Part
@@ -774,30 +776,30 @@ RunService.RenderStepped:Connect(function()
     if Config.AimbotEnabled then
         local Target = GetClosestPlayer()
         if Target then
-        
             Camera.CFrame = CFrame.new(Camera.CFrame.Position, Target.Position)
         end
     else
-        TargetPlayer = nil
+        TargetPlayer = nil 
     end
 end)
 
 
+-- FIJADO DE FOV NATIVO 
 
-local CoreGui = game:GetService("CoreGui")
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local FOVScreen = Instance.new("ScreenGui")
-FOVScreen.Name = "ViceCity_Fov"
+FOVScreen.Name = "ViceCity_FOV_Fixed"
 FOVScreen.ResetOnSpawn = false
-FOVScreen.IgnoreGuiInset = true -- 🌟 CLAVE: Ignora la barra superior del celular para alineación perfecta
-FOVScreen.Parent = CoreGui:FindFirstChild("RobloxGui") or CoreGui
+FOVScreen.IgnoreGuiInset = true 
+FOVScreen.Parent = PlayerGui
 
 local FOVImage = Instance.new("ImageLabel")
 FOVImage.Name = "AnilloVisual"
 FOVImage.AnchorPoint = Vector2.new(0.5, 0.5)
 FOVImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 FOVImage.BackgroundTransparency = 1
-FOVImage.Image = "rbxassetid://13460875291" -- ID circular verificado
+FOVImage.Image = "rbxassetid://13460875291" 
 FOVImage.ImageColor3 = Theme.Combat
 FOVImage.ImageTransparency = 0.4
 FOVImage.Visible = false
@@ -805,14 +807,13 @@ FOVImage.Parent = FOVScreen
 
 RunService.RenderStepped:Connect(function()
     if Config.FOVEnabled then
-        -- 
         local ViewportSize = Camera.ViewportSize
         local CenterX = ViewportSize.X / 2
         local CenterY = ViewportSize.Y / 2
         local Diameter = Config.FOVRadius * 2
         
         FOVImage.Size = UDim2.new(0, Diameter, 0, Diameter)
-        FOVImage.Position = UDim2.new(0, CenterX, 0, CenterY)
+        FOVImage.Position = UDim2.new(0, CenterX, 0, CenterY) 
         FOVImage.Visible = true
     else
         FOVImage.Visible = false
@@ -821,11 +822,7 @@ end)
 
 
 
-
-
-
 -- SISTEMA  ESP 
-
 
 local function CreateESP(player)
     
