@@ -784,22 +784,45 @@ RunService.RenderStepped:Connect(function()
 end)
 
 
--- CONFIGURACIOM DEL FOV
-local FOVCircle = Drawing.new("Circle")
-FOVCircle.Visible = false
-FOVCircle.Color = Theme.Combat
-FOVCircle.Thickness = 2
-FOVCircle.NumSides = 60 
-FOVCircle.Filled = false
-FOVCircle.Transparency = 1
+-- CÍRCULO DEL FOV NATIVO PARA MÓVIL (100% COMPATIBLE)
 
+
+local CoreGui = game:GetService("CoreGui")
+
+-- 1. Crear el contenedor de la interfaz para el FOV
+local FOVScreen = Instance.new("ScreenGui")
+FOVScreen.Name = "ViceCity_FOV"
+FOVScreen.Parent = CoreGui:FindFirstChild("RobloxGui") or CoreGui
+FOVScreen.DisplayOrder = 999 -- Asegura que se dibuje por encima de todo
+
+-- 2. Crear la imagen del círculo (Usamos un asset circular nativo de Roblox)
+local FOVImage = Instance.new("ImageLabel")
+FOVImage.Name = "Anillo"
+FOVImage.AnchorPoint = Vector2.new(0.5, 0.5) -- Centrado perfecto
+FOVImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+FOVImage.BackgroundTransparency = 1 -- Fondo invisible
+FOVImage.Image = "rbxassetid://13460875291" -- ID de una textura circular perfecta de Roblox
+FOVImage.ImageColor3 = Theme.Combat -- Usa tu color Rojo Carmesí
+FOVImage.ImageTransparency = 0.3 -- Un toque de transparencia para que no tape la pantalla
+FOVImage.Visible = false
+FOVImage.Parent = FOVScreen
+
+-- 3. Bucle para actualizar la posición y tamaño en tiempo real
 RunService.RenderStepped:Connect(function()
     if Config.FOVEnabled then
-        FOVCircle.Radius = Config.FOVRadius
-        FOVCircle.Position = UserInputService:GetMouseLocation()
-        FOVCircle.Visible = true
+        -- Obtenemos la posición de la mira/dedo en la pantalla
+        local MousePos = UserInputService:GetMouseLocation()
+        
+        -- El diámetro del círculo es el doble del radio del slider
+        local Diameter = Config.FOVRadius * 2
+        
+        -- Centramos el círculo exactamente en donde apunta el mouse/cámara
+        FOVImage.Size = UDim2.new(0, Diameter, 0, Diameter)
+        FOVImage.Position = UDim2.new(0, MousePos.X, 0, MousePos.Y)
+        
+        FOVImage.Visible = true
     else
-        FOVCircle.Visible = false
+        FOVImage.Visible = false
     end
 end)
 
