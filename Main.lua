@@ -639,7 +639,7 @@ Title.Parent = AimMenu
 
 
 UIListLayout.Parent = AimMenu
-UIListLayout.SortOrder = Enum.Font.SourceSans
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder 
 UIListLayout.Padding = UDim.new(0, 5)
 
 
