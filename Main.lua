@@ -706,68 +706,67 @@ AddButton(TabMisc, "Server Hop", Theme.Misc)
 AddButton(TabMisc, "Rejoin Server", Theme.Misc)
 
 
--- SISTEMA DE AIMBOT 
+-- SISTEMA DE AIMBOT  LOCK 
 
 local Camera = workspace.CurrentCamera
-local CurrentTarget = nil 
+local TargetPlayer = nil 
 
 local function GetTargetBone(character)
     if Config.AimPart == "Head" then
         return character:FindFirstChild("Head")
     elseif Config.AimPart == "Neck" then
-        
         return character:FindFirstChild("UpperTorso") or character:FindFirstChild("Head")
     elseif Config.AimPart == "Torso" then
-    
         return character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso") or character:FindFirstChild("HumanoidRootPart")
     end
-    return character:FindFirstChild("Head") 
+    return character:FindFirstChild("Head")
 end
 
-local function GetClosestPlayer()
 
-    if CurrentTarget and CurrentTarget.Parent and CurrentTarget.Parent:FindFirstChildOfClass("Humanoid") then
-        local Humanoid = CurrentTarget.Parent:FindFirstChildOfClass("Humanoid")
-        if Humanoid.Health > 0 then
-            local ScreenPosition, OnScreen = Camera:WorldToViewportPoint(CurrentTarget.Position)
+local function GetClosestPlayer()
+    
+    if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+        local Hum = TargetPlayer.Character:FindFirstChildOfClass("Humanoid")
+        local Part = GetTargetBone(TargetPlayer.Character)
+        
+        if Hum.Health > 0 and Part then
+            local _, OnScreen = Camera:WorldToViewportPoint(Part.Position)
             if OnScreen then
-                local MousePosition = UserInputService:GetMouseLocation()
-                local Distance = (Vector3.new(ScreenPosition.X, ScreenPosition.Y, 0) - Vector3.new(MousePosition.X, MousePosition.Y, 0)).Magnitude
-                if Distance < Config.FOVRadius then
-                    return CurrentTarget -- Mantiene el candado
-                end
+                return Part 
             end
         end
     end
 
     
-    local ClosestTarget = nil
+    TargetPlayer = nil
+    local ClosestPart = nil
     local MaxDistance = Config.FOVRadius
 
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character then
-            local TargetChar = player.Character
-            local TargetPart = GetTargetBone(TargetChar) -- Busca dinámicamente R6 o R15
-            local Humanoid = TargetChar:FindFirstChildOfClass("Humanoid")
+            local Char = player.Character
+            local Part = GetTargetBone(Char)
+            local Hum = Char:FindFirstChildOfClass("Humanoid")
 
-            if TargetPart and Humanoid and Humanoid.Health > 0 then
-                local ScreenPosition, OnScreen = Camera:WorldToViewportPoint(TargetPart.Position)
+            if Part and Hum and Hum.Health > 0 then
+                local ScreenPosition, OnScreen = Camera:WorldToViewportPoint(Part.Position)
 
                 if OnScreen then
                     local MousePosition = UserInputService:GetMouseLocation()
                     local Distance = (Vector3.new(ScreenPosition.X, ScreenPosition.Y, 0) - Vector3.new(MousePosition.X, MousePosition.Y, 0)).Magnitude
 
+                
                     if Distance < MaxDistance then
                         MaxDistance = Distance
-                        ClosestTarget = TargetPart
+                        ClosestPart = Part
+                        TargetPlayer = player 
                     end
                 end
             end
         end
     end
     
-    CurrentTarget = ClosestTarget 
-    return ClosestTarget
+    return ClosestPart
 end
 
 
@@ -779,47 +778,41 @@ RunService.RenderStepped:Connect(function()
             Camera.CFrame = CFrame.new(Camera.CFrame.Position, Target.Position)
         end
     else
-        CurrentTarget = nil 
+        TargetPlayer = nil
     end
 end)
 
 
--- CÍRCULO DEL FOV NATIVO PARA MÓVIL (100% COMPATIBLE)
-
 
 local CoreGui = game:GetService("CoreGui")
 
--- 1. Crear el contenedor de la interfaz para el FOV
 local FOVScreen = Instance.new("ScreenGui")
-FOVScreen.Name = "ViceCity_FOV"
+FOVScreen.Name = "ViceCity_Fov"
+FOVScreen.ResetOnSpawn = false
+FOVScreen.IgnoreGuiInset = true -- 🌟 CLAVE: Ignora la barra superior del celular para alineación perfecta
 FOVScreen.Parent = CoreGui:FindFirstChild("RobloxGui") or CoreGui
-FOVScreen.DisplayOrder = 999 -- Asegura que se dibuje por encima de todo
 
--- 2. Crear la imagen del círculo (Usamos un asset circular nativo de Roblox)
 local FOVImage = Instance.new("ImageLabel")
-FOVImage.Name = "Anillo"
-FOVImage.AnchorPoint = Vector2.new(0.5, 0.5) -- Centrado perfecto
+FOVImage.Name = "AnilloVisual"
+FOVImage.AnchorPoint = Vector2.new(0.5, 0.5)
 FOVImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-FOVImage.BackgroundTransparency = 1 -- Fondo invisible
-FOVImage.Image = "rbxassetid://13460875291" -- ID de una textura circular perfecta de Roblox
-FOVImage.ImageColor3 = Theme.Combat -- Usa tu color Rojo Carmesí
-FOVImage.ImageTransparency = 0.3 -- Un toque de transparencia para que no tape la pantalla
+FOVImage.BackgroundTransparency = 1
+FOVImage.Image = "rbxassetid://13460875291" -- ID circular verificado
+FOVImage.ImageColor3 = Theme.Combat
+FOVImage.ImageTransparency = 0.4
 FOVImage.Visible = false
 FOVImage.Parent = FOVScreen
 
--- 3. Bucle para actualizar la posición y tamaño en tiempo real
 RunService.RenderStepped:Connect(function()
     if Config.FOVEnabled then
-        -- Obtenemos la posición de la mira/dedo en la pantalla
-        local MousePos = UserInputService:GetMouseLocation()
-        
-        -- El diámetro del círculo es el doble del radio del slider
+        -- 
+        local ViewportSize = Camera.ViewportSize
+        local CenterX = ViewportSize.X / 2
+        local CenterY = ViewportSize.Y / 2
         local Diameter = Config.FOVRadius * 2
         
-        -- Centramos el círculo exactamente en donde apunta el mouse/cámara
         FOVImage.Size = UDim2.new(0, Diameter, 0, Diameter)
-        FOVImage.Position = UDim2.new(0, MousePos.X, 0, MousePos.Y)
-        
+        FOVImage.Position = UDim2.new(0, CenterX, 0, CenterY)
         FOVImage.Visible = true
     else
         FOVImage.Visible = false
@@ -827,42 +820,8 @@ RunService.RenderStepped:Connect(function()
 end)
 
 
---  EJECUCIÓN CRONOMETRADA 
-task.spawn(function()
-    TweenService:Create(TopBarIntro, TweenInfo.new(0.8, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0.14, 0)}):Play()
-    TweenService:Create(BottomBarIntro, TweenInfo.new(0.8, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0.14, 0)}):Play()
-    task.wait(0.4)
 
-    TweenService:Create(IntroText, TweenInfo.new(1.5, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {TextSize = 55, TextTransparency = 0}):Play()
-    TweenService:Create(TextStroke, TweenInfo.new(1.5), {Transparency = 0.4}):Play()
-    task.wait(0.6)
 
-    TweenService:Create(SubText, TweenInfo.new(0.8, Enum.EasingStyle.Sine), {TextTransparency = 0.2}):Play()
-    task.wait(2.0)
-
-    TweenService:Create(TopBarIntro, TweenInfo.new(1.0, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {Size = UDim2.new(1, 0, 0, 0)}):Play()
-    TweenService:Create(BottomBarIntro, TweenInfo.new(1.0, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {Size = UDim2.new(1, 0, 0, 0)}):Play()
-
-    local fadeInfo = TweenInfo.new(1.0, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-    TweenService:Create(IntroText, fadeInfo, {TextTransparency = 1, TextSize = 85}):Play()
-    TweenService:Create(TextStroke, fadeInfo, {Transparency = 1}):Play()
-    TweenService:Create(SubText, fadeInfo, {TextTransparency = 1}):Play()
-    TweenService:Create(IntroFrame, fadeInfo, {BackgroundTransparency = 1}):Play()
-
-    for _, p in pairs(ParticlesFolder:GetChildren()) do
-        TweenService:Create(p, fadeInfo, {BackgroundTransparency = 1}):Play()
-    end
-
-    task.wait(1.0)
-    
-    if rgbConnection then rgbConnection:Disconnect() end
-    for _, t in pairs(activeTweens) do pcall(function() t:Cancel() end) end
-    IntroFrame:Destroy()
-    
-    OpenBtn.Size = UDim2.new(0, 0, 0, 0)
-    OpenBtn.Visible = true
-    TweenService:Create(OpenBtn, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 50, 0, 50)}):Play()
-end)
 
 
 -- SISTEMA  ESP 
