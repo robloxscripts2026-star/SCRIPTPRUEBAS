@@ -19,8 +19,14 @@ end)
 local Config = {
     SpeedValue = 16, SpeedEnabled = false, InfJump = false, Noclip = false, Fly = false,
     SilentAim = false, FOVEnabled = false, FOVRadius = 100,
+    
+    AimbotEnabled = false,
+    AimPart = "Head",         
+    HideAimMenu = false,     
+    
     ESPBox = false, ESPName = false, ESPDist = false, ESPHealth = false, Traces = false
 }
+
 
 -- Paleta de Colores por Sección
 local Theme = {
@@ -592,16 +598,103 @@ if Pages["Main"] then
     if TabButtons["Main"] then TabButtons["Main"].TextColor3 = Theme.Main end
 end
 
--- Añadir Elementos del Menú
+--  Elementos del Menú
 AddToggle(TabMain, "Speed Hack", "SpeedEnabled", Theme.Main)
 AddSlider(TabMain, "Speed Power", 16, 300, 16, "SpeedValue", Theme.Main)
 AddToggle(TabMain, "Infinity Jump", "InfJump", Theme.Main)
 AddToggle(TabMain, "Noclip", "Noclip", Theme.Main)
 AddToggle(TabMain, "Fly (Vuelo)", "Fly", Theme.Main)
 
-AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
-AddToggle(TabCombat, "Show FOV Anillo", "FOVEnabled", Theme.Combat)
+AddToggle(TabCombat, "Aimbot", "AimbotEnabled", Theme.Combat)
 AddSlider(TabCombat, "FOV Radio", 30, 300, 100, "FOVRadius", Theme.Combat)
+AddToggle(TabCombat, "Show FOV Anillo", "FOVEnabled", Theme.Combat)
+AddToggle(TabCombat, "Ocultar Menú Aim", "HideAimMenu", Theme.Combat)
+AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
+
+
+-- MINI PANEL DESPLEGABLE DE AIMBOT 
+
+local CoreGui = game:GetService("CoreGui")
+local AimMenu = Instance.new("Frame")
+local UIListLayout = Instance.new("UIListLayout")
+local Title = Instance.new("TextLabel")
+
+AimMenu.Name = "ViceCity_AimMenu"
+AimMenu.Parent = CoreGui:FindFirstChild("RobloxGui") or CoreGui
+AimMenu.Size = UDim2.new(0, 150, 0, 160)
+AimMenu.Position = UDim2.new(0.1, 0, 0.4, 0) 
+AimMenu.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+AimMenu.BorderSizePixel = 2
+AimMenu.BorderColor3 = Theme.Combat
+AimMenu.Visible = false 
+
+NAME
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+Title.Text = "AIM MENU"
+Title.TextColor3 = Theme.Combat
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 12
+Title.Parent = AimMenu
+
+
+UIListLayout.Parent = AimMenu
+UIListLayout.SortOrder = Enum.Font.SourceSans
+UIListLayout.Padding = UDim.new(0, 5)
+
+
+local function CreateAimButton(partName, displayName)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(1, -10, 0, 35)
+    Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    Btn.Text = displayName
+    Btn.Font = Enum.Font.Gotham
+    Btn.TextSize = 13
+    
+     
+    Btn.TextColor3 = (Config.AimPart == partName) and Theme.Combat or Color3.fromRGB(200, 200, 200)
+    Btn.Parent = AimMenu
+    
+
+    local UIPadding = Instance.new("UIPadding")
+    UIPadding.PaddingLeft = UDim.new(0, 5)
+    UIPadding.Parent = Btn
+
+    Btn.MouseButton1Click:Connect(function()
+        Config.AimPart = partName
+
+        for _, child in ipairs(AimMenu:GetChildren()) do
+            if child:IsA("TextButton") then
+                child.TextColor3 = Color3.fromRGB(200, 200, 200)
+            end
+        end
+        Btn.TextColor3 = Theme.Combat
+    end)
+end
+
+-- Creamos las 3 opciones requeridas
+CreateAimButton("Head", "👤 Cabeza (Head)")
+CreateAimButton("Neck", "🦒 Cuello (Neck)")
+CreateAimButton("Torso", "👕 Torso")
+
+
+local function UpdateAimMenuVisibility()
+    
+    if Config.AimbotEnabled and not Config.HideAimMenu then
+        AimMenu.Visible = true
+    else
+        AimMenu.Visible = false
+    end
+end
+
+
+local RunService = game:GetService("RunService")
+RunService.RenderStepped:Connect(UpdateAimMenuVisibility)
+
+MakeSmoothDrag(AimMenu, Title)
+
+
+
 
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Name", "ESPName", Theme.Visuals)
