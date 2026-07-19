@@ -140,14 +140,15 @@ IntroText.Position = UDim2.new(0, 0, -0.04, 0)
 IntroText.BackgroundTransparency = 1
 IntroText.Text = "VICE CITY HUB"
 IntroText.Font = Enum.Font.GothamBlack
-IntroText.TextSize = 1 
-IntroText.TextTransparency = 1 
+IntroText.TextSize = 35 
+IntroText.TextColor3 = Color3.fromRGB(255, 255, 255)
+IntroText.TextTransparency = 0 
 IntroText.ZIndex = 103
 IntroText.Parent = IntroFrame
 
 local TextStroke = Instance.new("UIStroke")
 TextStroke.Thickness = 3.5
-TextStroke.Transparency = 1
+TextStroke.Transparency = 0 
 TextStroke.Parent = IntroText
 
 local SubText = Instance.new("TextLabel")
@@ -158,9 +159,10 @@ SubText.Text = "C A R G A N D O   S I S T E M A . . ."
 SubText.TextColor3 = Color3.fromRGB(200, 200, 200)
 SubText.Font = Enum.Font.Gotham
 SubText.TextSize = 13
-SubText.TextTransparency = 1
+SubText.TextTransparency = 0 -- <-- CORREGIDO: Cambiado de 1 a 0 para que se lea el texto de carga
 SubText.ZIndex = 103
 SubText.Parent = IntroFrame
+
 
 local themeColors = {Theme.Main, Theme.Combat, Theme.Visuals, Theme.Misc}
 local rgbConnection = RunService.RenderStepped:Connect(function()
