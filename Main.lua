@@ -291,6 +291,19 @@ TabPanel.BackgroundColor3 = Color3.fromRGB(17, 18, 22)
 TabPanel.BorderSizePixel = 0
 TabPanel.Parent = MainFrame
 
+local TabCorner = Instance.new("UICorner")
+TabCorner.CornerRadius = UDim.new(0, 14)
+TabCorner.Parent = TabPanel
+
+local TabFixLeft = Instance.new("Frame")
+TabFixLeft.Size = UDim2.new(1, 0, 0, 15)
+TabFixLeft.Position = UDim2.new(0, 0, 0, 0)
+TabFixLeft.BackgroundColor3 = Color3.fromRGB(17, 18, 22)
+TabFixLeft.BorderSizePixel = 0
+TabFixLeft.ZIndex = 2
+TabFixLeft.Parent = TabPanel
+
+
 local TabList = Instance.new("UIListLayout")
 TabList.Padding = UDim.new(0, 4)
 TabList.Parent = TabPanel
