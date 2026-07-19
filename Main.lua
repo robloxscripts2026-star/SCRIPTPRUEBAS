@@ -30,10 +30,10 @@ local Config = {
 
 -- Paleta de Colores por Sección
 local Theme = {
-    Main = Color3.fromRGB(0, 255, 230),    -- Cian Neón Eléctrico
-    Combat = Color3.fromRGB(255, 60, 80),  -- Rojo Carmesí
-    Visuals = Color3.fromRGB(255, 210, 0), -- Amarillo Oro Neón
-    Misc = Color3.fromRGB(160, 80, 255)    -- Morado Cyberpunk
+    Main = Color3.fromRGB(0, 255, 230),    -- Cian  
+    Combat = Color3.fromRGB(255, 60, 80),  -- Rojo 
+    Visuals = Color3.fromRGB(255, 210, 0), -- Amarillo 
+    Misc = Color3.fromRGB(160, 80, 255)    -- Morado 
 }
 
 --  Función de arrastrar 
@@ -657,93 +657,7 @@ AddToggle(TabMain, "Fly (Vuelo)", "Fly", Theme.Main)
 AddToggle(TabCombat, "Aimbot", "AimbotEnabled", Theme.Combat)
 AddSlider(TabCombat, "FOV Radio", 30, 300, 100, "FOVRadius", Theme.Combat)
 AddToggle(TabCombat, "Show FOV Anillo", "FOVEnabled", Theme.Combat)
-AddToggle(TabCombat, "Ocultar Menú Aim", "HideAimMenu", Theme.Combat)
 AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
-
-
--- MINI PANEL DESPLEGABLE DE AIMBOT 
-
-local CoreGui = game:GetService("CoreGui")
-local AimMenu = Instance.new("Frame")
-local UIListLayout = Instance.new("UIListLayout")
-local AimTitle = Instance.new("TextLabel") -- ¡Cambiado para evitar errores!
-
-AimMenu.Name = "ViceCity_AimMenu"
-AimMenu.Parent = CoreGui:FindFirstChild("RobloxGui") or CoreGui
-AimMenu.Size = UDim2.new(0, 150, 0, 160)
-AimMenu.Position = UDim2.new(0.1, 0, 0.4, 0) 
-AimMenu.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-AimMenu.BorderSizePixel = 2
-AimMenu.BorderColor3 = Theme.Combat
-AimMenu.Visible = false 
-
---NAME 
-AimTitle.Size = UDim2.new(1, 0, 0, 30)
-AimTitle.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
-AimTitle.Text = "AIM MENU"
-AimTitle.TextColor3 = Theme.Combat
-AimTitle.Font = Enum.Font.GothamBold
-AimTitle.TextSize = 12
-AimTitle.Parent = AimMenu
-
-UIListLayout.Parent = AimMenu
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder 
-UIListLayout.Padding = UDim.new(0, 5)
-
-
-
-
-local function CreateAimButton(partName, displayName)
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(1, -10, 0, 35)
-    Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
-    Btn.Text = displayName
-    Btn.Font = Enum.Font.Gotham
-    Btn.TextSize = 13
-    
-     
-    Btn.TextColor3 = (Config.AimPart == partName) and Theme.Combat or Color3.fromRGB(200, 200, 200)
-    Btn.Parent = AimMenu
-    
-
-    local UIPadding = Instance.new("UIPadding")
-    UIPadding.PaddingLeft = UDim.new(0, 5)
-    UIPadding.Parent = Btn
-
-    Btn.MouseButton1Click:Connect(function()
-        Config.AimPart = partName
-
-        for _, child in ipairs(AimMenu:GetChildren()) do
-            if child:IsA("TextButton") then
-                child.TextColor3 = Color3.fromRGB(200, 200, 200)
-            end
-        end
-        Btn.TextColor3 = Theme.Combat
-    end)
-end
-
--- Creamos las 3 opciones requeridas
-CreateAimButton("Head", "👤 Cabeza (Head)")
-CreateAimButton("Neck", "🦒 Cuello (Neck)")
-CreateAimButton("Torso", "👕 Torso")
-
-
-local function UpdateAimMenuVisibility()
-    
-    if Config.AimbotEnabled and not Config.HideAimMenu then
-        AimMenu.Visible = true
-    else
-        AimMenu.Visible = false
-    end
-end
-
-
-local RunService = game:GetService("RunService")
-RunService.RenderStepped:Connect(UpdateAimMenuVisibility)
-
-MakeSmoothDrag(AimMenu, AimTitle)
-
-
 
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Name", "ESPName", Theme.Visuals)
@@ -754,120 +668,6 @@ AddToggle(TabVisuals, "Traces", "Traces", Theme.Visuals)
 AddButton(TabMisc, "Server Hop", Theme.Misc)
 AddButton(TabMisc, "Rejoin Server", Theme.Misc)
 
-
-
-
--- SISTEMA DE AIMBOT
-
-
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-local Camera = workspace.CurrentCamera
-local TargetPlayer = nil 
-
-
-local function GetTargetBone(character)
-    if Config.AimPart == "Head" then
-        return character:FindFirstChild("Head")
-    elseif Config.AimPart == "Neck" then
-        return character:FindFirstChild("UpperTorso") or character:FindFirstChild("Head")
-    elseif Config.AimPart == "Torso" then
-        return character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso") or character:FindFirstChild("HumanoidRootPart")
-    end
-    return character:FindFirstChild("Head")
-end
-
-local function GetClosestPlayer()
-    if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChildOfClass("Humanoid") then
-        local Hum = TargetPlayer.Character:FindFirstChildOfClass("Humanoid")
-        local Part = GetTargetBone(TargetPlayer.Character)
-        
-        if Hum.Health > 0 and Part then
-            local _, OnScreen = Camera:WorldToViewportPoint(Part.Position)
-            if OnScreen then
-                return Part
-            end
-        end
-    end
-
-    TargetPlayer = nil
-    local ClosestPart = nil
-    local MaxDistance = Config.FOVRadius
-
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character then
-            local Char = player.Character
-            local Part = GetTargetBone(Char)
-            local Hum = Char:FindFirstChildOfClass("Humanoid")
-
-            if Part and Hum and Hum.Health > 0 then
-                local ScreenPosition, OnScreen = Camera:WorldToViewportPoint(Part.Position)
-
-                if OnScreen then
-                    local MousePosition = UserInputService:GetMouseLocation()
-                    local Distance = (Vector3.new(ScreenPosition.X, ScreenPosition.Y, 0) - Vector3.new(MousePosition.X, MousePosition.Y, 0)).Magnitude
-
-                    if Distance < MaxDistance then
-                        MaxDistance = Distance
-                        ClosestPart = Part
-                        TargetPlayer = player 
-                    end
-                end
-            end
-        end
-    end
-    
-    return ClosestPart
-end
-
-
-RunService.RenderStepped:Connect(function()
-    if Config.AimbotEnabled then
-        local Target = GetClosestPlayer()
-        if Target then
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, Target.Position)
-        end
-    else
-        TargetPlayer = nil 
-    end
-end)
-
-
--- FIJADO DE FOV NATIVO 
-
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-
-local FOVScreen = Instance.new("ScreenGui")
-FOVScreen.Name = "ViceCity_FOV_Fixed"
-FOVScreen.ResetOnSpawn = false
-FOVScreen.IgnoreGuiInset = true 
-FOVScreen.Parent = PlayerGui
-
-local FOVImage = Instance.new("ImageLabel")
-FOVImage.Name = "AnilloVisual"
-FOVImage.AnchorPoint = Vector2.new(0.5, 0.5)
-FOVImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-FOVImage.BackgroundTransparency = 1
-FOVImage.Image = "rbxassetid://13460875291" 
-FOVImage.ImageColor3 = Theme.Combat
-FOVImage.ImageTransparency = 0.4
-FOVImage.Visible = false
-FOVImage.Parent = FOVScreen
-
-RunService.RenderStepped:Connect(function()
-    if Config.FOVEnabled then
-        local ViewportSize = Camera.ViewportSize
-        local CenterX = ViewportSize.X / 2
-        local CenterY = ViewportSize.Y / 2
-        local Diameter = Config.FOVRadius * 2
-        
-        FOVImage.Size = UDim2.new(0, Diameter, 0, Diameter)
-        FOVImage.Position = UDim2.new(0, CenterX, 0, CenterY) 
-        FOVImage.Visible = true
-    else
-        FOVImage.Visible = false
-    end
-end)
 
 
 
