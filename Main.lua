@@ -87,6 +87,7 @@ ScreenGui.IgnoreGuiInset = true
 
 
 --  MOSTRAR INTRO INMEDIATAMENTE 
+local MainFrame
 local IntroFrame = Instance.new("Frame")
 IntroFrame.Name = "IntroFrame"
 IntroFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -209,17 +210,20 @@ task.spawn(function()
             IntroFrame:Destroy()
             if rgbConnection then rgbConnection:Disconnect() end
             
-            if MainFrame then
-                MainFrame.Visible = true
-            end
-        end)
-    end
-end)
+    if MainFrame then
+        MainFrame.Visible = true
+        if Pages["Main"] and TabButtons["Main"] then
+            Pages["Main"].Visible = true
+            TabButtons["Main"].TextColor3 = Theme.Main
+        end
+     end         
+ end)                 
+                    
 
 
 
 --   CONSTRUCCIÓN DEL MENÚ EN SEGUNDO PLANO 
-local MainFrame = Instance.new("Frame")
+MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 460, 0, 270)
 MainFrame.Position = UDim2.new(0.5, -230, 0.5, -135)
@@ -332,7 +336,7 @@ local Pages = {}
 local TabButtons = {}
 local isTweening = false
 
---  ANIMACIÓNESDE APERTURA Y CIERRE 
+--  ANIMACIÓNES DE APERTURA Y CIERRE 
 CloseBtn.MouseButton1Click:Connect(function()
     if isTweening then return end
     isTweening = true
@@ -739,8 +743,6 @@ MakeSmoothDrag(AimMenu, AimTitle)
 
 
 
-
-
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Name", "ESPName", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Distancia", "ESPDist", Theme.Visuals)
@@ -1114,7 +1116,7 @@ RunService.RenderStepped:Connect(function()
         end
         
         local camera = workspace.CurrentCamera
-        FlyGyro.Cframe = camera.CFrame
+        FlyGyro.CFrame = camera.CFrame
         
         local moveDirection = Humanoid.MoveDirection
         if moveDirection.Magnitude > 0 then
