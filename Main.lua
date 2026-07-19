@@ -617,7 +617,7 @@ AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
 local CoreGui = game:GetService("CoreGui")
 local AimMenu = Instance.new("Frame")
 local UIListLayout = Instance.new("UIListLayout")
-local Title = Instance.new("TextLabel")
+local AimTitle = Instance.new("TextLabel") -- ¡Cambiado para evitar errores!
 
 AimMenu.Name = "ViceCity_AimMenu"
 AimMenu.Parent = CoreGui:FindFirstChild("RobloxGui") or CoreGui
@@ -628,19 +628,20 @@ AimMenu.BorderSizePixel = 2
 AimMenu.BorderColor3 = Theme.Combat
 AimMenu.Visible = false 
 
---NAME
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
-Title.Text = "AIM MENU"
-Title.TextColor3 = Theme.Combat
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 12
-Title.Parent = AimMenu
-
+--NAME 
+AimTitle.Size = UDim2.new(1, 0, 0, 30)
+AimTitle.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+AimTitle.Text = "AIM MENU"
+AimTitle.TextColor3 = Theme.Combat
+AimTitle.Font = Enum.Font.GothamBold
+AimTitle.TextSize = 12
+AimTitle.Parent = AimMenu
 
 UIListLayout.Parent = AimMenu
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder 
 UIListLayout.Padding = UDim.new(0, 5)
+
+
 
 
 local function CreateAimButton(partName, displayName)
@@ -691,7 +692,8 @@ end
 local RunService = game:GetService("RunService")
 RunService.RenderStepped:Connect(UpdateAimMenuVisibility)
 
-MakeSmoothDrag(AimMenu, Title)
+MakeSmoothDrag(AimMenu, AimTitle)
+
 
 
 
@@ -957,19 +959,18 @@ end
 --  A.P GB👀
 
 
--- Función interna para gestionar de forma segura la aparición del personaje
 local function MonitorPlayer(player)
     if player == LocalPlayer then return end
 
-    -- Conector principal cada vez que el jugador reaparezca (Spawn o muerte)
+
     player.CharacterAdded:Connect(function(character)
-        -- Esperas preventivas seguras para asegurar existencia física en Workspace
+        
         local root = character:WaitForChild("HumanoidRootPart", 10)
         local head = character:WaitForChild("Head", 10)
         local humanoid = character:WaitForChild("Humanoid", 10)
         
         if root and head and humanoid then
-            task.wait(0.2) -- Micro-retraso premium para evitar desajustes de accesorios y lag de red
+            task.wait(0.2) 
             CreateESP(player)
         end
     end)
@@ -980,15 +981,12 @@ local function MonitorPlayer(player)
     end
 end
 
--- Escuchar de forma activa y en tiempo real a todo jugador NUEVO que se una al servidor
 Players.PlayerAdded:Connect(MonitorPlayer)
 
--- Aplicar inmediatamente el detector a todos los jugadores que YA estaban dentro del servidor
 for _, player in pairs(Players:GetPlayers()) do
     MonitorPlayer(player)
 end
 
--- Conexión robusta para jugadores actuales y futuros
 for _, player in pairs(Players:GetPlayers()) do
     if player ~= LocalPlayer then
         CreateESP(player)
@@ -998,7 +996,7 @@ end
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
         if player ~= LocalPlayer then
-            -- Espera de seguridad integrada para asegurar la carga completa de las extremidades
+            
             player.Character:WaitForChild("HumanoidRootPart", 5)
             player.Character:WaitForChild("Head", 5)
             CreateESP(player)
@@ -1010,11 +1008,6 @@ end)
 -- BYPASS ULTRA MEGA PRO MAX 🗣️🔥🔥🔥
 
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-
-local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character:WaitForChild("HumanoidRootPart")
@@ -1078,7 +1071,7 @@ RunService.RenderStepped:Connect(function()
         end
         
         local camera = workspace.CurrentCamera
-        FlyGyro.cframe = camera.CFrame
+        FlyGyro.Cframe = camera.CFrame
         
         local moveDirection = Humanoid.MoveDirection
         if moveDirection.Magnitude > 0 then
