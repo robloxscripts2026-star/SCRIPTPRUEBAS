@@ -175,6 +175,49 @@ local rgbConnection = RunService.RenderStepped:Connect(function()
 end)
 
 
+-- SECUENCIA DE CIERRE DE LA INTRODUCCIÓN
+task.spawn(function()
+    task.wait(3.5) 
+
+    if IntroText and SubText then
+        
+        TweenService:Create(IntroText, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            TextSize = 35,
+            TextTransparency = 1
+        }):Play()
+        
+        TweenService:Create(TextStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Transparency = 1
+        }):Play()
+
+        TweenService:Create(SubText, TweenInfo.new(0.4, Enum.EasingStyle.Quad), {
+            TextTransparency = 1
+        }):Play()
+        
+        task.wait(0.5)
+    end
+
+    
+    if IntroFrame then
+        local fadeTween = TweenService:Create(IntroFrame, TweenInfo.new(0.7, Enum.EasingStyle.Quad), {
+            BackgroundTransparency = 1
+        })
+        fadeTween:Play()
+        
+        fadeTween.Completed:Connect(function()
+            
+            IntroFrame:Destroy()
+            if rgbConnection then rgbConnection:Disconnect() end
+            
+            if MainFrame then
+                MainFrame.Visible = true
+            end
+        end)
+    end
+end)
+
+
+
 --   CONSTRUCCIÓN DEL MENÚ EN SEGUNDO PLANO 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
