@@ -216,8 +216,10 @@ task.spawn(function()
             Pages["Main"].Visible = true
             TabButtons["Main"].TextColor3 = Theme.Main
         end
-     end         
- end)                 
+    end
+end)
+    end
+end)
                     
 
 
