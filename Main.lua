@@ -348,7 +348,7 @@ RunService.RenderStepped:Connect(function(dt)
     end
 end)
 
--- Estructuras de control necesarias para las animaciones
+
 local Pages = {}
 local TabButtons = {}
 local isTweening = false
@@ -669,110 +669,143 @@ end
 
 
 
+local InfoCard = Instance.new("Frame")
+InfoCard.Size = UDim2.new(0.92, 0, 0, 85)
+InfoCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
+InfoCard.BorderSizePixel = 0
+InfoCard.Parent = TabMain
+
+local ic_corner = Instance.new("UICorner")
+ic_corner.CornerRadius = UDim.new(0, 8)
+ic_corner.Parent = InfoCard
+
+local ic_stroke = Instance.new("UIStroke")
+ic_stroke.Color = Color3.fromRGB(35, 38, 47)
+ic_stroke.Thickness = 1.2
+ic_stroke.Parent = InfoCard
+
 local WelcomeLabel = Instance.new("TextLabel")
-WelcomeLabel.Size = UDim2.new(0.92, 0, 0, 30)
-WelcomeLabel.Text = "BIENVENIDO " .. tostring(LocalPlayer.Name):upper() .. " DE ROBLOX 👻"
+WelcomeLabel.Size = UDim2.new(1, -20, 0, 22)
+WelcomeLabel.Position = UDim2.new(0, 10, 0, 6)
+WelcomeLabel.Text = "BIENVENIDO, " .. tostring(LocalPlayer.Name):upper() .. " 👋"
 WelcomeLabel.Font = Enum.Font.GothamBold
-WelcomeLabel.TextSize = 14
+WelcomeLabel.TextSize = 13
 WelcomeLabel.TextColor3 = Theme.Main
+WelcomeLabel.TextXAlignment = Enum.TextXAlignment.Left
 WelcomeLabel.BackgroundTransparency = 1
-WelcomeLabel.Parent = TabMain
+WelcomeLabel.Parent = InfoCard
 
-local InfoLabel = Instance.new("TextLabel")
-InfoLabel.Size = UDim2.new(0.92, 0, 0, 25)
-InfoLabel.Text = "DISFRUTA DEL SCRIPT PARA VICE CITY HUB V2"
-InfoLabel.Font = Enum.Font.Gotham
-InfoLabel.TextSize = 12
-InfoLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-InfoLabel.BackgroundTransparency = 1
-InfoLabel.Parent = TabMain
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(1, -20, 0, 18)
+StatusLabel.Position = UDim2.new(0, 10, 0, 30)
+StatusLabel.Text = "• ESTADO: ACTIVE 🟢 (ENFORCE CITY 2)"
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.TextSize = 11
+StatusLabel.TextColor3 = Color3.fromRGB(180, 185, 195)
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Parent = InfoCard
 
-local WarnLabel = Instance.new("TextLabel")
-WarnLabel.Size = UDim2.new(0.92, 0, 0, 35)
-WarnLabel.Text = "⚠️ RECUERDA QUE EL USO DE HACKS PUEDE CAUSAR BANEOS"
-WarnLabel.Font = Enum.Font.GothamBold
-WarnLabel.TextSize = 11
-WarnLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
-WarnLabel.TextWrapped = true
-WarnLabel.BackgroundTransparency = 1
-WarnLabel.Parent = TabMain
+local PlayersLabel = Instance.new("TextLabel")
+PlayersLabel.Size = UDim2.new(1, -20, 0, 18)
+PlayersLabel.Position = UDim2.new(0, 10, 0, 52)
+PlayersLabel.Text = "• SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers()) .. " JUGADORES ACTIVAS"
+PlayersLabel.Font = Enum.Font.Gotham
+PlayersLabel.TextSize = 11
+PlayersLabel.TextColor3 = Color3.fromRGB(180, 185, 195)
+PlayersLabel.TextXAlignment = Enum.TextXAlignment.Left
+PlayersLabel.BackgroundTransparency = 1
+PlayersLabel.Parent = InfoCard
 
-local Separator = Instance.new("Frame")
-Separator.Size = UDim2.new(0.92, 0, 0, 2)
-Separator.BackgroundColor3 = Color3.fromRGB(35, 38, 47)
-Separator.BorderSizePixel = 0
-Separator.Parent = TabMain
 
--- Botón de WhatsApp
+local function UpdatePlayerCount()
+    PlayersLabel.Text = "• SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers()) .. " JUGADORES ACTIVOS"
+end
+game:GetService("Players").PlayerAdded:Connect(UpdatePlayerCount)
+game:GetService("Players").PlayerRemoving:Connect(UpdatePlayerCount)
+
+
+
+local SocialCard = Instance.new("Frame")
+SocialCard.Size = UDim2.new(0.92, 0, 0, 95)
+SocialCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
+SocialCard.BorderSizePixel = 0
+SocialCard.Parent = TabMain
+
+local sc_corner = Instance.new("UICorner")
+sc_corner.CornerRadius = UDim.new(0, 8)
+sc_corner.Parent = SocialCard
+
+local sc_stroke = Instance.new("UIStroke")
+sc_stroke.Color = Color3.fromRGB(35, 38, 47)
+sc_stroke.Thickness = 1.2
+sc_stroke.Parent = SocialCard
+
+local SocialTitle = Instance.new("TextLabel")
+SocialTitle.Size = UDim2.new(1, -20, 0, 22)
+SocialTitle.Position = UDim2.new(0, 10, 0, 6)
+SocialTitle.Text = "COMUNIDAD & REDES 🌐"
+SocialTitle.Font = Enum.Font.GothamBold
+SocialTitle.TextSize = 12
+SocialTitle.TextColor3 = Color3.fromRGB(220, 225, 235)
+SocialTitle.TextXAlignment = Enum.TextXAlignment.Left
+SocialTitle.BackgroundTransparency = 1
+SocialTitle.Parent = SocialCard
+
+-- Botón WhatsApp 
 local WhatsAppBtn = Instance.new("TextButton")
-WhatsAppBtn.Size = UDim2.new(0.92, 0, 0, 36)
-WhatsAppBtn.BackgroundColor3 = Color3.fromRGB(24, 27, 34)
-WhatsAppBtn.Text = "📲 SÍGUENOS EN NUESTRO CANAL DE WHATSAPP"
+WhatsAppBtn.Size = UDim2.new(1, -20, 0, 26)
+WhatsAppBtn.Position = UDim2.new(0, 10, 0, 32)
+WhatsAppBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+WhatsAppBtn.Text = "📲 CANAL DE WHATSAPP"
 WhatsAppBtn.Font = Enum.Font.GothamBold
-WhatsAppBtn.TextSize = 11
+WhatsAppBtn.TextSize = 10.5
 WhatsAppBtn.TextColor3 = Theme.Main
-WhatsAppBtn.Parent = TabMain
+WhatsAppBtn.Parent = SocialCard
 
 local wbc = Instance.new("UICorner")
-wbc.CornerRadius = UDim.new(0, 6)
+wbc.CornerRadius = UDim.new(0, 5)
 wbc.Parent = WhatsAppBtn
 
 WhatsAppBtn.MouseButton1Click:Connect(function()
     setclipboard("https://whatsapp.com/channel/0029VbC12x4GufIzNYfrPh3R")
-    WhatsAppBtn.Text = "¡LINK COPIADO AL PORTAPAPELES! ✅"
+    WhatsAppBtn.Text = "¡LINK COPIADO! ✅"
     task.wait(2)
-    WhatsAppBtn.Text = "📲 SÍGUENOS EN NUESTRO CANAL DE WHATSAPP"
+    WhatsAppBtn.Text = "📲 CANAL DE WHATSAPP"
 end)
 
--- Botón de TikTok 
+-- Botón 
 local TikTokBtn = Instance.new("TextButton")
-TikTokBtn.Size = UDim2.new(0.92, 0, 0, 36)
-TikTokBtn.BackgroundColor3 = Color3.fromRGB(24, 27, 34)
-TikTokBtn.Text = "🎵 VISITA NUESTRO TIKTOK (COPIAR USER)"
+TikTokBtn.Size = UDim2.new(1, -20, 0, 26)
+TikTokBtn.Position = UDim2.new(0, 10, 0, 62)
+TikTokBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+TikTokBtn.Text = "🎵 OFICIAL TIKTOK"
 TikTokBtn.Font = Enum.Font.GothamBold
-TikTokBtn.TextSize = 11
+TikTokBtn.TextSize = 10.5
 TikTokBtn.TextColor3 = Theme.Main
-TikTokBtn.Parent = TabMain
+TikTokBtn.Parent = SocialCard
 
 local tkc = Instance.new("UICorner")
-tkc.CornerRadius = UDim.new(0, 6)
+tkc.CornerRadius = UDim.new(0, 5)
 tkc.Parent = TikTokBtn
 
 TikTokBtn.MouseButton1Click:Connect(function()
-    setclipboard("softworks32") -- Sigue copiando tu usuario al portapapeles en secreto ;)
+    setclipboard("softworks32")
     TikTokBtn.Text = "¡USUARIO COPIADO! ✅"
     task.wait(2)
-    TikTokBtn.Text = "🎵 VISITA NUESTRO TIKTOK (COPIAR USER)"
+    TikTokBtn.Text = "🎵 OFICIAL TIKTOK"
 end)
 
 
-
-local StatusLabel = Instance.new("TextLabel")
-StatusLabel.Size = UDim2.new(0.92, 0, 0, 20)
-StatusLabel.Text = "ESTADO: ACTUALIZADO Y ACTIVO 🟢"
-StatusLabel.Font = Enum.Font.GothamBold
-StatusLabel.TextSize = 11
-StatusLabel.TextColor3 = Color3.fromRGB(50, 255, 130) -- Verde brillante
-StatusLabel.BackgroundTransparency = 1
-StatusLabel.Parent = TabMain
-
-local PlayersLabel = Instance.new("TextLabel")
-PlayersLabel.Size = UDim2.new(0.92, 0, 0, 20)
-PlayersLabel.Text = "JUGADORES EN EL SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers())
-PlayersLabel.Font = Enum.Font.Gotham
-PlayersLabel.TextSize = 11
-PlayersLabel.TextColor3 = Color3.fromRGB(180, 185, 195)
-PlayersLabel.BackgroundTransparency = 1
-PlayersLabel.Parent = TabMain
-
-
-game:GetService("Players").PlayerAdded:Connect(function()
-    PlayersLabel.Text = "JUGADORES EN EL SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers())
-end)
-game:GetService("Players").PlayerRemoving:Connect(function()
-    PlayersLabel.Text = "JUGADORES EN EL SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers())
-end)
-
+--AVISO 
+local WarnLabel = Instance.new("TextLabel")
+WarnLabel.Size = UDim2.new(0.92, 0, 0, 25)
+WarnLabel.Text = "⚠️ Usa las funciones bajo tu propio riesgo."
+WarnLabel.Font = Enum.Font.Gotham
+WarnLabel.TextSize = 10.5
+WarnLabel.TextColor3 = Color3.fromRGB(255, 90, 90)
+WarnLabel.BackgroundTransparency = 1
+WarnLabel.Parent = TabMain
 
 
 
