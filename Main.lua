@@ -159,7 +159,7 @@ SubText.Text = "C A R G A N D O   S I S T E M A . . ."
 SubText.TextColor3 = Color3.fromRGB(200, 200, 200)
 SubText.Font = Enum.Font.Gotham
 SubText.TextSize = 13
-SubText.TextTransparency = 0 -- <-- CORREGIDO: Cambiado de 1 a 0 para que se lea el texto de carga
+SubText.TextTransparency = 0 
 SubText.ZIndex = 103
 SubText.Parent = IntroFrame
 
@@ -668,9 +668,6 @@ if Pages["Main"] then
 end
 
 
-if Pages["Main"] then
-    Pages["Main"].Visible = true
-    if TabButtons["Main"] then TabButtons["Main"].TextColor3 = Theme.Main end
 
 local WelcomeLabel = Instance.new("TextLabel")
 WelcomeLabel.Size = UDim2.new(0.92, 0, 0, 30)
