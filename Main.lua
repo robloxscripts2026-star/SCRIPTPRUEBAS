@@ -703,7 +703,7 @@ Separator.BackgroundColor3 = Color3.fromRGB(35, 38, 47)
 Separator.BorderSizePixel = 0
 Separator.Parent = TabMain
 
--- Botón de WhatsApp Oculto
+-- Botón de WhatsApp
 local WhatsAppBtn = Instance.new("TextButton")
 WhatsAppBtn.Size = UDim2.new(0.92, 0, 0, 36)
 WhatsAppBtn.BackgroundColor3 = Color3.fromRGB(24, 27, 34)
@@ -724,11 +724,11 @@ WhatsAppBtn.MouseButton1Click:Connect(function()
     WhatsAppBtn.Text = "📲 SÍGUENOS EN NUESTRO CANAL DE WHATSAPP"
 end)
 
--- Botón de TikTok
+-- Botón de TikTok 
 local TikTokBtn = Instance.new("TextButton")
 TikTokBtn.Size = UDim2.new(0.92, 0, 0, 36)
 TikTokBtn.BackgroundColor3 = Color3.fromRGB(24, 27, 34)
-TikTokBtn.Text = "🎵 TIKTOK: @softworks32 (COPIAR USER)"
+TikTokBtn.Text = "🎵 VISITA NUESTRO TIKTOK (COPIAR USER)"
 TikTokBtn.Font = Enum.Font.GothamBold
 TikTokBtn.TextSize = 11
 TikTokBtn.TextColor3 = Theme.Main
@@ -739,11 +739,41 @@ tkc.CornerRadius = UDim.new(0, 6)
 tkc.Parent = TikTokBtn
 
 TikTokBtn.MouseButton1Click:Connect(function()
-    setclipboard("softworks32")
+    setclipboard("softworks32") -- Sigue copiando tu usuario al portapapeles en secreto ;)
     TikTokBtn.Text = "¡USUARIO COPIADO! ✅"
     task.wait(2)
-    TikTokBtn.Text = "🎵 TIKTOK: @softworks32 (COPIAR USER)"
+    TikTokBtn.Text = "🎵 VISITA NUESTRO TIKTOK (COPIAR USER)"
 end)
+
+
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(0.92, 0, 0, 20)
+StatusLabel.Text = "ESTADO: ACTUALIZADO Y ACTIVO 🟢"
+StatusLabel.Font = Enum.Font.GothamBold
+StatusLabel.TextSize = 11
+StatusLabel.TextColor3 = Color3.fromRGB(50, 255, 130) -- Verde brillante
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Parent = TabMain
+
+local PlayersLabel = Instance.new("TextLabel")
+PlayersLabel.Size = UDim2.new(0.92, 0, 0, 20)
+PlayersLabel.Text = "JUGADORES EN EL SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers())
+PlayersLabel.Font = Enum.Font.Gotham
+PlayersLabel.TextSize = 11
+PlayersLabel.TextColor3 = Color3.fromRGB(180, 185, 195)
+PlayersLabel.BackgroundTransparency = 1
+PlayersLabel.Parent = TabMain
+
+
+game:GetService("Players").PlayerAdded:Connect(function()
+    PlayersLabel.Text = "JUGADORES EN EL SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers())
+end)
+game:GetService("Players").PlayerRemoving:Connect(function()
+    PlayersLabel.Text = "JUGADORES EN EL SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers())
+end)
+
+
 
 
 AddToggle(TabCheats, "Speed Hack", "SpeedEnabled", Theme.Main)
