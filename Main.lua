@@ -358,10 +358,12 @@ CloseBtn.MouseButton1Click:Connect(function()
     if isTweening then return end
     isTweening = true
     
-    local closeInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
     
+    local closeInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+    
+
     local mainClose = TweenService:Create(MainFrame, closeInfo, {
-        Size = UDim2.new(0, 300, 0, 180),
+        Size = UDim2.new(0, 430, 0, 250),
         BackgroundTransparency = 1
     })
     
@@ -388,11 +390,13 @@ CloseBtn.MouseButton1Click:Connect(function()
         MainFrame.Visible = false
         OpenBtn.Visible = true
         OpenBtn.Size = UDim2.new(0, 0, 0, 0)
-        local openAnim = TweenService:Create(OpenBtn, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 50, 0, 50)})
+        
+        local openAnim = TweenService:Create(OpenBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 50, 0, 50)})
         openAnim:Play()
         openAnim.Completed:Connect(function() isTweening = false end)
     end)
 end)
+
 
 OpenBtn.MouseButton1Click:Connect(function()
     if isTweening then return end
@@ -653,6 +657,7 @@ end
 
 --  INICIALIZACIÓN DE CATEGORÍAS 
 local TabMain = CreateTab("Main", Theme.Main)
+local TabCheats = CreateTab("Player Cheats", Theme.Main) 
 local TabCombat = CreateTab("Combat", Theme.Combat)
 local TabVisuals = CreateTab("Visuals", Theme.Visuals)
 local TabMisc = CreateTab("Misc", Theme.Misc)
@@ -662,13 +667,94 @@ if Pages["Main"] then
     if TabButtons["Main"] then TabButtons["Main"].TextColor3 = Theme.Main end
 end
 
---  Elementos del Menú
-AddToggle(TabMain, "Speed Hack", "SpeedEnabled", Theme.Main)
-AddSlider(TabMain, "Speed Power", 16, 300, 16, "SpeedValue", Theme.Main)
-AddToggle(TabMain, "Infinity Jump", "InfJump", Theme.Main)
-AddToggle(TabMain, "Noclip", "Noclip", Theme.Main)
-AddToggle(TabMain, "Fly (Vuelo)", "Fly", Theme.Main)
 
+if Pages["Main"] then
+    Pages["Main"].Visible = true
+    if TabButtons["Main"] then TabButtons["Main"].TextColor3 = Theme.Main end
+
+local WelcomeLabel = Instance.new("TextLabel")
+WelcomeLabel.Size = UDim2.new(0.92, 0, 0, 30)
+WelcomeLabel.Text = "BIENVENIDO " .. tostring(LocalPlayer.Name):upper() .. " DE ROBLOX 👻"
+WelcomeLabel.Font = Enum.Font.GothamBold
+WelcomeLabel.TextSize = 14
+WelcomeLabel.TextColor3 = Theme.Main
+WelcomeLabel.BackgroundTransparency = 1
+WelcomeLabel.Parent = TabMain
+
+local InfoLabel = Instance.new("TextLabel")
+InfoLabel.Size = UDim2.new(0.92, 0, 0, 25)
+InfoLabel.Text = "DISFRUTA DEL SCRIPT PARA VICE CITY HUB V2"
+InfoLabel.Font = Enum.Font.Gotham
+InfoLabel.TextSize = 12
+InfoLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+InfoLabel.BackgroundTransparency = 1
+InfoLabel.Parent = TabMain
+
+local WarnLabel = Instance.new("TextLabel")
+WarnLabel.Size = UDim2.new(0.92, 0, 0, 35)
+WarnLabel.Text = "⚠️ RECUERDA QUE EL USO DE HACKS PUEDE CAUSAR BANEOS"
+WarnLabel.Font = Enum.Font.GothamBold
+WarnLabel.TextSize = 11
+WarnLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+WarnLabel.TextWrapped = true
+WarnLabel.BackgroundTransparency = 1
+WarnLabel.Parent = TabMain
+
+local Separator = Instance.new("Frame")
+Separator.Size = UDim2.new(0.92, 0, 0, 2)
+Separator.BackgroundColor3 = Color3.fromRGB(35, 38, 47)
+Separator.BorderSizePixel = 0
+Separator.Parent = TabMain
+
+-- Botón de WhatsApp Oculto
+local WhatsAppBtn = Instance.new("TextButton")
+WhatsAppBtn.Size = UDim2.new(0.92, 0, 0, 36)
+WhatsAppBtn.BackgroundColor3 = Color3.fromRGB(24, 27, 34)
+WhatsAppBtn.Text = "📲 SÍGUENOS EN NUESTRO CANAL DE WHATSAPP"
+WhatsAppBtn.Font = Enum.Font.GothamBold
+WhatsAppBtn.TextSize = 11
+WhatsAppBtn.TextColor3 = Theme.Main
+WhatsAppBtn.Parent = TabMain
+
+local wbc = Instance.new("UICorner")
+wbc.CornerRadius = UDim.new(0, 6)
+wbc.Parent = WhatsAppBtn
+
+WhatsAppBtn.MouseButton1Click:Connect(function()
+    setclipboard("https://whatsapp.com/channel/0029VbC12x4GufIzNYfrPh3R")
+    WhatsAppBtn.Text = "¡LINK COPIADO AL PORTAPAPELES! ✅"
+    task.wait(2)
+    WhatsAppBtn.Text = "📲 SÍGUENOS EN NUESTRO CANAL DE WHATSAPP"
+end)
+
+-- Botón de TikTok
+local TikTokBtn = Instance.new("TextButton")
+TikTokBtn.Size = UDim2.new(0.92, 0, 0, 36)
+TikTokBtn.BackgroundColor3 = Color3.fromRGB(24, 27, 34)
+TikTokBtn.Text = "🎵 TIKTOK: @softworks32 (COPIAR USER)"
+TikTokBtn.Font = Enum.Font.GothamBold
+TikTokBtn.TextSize = 11
+TikTokBtn.TextColor3 = Theme.Main
+TikTokBtn.Parent = TabMain
+
+local tkc = Instance.new("UICorner")
+tkc.CornerRadius = UDim.new(0, 6)
+tkc.Parent = TikTokBtn
+
+TikTokBtn.MouseButton1Click:Connect(function()
+    setclipboard("softworks32")
+    TikTokBtn.Text = "¡USUARIO COPIADO! ✅"
+    task.wait(2)
+    TikTokBtn.Text = "🎵 TIKTOK: @softworks32 (COPIAR USER)"
+end)
+
+
+AddToggle(TabCheats, "Speed Hack", "SpeedEnabled", Theme.Main)
+AddSlider(TabCheats, "Speed Power", 16, 300, 16, "SpeedValue", Theme.Main)
+AddToggle(TabCheats, "Infinity Jump", "InfJump", Theme.Main)
+AddToggle(TabCheats, "Noclip", "Noclip", Theme.Main)
+AddToggle(TabCheats, "Fly (Vuelo)", "Fly", Theme.Main)
+  
 AddToggle(TabCombat, "Aimbot", "AimbotEnabled", Theme.Combat)
 AddSlider(TabCombat, "FOV Radio", 30, 300, 100, "FOVRadius", Theme.Combat)
 AddToggle(TabCombat, "Show FOV Anillo", "FOVEnabled", Theme.Combat)
@@ -682,7 +768,6 @@ AddToggle(TabVisuals, "Traces", "Traces", Theme.Visuals)
 
 AddButton(TabMisc, "Server Hop", Theme.Misc)
 AddButton(TabMisc, "Rejoin Server", Theme.Misc)
-
 
 
 
