@@ -667,145 +667,208 @@ if Pages["Main"] then
     if TabButtons["Main"] then TabButtons["Main"].TextColor3 = Theme.Main end
 end
 
+-- ==========================================
+-- ESTRUCTURA COMPLETA: MAIN TAB (V2.0)
+-- ==========================================
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Stats = game:GetService("Stats")
 
-local InfoCard = Instance.new("Frame")
-InfoCard.Size = UDim2.new(0.92, 0, 0, 85)
-InfoCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
-InfoCard.BorderSizePixel = 0
-InfoCard.Parent = TabMain
+-- --- 1. TARJETA DE PERFIL Y JUGADOR ---
+local ProfileCard = Instance.new("Frame")
+ProfileCard.Size = UDim2.new(0.92, 0, 0, 75)
+ProfileCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
+ProfileCard.BorderSizePixel = 0
+ProfileCard.Parent = TabMain
 
-local ic_corner = Instance.new("UICorner")
-ic_corner.CornerRadius = UDim.new(0, 8)
-ic_corner.Parent = InfoCard
+local pc_corner = Instance.new("UICorner")
+pc_corner.CornerRadius = UDim.new(0, 8)
+pc_corner.Parent = ProfileCard
 
-local ic_stroke = Instance.new("UIStroke")
-ic_stroke.Color = Color3.fromRGB(35, 38, 47)
-ic_stroke.Thickness = 1.2
-ic_stroke.Parent = InfoCard
+local pc_stroke = Instance.new("UIStroke")
+pc_stroke.Color = Color3.fromRGB(35, 38, 47)
+pc_stroke.Thickness = 1.2
+pc_stroke.Parent = ProfileCard
 
-local WelcomeLabel = Instance.new("TextLabel")
-WelcomeLabel.Size = UDim2.new(1, -20, 0, 22)
-WelcomeLabel.Position = UDim2.new(0, 10, 0, 6)
-WelcomeLabel.Text = "BIENVENIDO, " .. tostring(LocalPlayer.Name):upper() .. " 👋"
-WelcomeLabel.Font = Enum.Font.GothamBold
-WelcomeLabel.TextSize = 13
-WelcomeLabel.TextColor3 = Theme.Main
-WelcomeLabel.TextXAlignment = Enum.TextXAlignment.Left
-WelcomeLabel.BackgroundTransparency = 1
-WelcomeLabel.Parent = InfoCard
+-- Avatar del Jugador
+local AvatarImage = Instance.new("ImageLabel")
+AvatarImage.Size = UDim2.new(0, 50, 0, 50)
+AvatarImage.Position = UDim2.new(0, 10, 0, 12)
+AvatarImage.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+AvatarImage.Parent = ProfileCard
 
-local StatusLabel = Instance.new("TextLabel")
-StatusLabel.Size = UDim2.new(1, -20, 0, 18)
-StatusLabel.Position = UDim2.new(0, 10, 0, 30)
-StatusLabel.Text = "• ESTADO: ACTIVE 🟢 (ENFORCE CITY 2)"
-StatusLabel.Font = Enum.Font.Gotham
-StatusLabel.TextSize = 11
-StatusLabel.TextColor3 = Color3.fromRGB(180, 185, 195)
-StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
-StatusLabel.BackgroundTransparency = 1
-StatusLabel.Parent = InfoCard
+local avatar_corner = Instance.new("UICorner")
+avatar_corner.CornerRadius = UDim.new(1, 0) -- Círculo perfecto
+avatar_corner.Parent = AvatarImage
 
-local PlayersLabel = Instance.new("TextLabel")
-PlayersLabel.Size = UDim2.new(1, -20, 0, 18)
-PlayersLabel.Position = UDim2.new(0, 10, 0, 52)
-PlayersLabel.Text = "• SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers()) .. " JUGADORES ACTIVAS"
-PlayersLabel.Font = Enum.Font.Gotham
-PlayersLabel.TextSize = 11
-PlayersLabel.TextColor3 = Color3.fromRGB(180, 185, 195)
-PlayersLabel.TextXAlignment = Enum.TextXAlignment.Left
-PlayersLabel.BackgroundTransparency = 1
-PlayersLabel.Parent = InfoCard
-
-
-local function UpdatePlayerCount()
-    PlayersLabel.Text = "• SERVIDOR: " .. tostring(#game:GetService("Players"):GetPlayers()) .. " JUGADORES ACTIVOS"
-end
-game:GetService("Players").PlayerAdded:Connect(UpdatePlayerCount)
-game:GetService("Players").PlayerRemoving:Connect(UpdatePlayerCount)
-
-
-
-local SocialCard = Instance.new("Frame")
-SocialCard.Size = UDim2.new(0.92, 0, 0, 95)
-SocialCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
-SocialCard.BorderSizePixel = 0
-SocialCard.Parent = TabMain
-
-local sc_corner = Instance.new("UICorner")
-sc_corner.CornerRadius = UDim.new(0, 8)
-sc_corner.Parent = SocialCard
-
-local sc_stroke = Instance.new("UIStroke")
-sc_stroke.Color = Color3.fromRGB(35, 38, 47)
-sc_stroke.Thickness = 1.2
-sc_stroke.Parent = SocialCard
-
-local SocialTitle = Instance.new("TextLabel")
-SocialTitle.Size = UDim2.new(1, -20, 0, 22)
-SocialTitle.Position = UDim2.new(0, 10, 0, 6)
-SocialTitle.Text = "COMUNIDAD & REDES 🌐"
-SocialTitle.Font = Enum.Font.GothamBold
-SocialTitle.TextSize = 12
-SocialTitle.TextColor3 = Color3.fromRGB(220, 225, 235)
-SocialTitle.TextXAlignment = Enum.TextXAlignment.Left
-SocialTitle.BackgroundTransparency = 1
-SocialTitle.Parent = SocialCard
-
--- Botón WhatsApp 
-local WhatsAppBtn = Instance.new("TextButton")
-WhatsAppBtn.Size = UDim2.new(1, -20, 0, 26)
-WhatsAppBtn.Position = UDim2.new(0, 10, 0, 32)
-WhatsAppBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
-WhatsAppBtn.Text = "📲 CANAL DE WHATSAPP"
-WhatsAppBtn.Font = Enum.Font.GothamBold
-WhatsAppBtn.TextSize = 10.5
-WhatsAppBtn.TextColor3 = Theme.Main
-WhatsAppBtn.Parent = SocialCard
-
-local wbc = Instance.new("UICorner")
-wbc.CornerRadius = UDim.new(0, 5)
-wbc.Parent = WhatsAppBtn
-
-WhatsAppBtn.MouseButton1Click:Connect(function()
-    setclipboard("https://whatsapp.com/channel/0029VbC12x4GufIzNYfrPh3R")
-    WhatsAppBtn.Text = "¡LINK COPIADO! ✅"
-    task.wait(2)
-    WhatsAppBtn.Text = "📲 CANAL DE WHATSAPP"
+-- Cargar la foto real del avatar de Roblox
+task.spawn(function()
+    local content, isReady = Players:GetUserThumbnailAsync(
+        LocalPlayer.UserId, 
+        Enum.ThumbnailType.HeadShot, 
+        Enum.ThumbnailSize.Size100x100
+    )
+    if isReady then
+        AvatarImage.Image = content
+    end
 end)
 
--- Botón 
-local TikTokBtn = Instance.new("TextButton")
-TikTokBtn.Size = UDim2.new(1, -20, 0, 26)
-TikTokBtn.Position = UDim2.new(0, 10, 0, 62)
-TikTokBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
-TikTokBtn.Text = "🎵 OFICIAL TIKTOK"
-TikTokBtn.Font = Enum.Font.GothamBold
-TikTokBtn.TextSize = 10.5
-TikTokBtn.TextColor3 = Theme.Main
-TikTokBtn.Parent = SocialCard
+-- Datos del usuario
+local UserNameLabel = Instance.new("TextLabel")
+UserNameLabel.Size = UDim2.new(1, -75, 0, 20)
+UserNameLabel.Position = UDim2.new(0, 68, 0, 14)
+UserNameLabel.Text = LocalPlayer.DisplayName .. " (@" .. LocalPlayer.Name .. ")"
+UserNameLabel.Font = Enum.Font.GothamBold
+UserNameLabel.TextSize = 12
+UserNameLabel.TextColor3 = Theme.Main
+UserNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+UserNameLabel.BackgroundTransparency = 1
+UserNameLabel.Parent = ProfileCard
 
-local tkc = Instance.new("UICorner")
-tkc.CornerRadius = UDim.new(0, 5)
-tkc.Parent = TikTokBtn
+local AccountAgeLabel = Instance.new("TextLabel")
+AccountAgeLabel.Size = UDim2.new(1, -75, 0, 18)
+AccountAgeLabel.Position = UDim2.new(0, 68, 0, 36)
+AccountAgeLabel.Text = "📅 Antigüedad: " .. tostring(LocalPlayer.AccountAge) .. " días"
+AccountAgeLabel.Font = Enum.Font.Gotham
+AccountAgeLabel.TextSize = 10.5
+AccountAgeLabel.TextColor3 = Color3.fromRGB(180, 185, 195)
+AccountAgeLabel.TextXAlignment = Enum.TextXAlignment.Left
+AccountAgeLabel.BackgroundTransparency = 1
+AccountAgeLabel.Parent = ProfileCard
 
-TikTokBtn.MouseButton1Click:Connect(function()
-    setclipboard("softworks32")
-    TikTokBtn.Text = "¡USUARIO COPIADO! ✅"
-    task.wait(2)
-    TikTokBtn.Text = "🎵 OFICIAL TIKTOK"
+
+-- TARJETA DE RENDIMIENTO 
+local PerfCard = Instance.new("Frame")
+PerfCard.Size = UDim2.new(0.92, 0, 0, 65)
+PerfCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
+PerfCard.BorderSizePixel = 0
+PerfCard.Parent = TabMain
+
+local perf_corner = Instance.new("UICorner")
+perf_corner.CornerRadius = UDim.new(0, 8)
+perf_corner.Parent = PerfCard
+
+local perf_stroke = Instance.new("UIStroke")
+perf_stroke.Color = Color3.fromRGB(35, 38, 47)
+perf_stroke.Thickness = 1.2
+perf_stroke.Parent = PerfCard
+
+local PerfTitle = Instance.new("TextLabel")
+PerfTitle.Size = UDim2.new(1, -20, 0, 20)
+PerfTitle.Position = UDim2.new(0, 10, 0, 6)
+PerfTitle.Text = "RENDIMIENTO EN TIEMPO REAL 📊"
+PerfTitle.Font = Enum.Font.GothamBold
+PerfTitle.TextSize = 11
+PerfTitle.TextColor3 = Color3.fromRGB(220, 225, 235)
+PerfTitle.TextXAlignment = Enum.TextXAlignment.Left
+PerfTitle.BackgroundTransparency = 1
+PerfTitle.Parent = PerfCard
+
+local StatsLabel = Instance.new("TextLabel")
+StatsLabel.Size = UDim2.new(1, -20, 0, 25)
+StatsLabel.Position = UDim2.new(0, 10, 0, 30)
+StatsLabel.Text = "FPS: 60 | Ping: 0 ms | Servidor: Active 🟢"
+StatsLabel.Font = Enum.Font.Gotham
+StatsLabel.TextSize = 10.5
+StatsLabel.TextColor3 = Color3.fromRGB(50, 255, 130)
+StatsLabel.TextXAlignment = Enum.TextXAlignment.Left
+StatsLabel.BackgroundTransparency = 1
+StatsLabel.Parent = PerfCard
+
+--fps
+local lastUpdate = tick()
+local frameCount = 0
+RunService.RenderStepped:Connect(function()
+    frameCount = frameCount + 1
+    if tick() - lastUpdate >= 1 then
+        local fps = frameCount
+        frameCount = 0
+        lastUpdate = tick()
+        
+        local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+        StatsLabel.Text = "FPS: " .. tostring(fps) .. " | Ping: " .. tostring(ping) .. " ms | Estado: 🟢 OK"
+    end
 end)
 
 
---AVISO 
-local WarnLabel = Instance.new("TextLabel")
-WarnLabel.Size = UDim2.new(0.92, 0, 0, 25)
-WarnLabel.Text = "⚠️ Usa las funciones bajo tu propio riesgo."
-WarnLabel.Font = Enum.Font.Gotham
-WarnLabel.TextSize = 10.5
-WarnLabel.TextColor3 = Color3.fromRGB(255, 90, 90)
-WarnLabel.BackgroundTransparency = 1
-WarnLabel.Parent = TabMain
+-- TARJETA/ NOVEDADES
+local NewsCard = Instance.new("Frame")
+NewsCard.Size = UDim2.new(0.92, 0, 0, 85)
+NewsCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
+NewsCard.BorderSizePixel = 0
+NewsCard.Parent = TabMain
+
+local news_corner = Instance.new("UICorner")
+news_corner.CornerRadius = UDim.new(0, 8)
+news_corner.Parent = NewsCard
+
+local news_stroke = Instance.new("UIStroke")
+news_stroke.Color = Color3.fromRGB(35, 38, 47)
+news_stroke.Thickness = 1.2
+news_stroke.Parent = NewsCard
+
+local NewsTitle = Instance.new("TextLabel")
+NewsTitle.Size = UDim2.new(1, -20, 0, 20)
+NewsTitle.Position = UDim2.new(0, 10, 0, 6)
+NewsTitle.Text = "NOVEDADES V1.1 📢"
+NewsTitle.Font = Enum.Font.GothamBold
+NewsTitle.TextSize = 11
+NewsTitle.TextColor3 = Color3.fromRGB(220, 225, 235)
+NewsTitle.TextXAlignment = Enum.TextXAlignment.Left
+NewsTitle.BackgroundTransparency = 1
+NewsTitle.Parent = NewsCard
+
+local NewsBody = Instance.new("TextLabel")
+NewsBody.Size = UDim2.new(1, -20, 0, 50)
+NewsBody.Position = UDim2.new(0, 10, 0, 28)
+NewsBody.Text = "• Nueva interfaz gráfica súper optimizada.\n• Monitor de rendimiento integrado en tiempo real.\n• Corrección de bugs generales y mejor respuesta."
+NewsBody.Font = Enum.Font.Gotham
+NewsBody.TextSize = 10
+NewsBody.TextColor3 = Color3.fromRGB(160, 165, 175)
+NewsBody.TextXAlignment = Enum.TextXAlignment.Left
+NewsBody.TextYAlignment = Enum.TextYAlignment.Top
+NewsBody.BackgroundTransparency = 1
+NewsBody.Parent = NewsCard
+
+
+--TARJETA DE CRÉDITOS 
+local CreditsCard = Instance.new("Frame")
+CreditsCard.Size = UDim2.new(0.92, 0, 0, 55)
+CreditsCard.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
+CreditsCard.BorderSizePixel = 0
+CreditsCard.Parent = TabMain
+
+local cred_corner = Instance.new("UICorner")
+cred_corner.CornerRadius = UDim.new(0, 8)
+cred_corner.Parent = CreditsCard
+
+local cred_stroke = Instance.new("UIStroke")
+cred_stroke.Color = Color3.fromRGB(35, 38, 47)
+cred_stroke.Thickness = 1.2
+cred_stroke.Parent = CreditsCard
+
+local CredTitle = Instance.new("TextLabel")
+CredTitle.Size = UDim2.new(1, -20, 0, 18)
+CredTitle.Position = UDim2.new(0, 10, 0, 6)
+CredTitle.Text = "DESARROLLO & CRÉDITOS 👑"
+CredTitle.Font = Enum.Font.GothamBold
+CredTitle.TextSize = 11
+CredTitle.TextColor3 = Theme.Main
+CredTitle.TextXAlignment = Enum.TextXAlignment.Left
+CredTitle.BackgroundTransparency = 1
+CredTitle.Parent = CreditsCard
+
+local CredSub = Instance.new("TextLabel")
+CredSub.Size = UDim2.new(1, -20, 0, 20)
+CredSub.Position = UDim2.new(0, 10, 0, 26)
+CredSub.Text = "Desarrollado por el equipo oficial de Vice City Hub."
+CredSub.Font = Enum.Font.Gotham
+CredSub.TextSize = 10
+CredSub.TextColor3 = Color3.fromRGB(160, 165, 175)
+CredSub.TextXAlignment = Enum.TextXAlignment.Left
+CredSub.BackgroundTransparency = 1
+CredSub.Parent = CreditsCard
 
 
 
