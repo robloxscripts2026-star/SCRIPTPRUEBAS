@@ -1,4 +1,4 @@
---  VICE CITY HUB V2 👻
+-- CONFLICTO DE BALAS 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -6,36 +6,58 @@ local Players = game:GetService("Players")
 
 local LocalPlayer = Players.LocalPlayer
 
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Character = LocalPlayer.Character
+if not Character then
+    LocalPlayer.CharacterAdded:Wait()
+    Character = LocalPlayer.Character
+end
 
 LocalPlayer.CharacterAdded:Connect(function(newChar)
     Character = newChar
 end)
 
 
-
-
 -- Configuración de Estado General
 local Config = {
-    SpeedValue = 16, SpeedEnabled = false, InfJump = false, Noclip = false, Fly = false,
-    SilentAim = false, FOVEnabled = false, FOVRadius = 100,
+    -- Player Cheats
+    SpeedValue = 16, 
+    SpeedEnabled = false, 
+    InfJump = false, 
+    Noclip = false, 
+    Fly = false,
     
+    -- Combat
     AimbotEnabled = false,
-    AimPart = "Head",         
-    HideAimMenu = false,     
+    SilentAim = false, 
+    FOVEnabled = false, 
+    FOVRadius = 100,     
     
-    ESPBox = false, ESPName = false, ESPDist = false, ESPHealth = false, Traces = false
+    -- Visuals 
+    ESPBox = false, 
+    ESPName = false, 
+    ESPDist = false, 
+    ESPHealth = false, 
+    Traces = false,
+    ESPGun = false, 
+    ESPGunDist = false,
+    
+    -- Misc
+    LockUI = false
 }
+
+
+
+
 
 
 -- Paleta de Colores por Sección
 local Theme = {
-    Main = Color3.fromRGB(0, 255, 230),    -- Cian  
-    Combat = Color3.fromRGB(255, 60, 80),  -- Rojo 
-    Visuals = Color3.fromRGB(255, 210, 0), -- Amarillo 
-    Misc = Color3.fromRGB(160, 80, 255)    -- Morado 
+    Main = Color3.fromRGB(160, 80, 255), 
+    Combat = Color3.fromRGB(160, 80, 255),
+    Visuals = Color3.fromRGB(160, 80, 255),
+    Misc = Color3.fromRGB(160, 80, 255)
 }
-
+ 
 --  Función de arrastrar 
 local function MakeSmoothDrag(frame, dragHandle)
     local dragging = false
@@ -43,6 +65,9 @@ local function MakeSmoothDrag(frame, dragHandle)
     local targetPos = frame.Position
 
     dragHandle.InputBegan:Connect(function(input)
+    
+        if Config.LockUI then return end 
+
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
@@ -57,19 +82,24 @@ local function MakeSmoothDrag(frame, dragHandle)
     end)
 
     dragHandle.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        if not Config.LockUI and dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             dragInput = input
         end
     end)
 
     RunService.RenderStepped:Connect(function()
-        if dragging and dragInput then
+        if dragging and dragInput and not Config.LockUI then
             local delta = dragInput.Position - dragStart
             targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
         frame.Position = frame.Position:Lerp(targetPos, 0.15)
     end)
 end
+
+
+
+
+
 
 --  Contenedor Principal
 local ScreenGui;
@@ -138,7 +168,7 @@ local IntroText = Instance.new("TextLabel")
 IntroText.Size = UDim2.new(1, 0, 1, 0)
 IntroText.Position = UDim2.new(0, 0, -0.04, 0)
 IntroText.BackgroundTransparency = 1
-IntroText.Text = "VICE CITY HUB"
+IntroText.Text = "CONFLICT BULLET"
 IntroText.Font = Enum.Font.GothamBlack
 IntroText.TextSize = 35 
 IntroText.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -266,7 +296,7 @@ TopFix.Parent = TopBar
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, -50, 1, 0)
 Title.Position = UDim2.new(0, 16, 0, 0)
-Title.Text = "VICE CITY HUB V2"
+Title.Text = "CONFLICT BULLET👾"
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 14
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -320,30 +350,44 @@ PageContainer.Position = UDim2.new(0, 110, 0, 42)
 PageContainer.BackgroundTransparency = 1
 PageContainer.Parent = MainFrame
 
-local OpenBtn = Instance.new("TextButton")
-OpenBtn.Name = "OpenButton"
-OpenBtn.Size = UDim2.new(0, 50, 0, 50) 
-OpenBtn.Position = UDim2.new(0.03, 0, 0.5, -25) 
-OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
-OpenBtn.Text = "🌪️"
-OpenBtn.Font = Enum.Font.GothamBold
-OpenBtn.TextSize = 24
-OpenBtn.Visible = false 
-OpenBtn.Parent = ScreenGui
+-- BOTÓN FLOTANTE 
+local OpenBtnFrame = Instance.new("Frame")
+OpenBtnFrame.Name = "OpenBtnFrame"
+OpenBtnFrame.Size = UDim2.new(0, 56, 0, 56) 
+OpenBtnFrame.Position = UDim2.new(0.03, 0, 0.5, -28) 
+OpenBtnFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 26)
+OpenBtnFrame.Visible = false 
+OpenBtnFrame.ClipsDescendants = true
+OpenBtnFrame.Parent = ScreenGui
 
-local OpenCorner = Instance.new("UICorner")
-OpenCorner.CornerRadius = UDim.new(1, 0)
-OpenCorner.Parent = OpenBtn
+local OpenBtnCorner = Instance.new("UICorner")
+OpenBtnCorner.CornerRadius = UDim.new(1, 0)
+OpenBtnCorner.Parent = OpenBtnFrame
 
 local OpenStroke = Instance.new("UIStroke")
 OpenStroke.Color = Theme.Main
-OpenStroke.Thickness = 1.6
-OpenStroke.Parent = OpenBtn
+OpenStroke.Thickness = 1.8
+OpenStroke.Parent = OpenBtnFrame
 
-MakeSmoothDrag(OpenBtn, OpenBtn)
+local OpenBtn = Instance.new("ImageButton")
+OpenBtn.Name = "OpenButton"
+OpenBtn.Size = UDim2.new(1, -6, 1, -6)
+OpenBtn.Position = UDim2.new(0, 3, 0, 3)
+OpenBtn.Image = "rbxassetid://122763495406604"
+OpenBtn.BackgroundTransparency = 1
+OpenBtn.AutoButtonColor = true
+OpenBtn.Active = true
+OpenBtn.Parent = OpenBtnFrame
+
+local ImageCorner = Instance.new("UICorner")
+ImageCorner.CornerRadius = UDim.new(1, 0)
+ImageCorner.Parent = OpenBtn
+
+
+MakeSmoothDrag(OpenBtnFrame, OpenBtn)
 
 RunService.RenderStepped:Connect(function(dt)
-    if OpenBtn.Visible then
+    if OpenBtnFrame.Visible then
         OpenBtn.Rotation = OpenBtn.Rotation + (dt * 120)
     end
 end)
@@ -353,15 +397,13 @@ local Pages = {}
 local TabButtons = {}
 local isTweening = false
 
---  ANIMACIÓNES DE APERTURA Y CIERRE 
+-- ANIMACIÓNES DE APERTURA Y CIERRE 
 CloseBtn.MouseButton1Click:Connect(function()
     if isTweening then return end
     isTweening = true
     
-    
     local closeInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
     
-
     local mainClose = TweenService:Create(MainFrame, closeInfo, {
         Size = UDim2.new(0, 430, 0, 250),
         BackgroundTransparency = 1
@@ -388,10 +430,13 @@ CloseBtn.MouseButton1Click:Connect(function()
     
     mainClose.Completed:Connect(function()
         MainFrame.Visible = false
-        OpenBtn.Visible = true
+        OpenBtnFrame.Visible = true
+        OpenBtnFrame.Size = UDim2.new(0, 56, 0, 56)
         OpenBtn.Size = UDim2.new(0, 0, 0, 0)
         
-        local openAnim = TweenService:Create(OpenBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 50, 0, 50)})
+        local openAnim = TweenService:Create(OpenBtn, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = UDim2.new(1, -6, 1, -6)
+        })
         openAnim:Play()
         openAnim.Completed:Connect(function() isTweening = false end)
     end)
@@ -402,11 +447,13 @@ OpenBtn.MouseButton1Click:Connect(function()
     if isTweening then return end
     isTweening = true
     
-    local hideTween = TweenService:Create(OpenBtn, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)})
+    local hideTween = TweenService:Create(OpenBtn, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0)
+    })
     hideTween:Play()
     
     hideTween.Completed:Connect(function()
-        OpenBtn.Visible = false
+        OpenBtnFrame.Visible = false
         
         MainFrame.BackgroundTransparency = 0
         MainStroke.Transparency = 0
@@ -445,7 +492,6 @@ OpenBtn.MouseButton1Click:Connect(function()
         mainOpen.Completed:Connect(function() isTweening = false end)
     end)
 end)
-
 
 -- COMPONENTES COLOREADOS
 local function CreateTab(name, sectionColor)
@@ -653,6 +699,7 @@ local function AddButton(page, text, sectionColor)
             TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(24, 27, 34)}):Play()
         end
     end)
+return Button
 end
 
 --  INICIALIZACIÓN DE CATEGORÍAS 
@@ -787,7 +834,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
-
 -- TARJETA DE COMUNIDAD 
 local SocialCard = Instance.new("Frame")
 SocialCard.Size = UDim2.new(0.94, 0, 0, 110)
@@ -899,11 +945,6 @@ NewsBody.TextYAlignment = Enum.TextYAlignment.Top
 NewsBody.BackgroundTransparency = 1
 NewsBody.Parent = NewsCard
 
-
-
-
-
-
 AddToggle(TabCheats, "Speed Hack", "SpeedEnabled", Theme.Main)
 AddSlider(TabCheats, "Speed Power", 16, 300, 16, "SpeedValue", Theme.Main)
 AddToggle(TabCheats, "Infinity Jump", "InfJump", Theme.Main)
@@ -915,25 +956,112 @@ AddSlider(TabCombat, "FOV Radio", 30, 300, 100, "FOVRadius", Theme.Combat)
 AddToggle(TabCombat, "Show FOV Anillo", "FOVEnabled", Theme.Combat)
 AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
 
+--AQUI PONES LA LÓGICA DEL AIMBOT Y FOV🗣️🔥🔥🔥🔥🔥
+
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Name", "ESPName", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Distancia", "ESPDist", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Health", "ESPHealth", Theme.Visuals)
 AddToggle(TabVisuals, "Traces", "Traces", Theme.Visuals)
+AddToggle(TabVisuals, "ESP Gun", "ESPGun", Theme.Visuals) -- 👈 Nuevo Toggle
+AddToggle(TabVisuals, "ESP Gun Distancia", "ESPGunDist", Theme.Visuals) -- 👈 Nuevo Toggle
 
-AddButton(TabMisc, "Server Hop", Theme.Misc)
-AddButton(TabMisc, "Rejoin Server", Theme.Misc)
+local BtnServerHop = AddButton(TabMisc, "Server Hop 🌐", Theme.Misc)
+local BtnRejoin = AddButton(TabMisc, "Rejoin Server 🔄", Theme.Misc)
+AddToggle(TabMisc, "Bloquear Menú🌪️", "LockUI", Theme.Misc)
 
 
+BtnServerHop.MouseButton1Click:Connect(function()
+    BtnServerHop.Text = "Buscando servidor... 🔍"
+    
+    local TeleportService = game:GetService("TeleportService")
+    local HttpService = game:GetService("HttpService")
+    local PlaceId = game.PlaceId
+    
+    
+    local success, result = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"))
+    end)
+    
+    if success and result and result.data then
+        local targetServer
+        for _, server in ipairs(result.data) do
+    
+            if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                targetServer = server.id
+                break
+            end
+        end
+        
+        if targetServer then
+            TeleportService:TeleportToPlaceInstance(PlaceId, targetServer, LocalPlayer)
+        else
+            BtnServerHop.Text = "No hay otros servers ❌"
+            task.wait(2)
+            BtnServerHop.Text = "Server Hop 🌐"
+        end
+    else
+        BtnServerHop.Text = "Error al buscar ❌"
+        task.wait(2)
+        BtnServerHop.Text = "Server Hop 🌐"
+    end
+end)
 
--- SISTEMA  ESP 
+BtnRejoin.MouseButton1Click:Connect(function()
+    BtnRejoin.Text = "Reconectando... 🔄"
+    local TeleportService = game:GetService("TeleportService")
+    
+    if #Players:GetPlayers() <= 1 then
+    
+        TeleportService:Teleport(game.PlaceId, LocalPlayer)
+    else
+    
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+    end
+end)
+
+-- SISTEMA ESP
+
+local WeaponColors = {
+    ["AK47"] = Color3.fromRGB(255, 215, 0),
+    ["AK47-Cosmetic"] = Color3.fromRGB(255, 215, 0),
+    ["Anaconda"] = Color3.fromRGB(200, 0, 0),
+    ["Barbed Baseball Bat"] = Color3.fromRGB(160, 32, 240),
+    ["Combat Axe"] = Color3.fromRGB(160, 32, 240),
+    ["DiamondMop"] = Color3.fromRGB(160, 32, 240),
+    ["Double Barrel"] = Color3.fromRGB(160, 32, 240),
+    ["Draco"] = Color3.fromRGB(160, 32, 240),
+    ["EnergyShot"] = Color3.fromRGB(160, 32, 240),
+    ["GoldMop"] = Color3.fromRGB(0, 122, 255),
+    ["M16"] = Color3.fromRGB(255, 215, 0),
+    ["Mop"] = Color3.fromRGB(128, 128, 128),
+    ["MP5"] = Color3.fromRGB(255, 215, 0),
+    ["Remington"] = Color3.fromRGB(255, 215, 0),
+    ["RightGrip"] = Color3.fromRGB(255, 215, 0),
+    ["RPG"] = Color3.fromRGB(255, 215, 0),
+    ["RPG-ریموٹ فونکشن اصلی"] = Color3.fromRGB(255, 215, 0),
+    ["SilverMop"] = Color3.fromRGB(160, 32, 240),
+    ["sledgehammer"] = Color3.fromRGB(160, 32, 240),
+    ["Tactical Axe"] = Color3.fromRGB(255, 215, 0)
+}
+
+local function GetPlayerTool(player)
+    if player.Character then
+        local tool = player.Character:FindFirstChildOfClass("Tool")
+        if tool then return tool end
+    end
+    if player:FindFirstChild("Backpack") then
+        local tool = player.Backpack:FindFirstChildOfClass("Tool")
+        if tool then return tool end
+    end
+    return nil
+end
 
 local function CreateESP(player)
-    
     local box = Drawing.new("Square")
     box.Visible = false
     box.Thickness = 1.0     
-    box.Color = Color3.fromRGB(255, 0, 0) --rojo
+    box.Color = Color3.fromRGB(255, 0, 0)
     box.Filled = false
 
     local nameText = Drawing.new("Text")
@@ -952,6 +1080,13 @@ local function CreateESP(player)
     distText.Font = 2
     distText.Color = Color3.fromRGB(220, 220, 220)
 
+    local gunText = Drawing.new("Text")
+    gunText.Visible = false
+    gunText.Center = true
+    gunText.Outline = true
+    gunText.Size = 11
+    gunText.Font = 2
+
     local healthBar = Drawing.new("Line")
     healthBar.Visible = false
     healthBar.Thickness = 2
@@ -959,11 +1094,10 @@ local function CreateESP(player)
     local traceLine = Drawing.new("Line")
     traceLine.Visible = false
     traceLine.Thickness = 1.0 
-    traceLine.Color = Color3.fromRGB(255, 0, 0) -- Rojo Puro
+    traceLine.Color = Color3.fromRGB(255, 0, 0)
 
     local connection
     connection = RunService.RenderStepped:Connect(function()
-    
         if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head") and player.Character:FindFirstChildOfClass("Humanoid") then
             local character = player.Character
             local rootPart = character.HumanoidRootPart
@@ -971,22 +1105,18 @@ local function CreateESP(player)
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             local camera = workspace.CurrentCamera
 
-            
             local vector, onScreen = camera:WorldToViewportPoint(rootPart.Position)
             
             if onScreen then
-                -- Calculamos la distancia real
                 local distance = (camera.CFrame.Position - rootPart.Position).Magnitude
-                
                 local topPos, topOnScreen = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 1.8, 0))
                 local bottomPos, bottomOnScreen = camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0))
 
                 if topOnScreen and bottomOnScreen then
-                    -- dimensiones de la caja
                     local boxHeight = math.abs(topPos.Y - bottomPos.Y)
                     local boxWidth = boxHeight * 0.60 
 
-                    --  ESP BOX 
+                    -- 1. ESP BOX
                     if Config.ESPBox then
                         box.Visible = true
                         box.Position = Vector2.new(vector.X - (boxWidth / 2), topPos.Y)
@@ -995,7 +1125,7 @@ local function CreateESP(player)
                         box.Visible = false
                     end
 
-                    --   ESP NAME 
+                    -- 2. ESP NAME
                     if Config.ESPName then
                         nameText.Visible = true
                         nameText.Position = Vector2.new(vector.X, topPos.Y - 16)
@@ -1004,16 +1134,40 @@ local function CreateESP(player)
                         nameText.Visible = false
                     end
 
-                    --   ESP DISTANCIA
+                    -- 3. ESP DISTANCIA
+                    local yOffset = bottomPos.Y + 4
                     if Config.ESPDist then
                         distText.Visible = true
-                        distText.Position = Vector2.new(vector.X, bottomPos.Y + 4)
+                        distText.Position = Vector2.new(vector.X, yOffset)
                         distText.Text = string.format("[%d studs]", math.floor(distance))
+                        yOffset = yOffset + 14
                     else
                         distText.Visible = false
                     end
 
-                    -- ESP HEALT
+                    -- 4. ESP GUN
+                    if Config.ESPGun then
+                        local currentTool = GetPlayerTool(player)
+                        if currentTool then
+                            local weaponName = currentTool.Name
+                            gunText.Visible = true
+                            gunText.Color = WeaponColors[weaponName] or Color3.fromRGB(255, 255, 255)
+                            
+                            if Config.ESPGunDist then
+                                gunText.Text = string.format("%s [%d studs]", weaponName, math.floor(distance))
+                            else
+                                gunText.Text = weaponName
+                            end
+                            gunText.Position = Vector2.new(vector.X, yOffset)
+                        else
+                            gunText.Visible = false
+                        end
+                    else
+                        gunText.Visible = false
+                        end
+
+
+-- 5. ESP HEALTH
                     if Config.ESPHealth then
                         healthBar.Visible = true
                         local healthPercentage = math.clamp(humanoid.Health / humanoid.MaxHealth, 0, 1)
@@ -1026,7 +1180,7 @@ local function CreateESP(player)
                         healthBar.Visible = false
                     end
 
-                    -- LÓGICA DE TRACES 
+                    -- 6. TRACES
                     if Config.Traces then
                         traceLine.Visible = true
                         traceLine.From = Vector2.new(camera.ViewportSize.X / 2, 0)
@@ -1036,24 +1190,27 @@ local function CreateESP(player)
                     end
                 end
             else
-            
                 box.Visible = false
                 nameText.Visible = false
                 distText.Visible = false
+                gunText.Visible = false
                 healthBar.Visible = false
                 traceLine.Visible = false
             end
         else
-            -- Si muere o se sale del juego, se eliminan los dibujos 
+            -- Limpieza completa de memoria al morir
             box:Destroy()
             nameText:Destroy()
             distText:Destroy()
+            gunText:Destroy()
             healthBar:Destroy()
             traceLine:Destroy()
             connection:Disconnect()
         end
     end)
 end
+
+
 
 
 
@@ -1106,7 +1263,6 @@ Players.PlayerAdded:Connect(function(player)
     end)
 end)
 
-
 -- BYPASS ULTRA MEGA PRO MAX 🗣️🔥🔥🔥
 
 
@@ -1121,7 +1277,6 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     RootPart = char:WaitForChild("HumanoidRootPart")
 end)
 
---  BYPASS ANTI-DETECCIÓN 🔥
 task.spawn(function()
     while task.wait(0.1) do
         if Character and Humanoid and RootPart then
@@ -1152,28 +1307,37 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- 3. CONTROL  FLY
-local FlyGyro, FlyVelocity
+
+--  CONTROL FLY
+local FlyAttachment, AlignOri, LinearVel
+
 RunService.RenderStepped:Connect(function()
     if Config.Fly and Character and RootPart and Humanoid then
-        -- 
-        if not FlyGyro or not FlyGyro.Parent then
-            FlyGyro = Instance.new("BodyGyro")
-            FlyGyro.Name = "EnforceFlyGyro"
-            FlyGyro.P = 9e4
-            FlyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-            FlyGyro.Parent = RootPart
-        end
-        
-        if not FlyVelocity or not FlyVelocity.Parent then
-            FlyVelocity = Instance.new("BodyVelocity")
-            FlyVelocity.Name = "EnforceFlyVelocity"
-            FlyVelocity.maxForce = Vector3.new(9e9, 9e9, 9e9)
-            FlyVelocity.Parent = RootPart
+
+        if not FlyAttachment or not FlyAttachment.Parent then
+            FlyAttachment = Instance.new("Attachment")
+            FlyAttachment.Name = "EnforceFlyAttachment"
+            FlyAttachment.Parent = RootPart
+            
+            AlignOri = Instance.new("AlignOrientation")
+            AlignOri.Name = "EnforceFlyAlign"
+            AlignOri.Mode = Enum.OrientationAlignmentMode.OneAttachment
+            AlignOri.Attachment0 = FlyAttachment
+            AlignOri.MaxTorque = 9e9
+            AlignOri.Responsiveness = 200 
+            AlignOri.Parent = RootPart
+            
+            LinearVel = Instance.new("LinearVelocity")
+            LinearVel.Name = "EnforceFlyVelocity"
+            LinearVel.Attachment0 = FlyAttachment
+            LinearVel.MaxForce = 9e9
+            LinearVel.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+            LinearVel.Parent = RootPart
         end
         
         local camera = workspace.CurrentCamera
-        FlyGyro.CFrame = camera.CFrame
+        
+        AlignOri.CFrame = camera.CFrame
         
         local moveDirection = Humanoid.MoveDirection
         if moveDirection.Magnitude > 0 then
@@ -1181,26 +1345,22 @@ RunService.RenderStepped:Connect(function()
             local lookVector = camera.CFrame.LookVector
             local targetVelocity = moveDirection * 50 
             
-            
-            if lookVector.Y > 0.2 then
-                targetVelocity = targetVelocity + Vector3.new(0, lookVector.Y * 40, 0)
-            elseif lookVector.Y < -0.2 then
+            if lookVector.Y > 0.2 or lookVector.Y < -0.2 then
                 targetVelocity = targetVelocity + Vector3.new(0, lookVector.Y * 40, 0)
             end
             
-            FlyVelocity.velocity = targetVelocity
+            LinearVel.VectorVelocity = targetVelocity
         else
-            
-            FlyVelocity.velocity = Vector3.new(0, 0, 0)
+            LinearVel.VectorVelocity = Vector3.new(0, 0, 0)
         end
     else
-    
-        if RootPart:FindFirstChild("EnforceFlyGyro") then RootPart.EnforceFlyGyro:Destroy() end
+        if RootPart:FindFirstChild("EnforceFlyAttachment") then RootPart.EnforceFlyAttachment:Destroy() end
+        if RootPart:FindFirstChild("EnforceFlyAlign") then RootPart.EnforceFlyAlign:Destroy() end
         if RootPart:FindFirstChild("EnforceFlyVelocity") then RootPart.EnforceFlyVelocity:Destroy() end
-        FlyGyro = nil
-        FlyVelocity = nil
+        FlyAttachment, AlignOri, LinearVel = nil, nil, nil
     end
 end)
+
 
 --  NOCLIP 
 RunService.Stepped:Connect(function()
@@ -1220,4 +1380,5 @@ UserInputService.JumpRequest:Connect(function()
         Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
     end
 end)
+
 
