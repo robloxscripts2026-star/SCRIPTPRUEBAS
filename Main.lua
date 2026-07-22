@@ -961,65 +961,47 @@ AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
 
 --AQUI PONES LA LÓGICA DEL AIMBOT Y FOV🗣️🔥🔥🔥🔥🔥
 
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
-
-local LocalPlayer = Players.LocalPlayer
-local Camera = Workspace.CurrentCamera
-
--- ============================================
--- 1. CÍRCULO FOV (DRAWING API)
--- ============================================
+--  LÓGICA DEL CÍRCULO FOV 
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Visible = false
-FOVCircle.Color = Color3.fromRGB(255, 255, 255) -- Color blanco
-FOVCircle.Thickness = 1.2
+FOVCircle.Color = Theme.Combat -- Usa el color morado de tu menú
+FOVCircle.Thickness = 1.5
 FOVCircle.Filled = false
 FOVCircle.Transparency = 1
+FOVCircle.NumSides = 60 
 
--- ============================================
--- 2. VISOR CHECK (DETECCIÓN DE PAREDES)
--- ============================================
+
+-- VISOR CHECK 
 local function VerificarParedVisibilidad(objetivoParte)
-    if not Config.WallCheck then return true end -- Si está apagado, ignora las paredes
+    if not Config.WallCheck then return true end 
     
     local origen = Camera.CFrame.Position
     local destino = objetivoParte.Position
     local raycastParams = RaycastParams.new()
     raycastParams.FilterType = RaycastParamsFilterType.Exclude
-    -- Ignora el cuerpo del jugador local y el cuerpo del enemigo para no bloquearse a sí mismo
     raycastParams.FilterDescendantsInstances = {LocalPlayer.Character, objetivoParte.Parent}
 
     local resultado = Workspace:Raycast(origen, destino - origen, raycastParams)
-    return resultado == nil -- Si devuelve nil, no chocó con ninguna pared
+    return resultado == nil 
 end
 
--- ============================================
--- 3. RADAR / SELECCIÓN DE ENEMIGO
--- ============================================
+-- 3. BUSCADOR DE ENEMIGOS 
 local function ObtenerEnemigoMasCercano()
     local objetivoCercano = nil
     local distanciaMinima = Config.FOVRadius
     local mousePos = UserInputService:GetMouseLocation()
 
     for _, jugador in ipairs(Players:GetPlayers()) do
-        -- Verifica que no seas tú mismo, que el enemigo exista y que esté vivo
         if jugador ~= LocalPlayer and jugador.Character and jugador.Character:FindFirstChild("Humanoid") and jugador.Character.Humanoid.Health > 0 then
             
-            -- Busca el UpperTorso (R15) o Torso (R6)
             local parteObjetivo = jugador.Character:FindFirstChild(Config.TargetPart) or jugador.Character:FindFirstChild("Torso")
             
             if parteObjetivo then
-                -- Convierte la posición 3D del enemigo a 2D en tu pantalla
                 local vector2, enPantalla = Camera:WorldToViewportPoint(parteObjetivo.Position)
                 
                 if enPantalla then
-                    -- Calcula la distancia entre el mouse y el pecho del enemigo
                     local distancia = (Vector2.new(vector2.X, vector2.Y) - mousePos).Magnitude
                     
-                    -- Si está dentro del FOV y no hay paredes bloqueando
                     if distancia < distanciaMinima and VerificarParedVisibilidad(parteObjetivo) then
                         distanciaMinima = distancia
                         objetivoCercano = parteObjetivo
@@ -1036,7 +1018,7 @@ end
 -- 4. MOTOR PRINCIPAL (RENDER STEPPED)
 -- ============================================
 RunService.RenderStepped:Connect(function()
-    -- Actualizar el FOV Anillo en pantalla
+    -- 4.1 Actualiza el FOV visualmente
     if Config.FOVEnabled then
         FOVCircle.Visible = true
         FOVCircle.Radius = Config.FOVRadius
@@ -1045,19 +1027,17 @@ RunService.RenderStepped:Connect(function()
         FOVCircle.Visible = false
     end
 
-    -- Ejecutar el Aimbot (Mueve la cámara)
-    -- Nota: Si quieres usar Silent Aim puro, requeriría un 'Hook' (modificar los proyectiles directamente).
-    -- Aquí usamos el Aimbot de cámara (Camera Lock) cuando Silent Aim está apagado.
-    if Config.AimbotEnabled and not Config.SilentAim then
+    -- 4.2 Ejecuta el Aimbot (Camera Lock Puro)
+    if Config.AimbotEnabled then
         local objetivo = ObtenerEnemigoMasCercano()
         
         if objetivo then
-            -- Mueve la cámara suavemente o directamente hacia el pecho del objetivo
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
+            -- Usamos Lerp para un seguimiento suave. (0.5 es la velocidad, puedes ajustarlo)
+            local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
+            Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.5) 
         end
     end
 end)
-
 
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Name", "ESPName", Theme.Visuals)
