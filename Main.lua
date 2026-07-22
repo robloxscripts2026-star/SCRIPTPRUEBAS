@@ -961,14 +961,24 @@ AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
 
 --AQUI PONES LA LÓGICA DEL AIMBOT Y FOV🗣️🔥🔥🔥🔥🔥
 
---  LÓGICA DEL CÍRCULO FOV 
-local FOVCircle = Drawing.new("Circle")
-FOVCircle.Visible = false
-FOVCircle.Color = Theme.Combat -- Usa el color morado de tu menú
-FOVCircle.Thickness = 1.5
-FOVCircle.Filled = false
-FOVCircle.Transparency = 1
-FOVCircle.NumSides = 60 
+    -- Asegurar que la cámara siempre exista
+    if not Camera or not workspace.CurrentCamera then
+        Camera = workspace.CurrentCamera
+        return
+    end
+
+    -- 1. Actualiza el FOV de forma fija al centro de la pantalla
+    if Config.FOVEnabled then
+        FOVCircle.Visible = true
+        FOVCircle.Radius = Config.FOVRadius
+        FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+    else
+        FOVCircle.Visible = false
+    end
+
+    -- El resto de tu lógica de Aimbot y colores...
+end)
+
 
 
 -- VISOR CHECK 
@@ -1016,7 +1026,13 @@ end
 
 -- MOTOR PRINCIPAL 
 RunService.RenderStepped:Connect(function()
-    -- 1. Actualiza el FOV de forma fija al centro de la pantalla
+
+    if not Camera or not workspace.CurrentCamera then
+        Camera = workspace.CurrentCamera
+        return
+    end
+
+    
     if Config.FOVEnabled then
         FOVCircle.Visible = true
         FOVCircle.Radius = Config.FOVRadius
@@ -1025,12 +1041,12 @@ RunService.RenderStepped:Connect(function()
         FOVCircle.Visible = false
     end
 
-    -- 2. Ejecuta el Aimbot y cambia el color del círculo según la presencia de objetivos
+    
     if Config.AimbotEnabled or Config.FOVEnabled then
         local objetivo = ObtenerEnemigoMasCercano()
         
         if objetivo then
-            -- Hay alguien dentro del FOV -> Cambia a VERDE 🟢
+        
             FOVCircle.Color = Color3.fromRGB(0, 255, 0)
             
             if Config.AimbotEnabled then
@@ -1038,11 +1054,12 @@ RunService.RenderStepped:Connect(function()
                 Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.5) 
             end
         else
-            -- No hay nadie en el radio -> Se queda en ROJO 🔴
+        
             FOVCircle.Color = Color3.fromRGB(255, 0, 0)
         end
     end
 end)
+
 
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Name", "ESPName", Theme.Visuals)
