@@ -1014,27 +1014,32 @@ local function ObtenerEnemigoMasCercano()
     return objetivoCercano
 end
 
--- ============================================
--- 4. MOTOR PRINCIPAL (RENDER STEPPED)
--- ============================================
+-- MOTOR PRINCIPAL 
 RunService.RenderStepped:Connect(function()
-    -- 4.1 Actualiza el FOV visualmente
+    -- 1. Actualiza el FOV de forma fija al centro de la pantalla
     if Config.FOVEnabled then
         FOVCircle.Visible = true
         FOVCircle.Radius = Config.FOVRadius
-        FOVCircle.Position = UserInputService:GetMouseLocation()
+        FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
     else
         FOVCircle.Visible = false
     end
 
-    -- 4.2 Ejecuta el Aimbot (Camera Lock Puro)
-    if Config.AimbotEnabled then
+    -- 2. Ejecuta el Aimbot y cambia el color del círculo según la presencia de objetivos
+    if Config.AimbotEnabled or Config.FOVEnabled then
         local objetivo = ObtenerEnemigoMasCercano()
         
         if objetivo then
-            -- Usamos Lerp para un seguimiento suave. (0.5 es la velocidad, puedes ajustarlo)
-            local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
-            Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.5) 
+            -- Hay alguien dentro del FOV -> Cambia a VERDE 🟢
+            FOVCircle.Color = Color3.fromRGB(0, 255, 0)
+            
+            if Config.AimbotEnabled then
+                local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
+                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.5) 
+            end
+        else
+            -- No hay nadie en el radio -> Se queda en ROJO 🔴
+            FOVCircle.Color = Color3.fromRGB(255, 0, 0)
         end
     end
 end)
