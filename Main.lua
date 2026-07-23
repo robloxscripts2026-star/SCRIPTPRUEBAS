@@ -1509,14 +1509,37 @@ RunService.RenderStepped:Connect(function()
 
      
       
-    -- 2. Ocultar Nombre Local Sin Errores
+    -- Hide Name (Mejorado)
+local function UpdateHideName()
     pcall(function()
-        if Character and Character:FindFirstChild("Head") then
-            for _, v in pairs(Character.Head:GetChildren()) do
-                if v:IsA("BillboardGui") then
-                    v.Enabled = not Config.HideName
-                end
+        if not Character or not Character:FindFirstChild("Head") then return end
+        
+        for _, v in pairs(Character.Head:GetChildren()) do
+            if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
+                v.Enabled = not Config.HideName
             end
         end
     end)
+end
+
+-- Solo actualizar cuando cambie el valor
+local lastHideNameState = false
+
+RunService.RenderStepped:Connect(function()
+    if Config.HideName \~= lastHideNameState then
+        lastHideNameState = Config.HideName
+        UpdateHideName()
+    end
+
+                
+    if Config.SpinBot and Character and Character:FindFirstChild("HumanoidRootPart") then
+        local root = Character.HumanoidRootPart
+        root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
+    end
+end)
+
+--
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(0.5) 
+    UpdateHideName()
 end)
