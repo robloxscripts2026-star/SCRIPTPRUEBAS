@@ -1279,7 +1279,7 @@ local function CreateESP(player)
                         end
 
 
-   CC.              --  ESP HEALTH
+                    --  ESP HEALTH
                     if Config.ESPHealth then
                         healthBar.Visible = true
                         local healthPercentage = math.clamp(humanoid.Health / humanoid.MaxHealth, 0, 1)
