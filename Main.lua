@@ -948,7 +948,9 @@ NewsTitle.Parent = NewsCard
 local NewsBody = Instance.new("TextLabel")
 NewsBody.Size = UDim2.new(1, -24, 0, 42)
 NewsBody.Position = UDim2.new(0, 12, 0, 28)
-NewsBody.Text = "sin novedades"
+NewsBody.Text= "se corrigió el error del aimbot"
+NewsBody.Text= "se añadió la función hide name"
+NewsBpdy.Text= "próximamente Canal de discord"
 NewsBody.Font = Enum.Font.Gotham
 NewsBody.TextSize = 10
 NewsBody.TextColor3 = Color3.fromRGB(160, 165, 175)
@@ -1037,7 +1039,7 @@ RunService.RenderStepped:Connect(function()
         local objetivo = ObtenerEnemigoMasCercano()
         
         if objetivo then
-            FOVCircle.Color = Color3.fromRGB(0, 255, 0) -- Verde = Detectado
+            FOVCircle.Color = Color3.fromRGB(0, 255, 0) 
             
             
             if Config.AimbotEnabled then
@@ -1046,10 +1048,10 @@ RunService.RenderStepped:Connect(function()
                 local targetCFrame = CFrame.new(currentPos, objetivo.Position)
                 
                 
-                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.3)
+                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.1)
             end
         else
-            FOVCircle.Color = Color3.fromRGB(255, 0, 0) -- Rojo = Buscando
+            FOVCircle.Color = Color3.fromRGB(255, 0, 0) 
         end
     end
 end)
