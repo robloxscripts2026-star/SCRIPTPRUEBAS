@@ -1507,21 +1507,13 @@ RunService.RenderStepped:Connect(function()
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
 
-    --  HIDE NAME BLINDADO
-    if Character then
-        local humanoid = Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            if Config.HideName then
-                -- Apagamos la distancia del texto del nombre
-                pcall(function()
-                    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-                end)
-            else
-                pcall(function()
-                    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
-                end)
+    -- HIDE NAME
+    if Config.HideName and Character then
+        for _, desc in pairs(Character:GetDescendants()) do
+            -
+            if desc:IsA("BillboardGui") or desc:IsA("SurfaceGui") then
+                desc:Destroy() 
             end
         end
     end
-    
 end)
