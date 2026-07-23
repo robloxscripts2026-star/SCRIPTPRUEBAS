@@ -16,7 +16,7 @@ LocalPlayer.CharacterAdded:Connect(function(newChar)
     Character = newChar
 end)
 local Camera = workspace.CurrentCamera
--- Construcción del FOV Circle 
+--FOV Circle 
 local FOVCircle
 pcall(function()
     FOVCircle = Drawing.new("Circle")
@@ -134,7 +134,7 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.IgnoreGuiInset = true
 
 
---  MOSTRAR INTRO INMEDIATAMENTE 
+-- MUESTRA LA INTRO INMEDIATAMENTE 
 local MainFrame
 local IntroFrame = Instance.new("Frame")
 IntroFrame.Name = "IntroFrame"
@@ -756,7 +756,7 @@ pc_stroke.Color = Color3.fromRGB(45, 50, 62)
 pc_stroke.Thickness = 1.2
 pc_stroke.Parent = ProfileCard
 
--- Avatar Círculo Perfecto
+-- dibujo círculo 
 local AvatarImage = Instance.new("ImageLabel")
 AvatarImage.Size = UDim2.new(0, 48, 0, 48)
 AvatarImage.Position = UDim2.new(0, 12, 0, 11)
@@ -995,7 +995,7 @@ local function VerificarParedVisibilidad(objetivoParte)
     return resultado == nil 
 end
 
--- 3. BUSCADOR DE ENEMIGOS 
+--BUSCA ENEMIGOS 
 local function ObtenerEnemigoMasCercano()
     local objetivoCercano = nil
     local distanciaMinima = Config.FOVRadius
@@ -1026,7 +1026,7 @@ local function ObtenerEnemigoMasCercano()
 end
 
 
--- MOTOR PRINCIPAL 
+-- LÓGICAPRINCIPAL 
 RunService.RenderStepped:Connect(function()
     if not Camera or not workspace.CurrentCamera then
         Camera = workspace.CurrentCamera
@@ -1228,7 +1228,7 @@ local function CreateESP(player)
                     local boxHeight = math.abs(topPos.Y - bottomPos.Y)
                     local boxWidth = boxHeight * 0.60 
 
-                    -- 1. ESP BOX
+                    --  ESP BOX
                     if Config.ESPBox then
                         box.Visible = true
                         box.Position = Vector2.new(vector.X - (boxWidth / 2), topPos.Y)
@@ -1237,7 +1237,7 @@ local function CreateESP(player)
                         box.Visible = false
                     end
 
-                    -- 2. ESP NAME
+                    -- ESP NAME
                     if Config.ESPName then
                         nameText.Visible = true
                         nameText.Position = Vector2.new(vector.X, topPos.Y - 16)
@@ -1246,7 +1246,7 @@ local function CreateESP(player)
                         nameText.Visible = false
                     end
 
-                    -- 3. ESP DISTANCIA
+                    --  ESP DISTANCIA
                     local yOffset = bottomPos.Y + 4
                     if Config.ESPDist then
                         distText.Visible = true
@@ -1257,7 +1257,7 @@ local function CreateESP(player)
                         distText.Visible = false
                     end
 
-                    -- 4. ESP GUN
+                    --  ESP GUN
                     if Config.ESPGun then
                         local currentTool = GetPlayerTool(player)
                         if currentTool then
@@ -1279,7 +1279,7 @@ local function CreateESP(player)
                         end
 
 
--- 5. ESP HEALTH
+   CC.              --  ESP HEALTH
                     if Config.ESPHealth then
                         healthBar.Visible = true
                         local healthPercentage = math.clamp(humanoid.Health / humanoid.MaxHealth, 0, 1)
@@ -1498,17 +1498,17 @@ end)
 
 
 
--- MOTOR 
+-- LÓGICA 
 
 RunService.RenderStepped:Connect(function()
     
-    -- 1. SPIN BOT 
+    -- SPIN BOT 
     if Config.SpinBot and Character and Character:FindFirstChild("HumanoidRootPart") then
         local root = Character.HumanoidRootPart
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
 
-    -- 2. HIDE NAME LOCAL 
+    -- HIDE NAME LOCAL 
     if Character then
 
         local hum = Character:FindFirstChildOfClass("Humanoid")
