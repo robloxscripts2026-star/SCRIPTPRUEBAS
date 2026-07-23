@@ -1507,28 +1507,19 @@ RunService.RenderStepped:Connect(function()
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
 
-    -- 2. HIDE NAME DIRECTO
-    if Character and Character:FindFirstChild("Humanoid") and Character:FindFirstChild("Head") then
-        local hum = Character.Humanoid
-        local head = Character.Head
-        
-        if Config.HideName then
-            
-            hum.DisplayName = " "
-            
-            
-            for _, child in ipairs(head:GetChildren()) do
-                if child:IsA("BillboardGui") then
-                    child.Enabled = false
-                end
-            end
-        else
-            -- Si se apaga el toggle
-            hum.DisplayName = LocalPlayer.Name
-            for _, child in ipairs(head:GetChildren()) do
-                if child:IsA("BillboardGui") then
-                    child.Enabled = true
-                end
+    --  HIDE NAME BLINDADO
+    if Character then
+        local humanoid = Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            if Config.HideName then
+                -- Apagamos la distancia del texto del nombre
+                pcall(function()
+                    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+                end)
+            else
+                pcall(function()
+                    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+                end)
             end
         end
     end
