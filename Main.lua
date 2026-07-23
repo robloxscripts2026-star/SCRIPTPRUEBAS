@@ -987,20 +987,18 @@ end
 local function ObtenerEnemigoMasCercano()
     local objetivoCercano = nil
     local distanciaMinima = Config.FOVRadius
-    
-    
     local centroPantalla = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
 
     for _, jugador in ipairs(Players:GetPlayers()) do
         if jugador ~= LocalPlayer and jugador.Character and jugador.Character:FindFirstChild("Humanoid") and jugador.Character.Humanoid.Health > 0 then
             
-            local parteObjetivo = jugador.Character:FindFirstChild(Config.TargetPart) or jugador.Character:FindFirstChild("Torso")
+            -- Buscamos primero la parte configurada, si falla intentamos con la cabeza por seguridad
+            local parteObjetivo = jugador.Character:FindFirstChild(Config.TargetPart) or jugador.Character:FindFirstChild("Head")
             
             if parteObjetivo then
                 local vector2, enPantalla = Camera:WorldToViewportPoint(parteObjetivo.Position)
                 
                 if enPantalla then
-                    
                     local distancia = (Vector2.new(vector2.X, vector2.Y) - centroPantalla).Magnitude
                     
                     if distancia < distanciaMinima and VerificarParedVisibilidad(parteObjetivo) then
@@ -1018,7 +1016,6 @@ end
 
 -- MOTOR PRINCIPAL 
 RunService.RenderStepped:Connect(function()
-    
     if not Camera or not workspace.CurrentCamera then
         Camera = workspace.CurrentCamera
         return
@@ -1038,29 +1035,22 @@ RunService.RenderStepped:Connect(function()
         local objetivo = ObtenerEnemigoMasCercano()
         
         if objetivo then
-            FOVCircle.Color = Color3.fromRGB(0, 255, 0) 
+            FOVCircle.Color = Color3.fromRGB(0, 255, 0) -- Verde = Detectado
             
-    
             if Config.AimbotEnabled and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
-                local vector2 = Camera:WorldToViewportPoint(objetivo.Position)
+                -- Método directo de CFrame con orientación de la cámara actual para mantener la fluidez
+                local currentPos = Camera.CFrame.Position
+                local targetCFrame = CFrame.new(currentPos, objetivo.Position)
                 
-                
-                local DeltaX = (vector2.X - centroPantalla.X) * 0.25 
-                local DeltaY = (vector2.Y - centroPantalla.Y) * 0.25
-                
-                if mousemoverel then
-                    mousemoverel(DeltaX, DeltaY)
-                else
-                    
-                    local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
-                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.25) 
-                end
+                -- Aplicamos el giro de forma suave
+                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.3)
             end
         else
-            FOVCircle.Color = Color3.fromRGB(255, 0, 0) 
+            FOVCircle.Color = Color3.fromRGB(255, 0, 0) -- Rojo = Buscando
         end
     end
 end)
+
 
 
 
