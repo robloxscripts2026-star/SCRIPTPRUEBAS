@@ -1047,7 +1047,7 @@ RunService.RenderStepped:Connect(function()
                 local targetCFrame = CFrame.new(currentPos, objetivo.Position)
                 
                 
-                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.1)
+                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 1.0)
             end
         else
             FOVCircle.Color = Color3.fromRGB(255, 0, 0) 
