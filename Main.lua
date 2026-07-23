@@ -24,7 +24,7 @@ pcall(function()
     FOVCircle.Thickness = 1.5
     FOVCircle.Color = Color3.fromRGB(255, 255, 255)
     FOVCircle.Filled = false
-end
+end)
 
 
 
@@ -1497,22 +1497,11 @@ end)
 
 
 
--- LÓGICA DE SPIN BOT Y HIDE 
+-- LÓGICA DE SPIN BOT Y HIDE
 
 local originalDisplayName = Humanoid and Humanoid.DisplayName or LocalPlayer.DisplayName
 
-RunService.RenderStepped:Connect(function()
-    
-    -- SPIN BOT 
-    if Config.SpinBot and Character and Character:FindFirstChild("HumanoidRootPart") then
-        local root = Character.HumanoidRootPart
-        
-        root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
-    end
-
-     
-      
-    -- Hide Name (Mejorado)
+-- Función de Hide Name
 local function UpdateHideName()
     pcall(function()
         if not Character or not Character:FindFirstChild("Head") then return end
@@ -1525,24 +1514,27 @@ local function UpdateHideName()
     end)
 end
 
--- Solo actualizar cuando cambie el valor
 local lastHideNameState = false
 
+-- UN SOLO MOTOR PARA SPIN BOT Y HIDE NAME
 RunService.RenderStepped:Connect(function()
-    if Config.HideName \~= lastHideNameState then
-        lastHideNameState = Config.HideName
-        UpdateHideName()
-    end
-
-                
+    
+    --  SPIN BOT 
     if Config.SpinBot and Character and Character:FindFirstChild("HumanoidRootPart") then
         local root = Character.HumanoidRootPart
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
+
+    -- HIDE NAME
+    if Config.HideName ~= lastHideNameState then
+        lastHideNameState = Config.HideName
+        UpdateHideName()
+    end
 end)
 
---
+
 LocalPlayer.CharacterAdded:Connect(function()
     task.wait(0.5) 
     UpdateHideName()
 end)
+
