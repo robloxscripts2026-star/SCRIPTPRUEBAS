@@ -1497,44 +1497,39 @@ end)
 
 
 
--- LÓGICA DE SPIN BOT Y HIDE
 
-local originalDisplayName = Humanoid and Humanoid.DisplayName or LocalPlayer.DisplayName
+-- MOTOR 
 
--- Función de Hide Name
-local function UpdateHideName()
-    pcall(function()
-        if not Character or not Character:FindFirstChild("Head") then return end
-        
-        for _, v in pairs(Character.Head:GetChildren()) do
-            if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
-                v.Enabled = not Config.HideName
-            end
-        end
-    end)
-end
-
-local lastHideNameState = false
-
--- UN SOLO MOTOR PARA SPIN BOT Y HIDE NAME
 RunService.RenderStepped:Connect(function()
     
-    --  SPIN BOT 
+    -- 1. SPIN BOT 
     if Config.SpinBot and Character and Character:FindFirstChild("HumanoidRootPart") then
         local root = Character.HumanoidRootPart
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
 
-    -- HIDE NAME
-    if Config.HideName ~= lastHideNameState then
-        lastHideNameState = Config.HideName
-        UpdateHideName()
+    -- 2. HIDE NAME LOCAL 
+    if Character then
+
+        local hum = Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            if Config.HideName then
+                hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+            else
+                hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+            end
+        end
+
+    
+        for _, obj in pairs(Character:GetDescendants()) do
+            if obj:IsA("BillboardGui") or obj:IsA("SurfaceGui") then
+                if Config.HideName then
+                    
+                    obj.Enabled = false
+                end
+            end
+        end
     end
 end)
-
-
-LocalPlayer.CharacterAdded:Connect(function()
-    task.wait(0.5) 
-    UpdateHideName()
-end)
+)
 
