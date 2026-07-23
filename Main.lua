@@ -969,7 +969,6 @@ AddToggle(TabCombat, "Show FOV Anillo", "FOVEnabled", Theme.Combat)
 AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
 
 
-
 -- VISOR CHECK 
 local function VerificarParedVisibilidad(objetivoParte)
     if not Config.WallCheck then return true end 
@@ -980,7 +979,7 @@ local function VerificarParedVisibilidad(objetivoParte)
     raycastParams.FilterType = RaycastParamsFilterType.Exclude
     raycastParams.FilterDescendantsInstances = {LocalPlayer.Character, objetivoParte.Parent}
 
-    local resultado = Workspace:Raycast(origen, destino - origen, raycastParams)
+    local resultado = workspace:Raycast(origen, destino - origen, raycastParams)
     return resultado == nil 
 end
 
@@ -988,7 +987,9 @@ end
 local function ObtenerEnemigoMasCercano()
     local objetivoCercano = nil
     local distanciaMinima = Config.FOVRadius
-    local mousePos = UserInputService:GetMouseLocation()
+    
+    
+    local centroPantalla = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
 
     for _, jugador in ipairs(Players:GetPlayers()) do
         if jugador ~= LocalPlayer and jugador.Character and jugador.Character:FindFirstChild("Humanoid") and jugador.Character.Humanoid.Health > 0 then
@@ -999,7 +1000,8 @@ local function ObtenerEnemigoMasCercano()
                 local vector2, enPantalla = Camera:WorldToViewportPoint(parteObjetivo.Position)
                 
                 if enPantalla then
-                    local distancia = (Vector2.new(vector2.X, vector2.Y) - mousePos).Magnitude
+                    
+                    local distancia = (Vector2.new(vector2.X, vector2.Y) - centroPantalla).Magnitude
                     
                     if distancia < distanciaMinima and VerificarParedVisibilidad(parteObjetivo) then
                         distanciaMinima = distancia
@@ -1022,15 +1024,15 @@ RunService.RenderStepped:Connect(function()
         return
     end
     
+    local centroPantalla = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
     
     if Config.FOVEnabled then
         FOVCircle.Visible = true
         FOVCircle.Radius = Config.FOVRadius
-        FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+        FOVCircle.Position = centroPantalla
     else
         FOVCircle.Visible = false
     end
-    
     
     if Config.AimbotEnabled or Config.FOVEnabled then
         local objetivo = ObtenerEnemigoMasCercano()
@@ -1038,16 +1040,29 @@ RunService.RenderStepped:Connect(function()
         if objetivo then
             FOVCircle.Color = Color3.fromRGB(0, 255, 0) 
             
-            if Config.AimbotEnabled then
-                local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
+    
+            if Config.AimbotEnabled and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+                local vector2 = Camera:WorldToViewportPoint(objetivo.Position)
                 
-                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.25) 
+                
+                local DeltaX = (vector2.X - centroPantalla.X) * 0.25 
+                local DeltaY = (vector2.Y - centroPantalla.Y) * 0.25
+                
+                if mousemoverel then
+                    mousemoverel(DeltaX, DeltaY)
+                else
+                    
+                    local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
+                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.25) 
+                end
             end
         else
             FOVCircle.Color = Color3.fromRGB(255, 0, 0) 
         end
     end
 end)
+
+
 
 
 
