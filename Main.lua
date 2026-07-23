@@ -41,7 +41,7 @@ local Config = {
     FOVEnabled = false, 
     FOVRadius = 100,
     WallCheck = true,
-    TargetPart = "UpperTorso",
+    TargetPart ="HumanoidRootPart",
     
     -- Visuals 
     ESPBox = false, 
@@ -1013,16 +1013,16 @@ local function ObtenerEnemigoMasCercano()
     return objetivoCercano
 end
 
--- MOTOR PRINCIPAL 
 
+-- MOTOR PRINCIPAL 
 RunService.RenderStepped:Connect(function()
-    -- Actualizar cámara si el jugador reaparece
+    
     if not Camera or not workspace.CurrentCamera then
         Camera = workspace.CurrentCamera
         return
     end
     
-    -- Control visual del FOV a través del Slider
+    
     if Config.FOVEnabled then
         FOVCircle.Visible = true
         FOVCircle.Radius = Config.FOVRadius
@@ -1031,23 +1031,24 @@ RunService.RenderStepped:Connect(function()
         FOVCircle.Visible = false
     end
     
-    -- Lógica de Aimbot y cambio de colores
+    
     if Config.AimbotEnabled or Config.FOVEnabled then
         local objetivo = ObtenerEnemigoMasCercano()
         
         if objetivo then
-            FOVCircle.Color = Color3.fromRGB(0, 255, 0) -- Verde si hay objetivo en la mira
+            FOVCircle.Color = Color3.fromRGB(0, 255, 0) 
             
             if Config.AimbotEnabled then
                 local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
-                -- Suavizado del aimbot (Lerp)
-                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.5) 
+                
+                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.25) 
             end
         else
-            FOVCircle.Color = Color3.fromRGB(255, 0, 0) -- Rojo si está vacío
+            FOVCircle.Color = Color3.fromRGB(255, 0, 0) 
         end
     end
 end)
+
 
 
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
