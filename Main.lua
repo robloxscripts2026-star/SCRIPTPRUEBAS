@@ -948,9 +948,7 @@ NewsTitle.Parent = NewsCard
 local NewsBody = Instance.new("TextLabel")
 NewsBody.Size = UDim2.new(1, -24, 0, 42)
 NewsBody.Position = UDim2.new(0, 12, 0, 28)
-NewsBody.Text= "se corrigió el error del aimbot"
-NewsBody.Text= "se añadió la función hide name"
-NewsBody.Text= "próximamente Canal de discord"
+NewsBody.Text = "• Se corrigió el error del aimbot\n• Se añadió la función Hide Name\n• Próximamente Canal de Discord"
 NewsBody.Font = Enum.Font.Gotham
 NewsBody.TextSize = 10
 NewsBody.TextColor3 = Color3.fromRGB(160, 165, 175)
@@ -958,6 +956,7 @@ NewsBody.TextXAlignment = Enum.TextXAlignment.Left
 NewsBody.TextYAlignment = Enum.TextYAlignment.Top
 NewsBody.BackgroundTransparency = 1
 NewsBody.Parent = NewsCard
+
 
 AddToggle(TabCheats, "Speed Hack", "SpeedEnabled", Theme.Main)
 AddSlider(TabCheats, "Speed Power", 16, 300, 16, "SpeedValue", Theme.Main)
