@@ -1492,25 +1492,35 @@ end)
 
 
 
--- LOGICA DEL SPIN BOT Y HIDE NAME 
+
+
+-- LÓGICA DE SPIN BOT Y HIDE 
+
 local originalDisplayName = Humanoid and Humanoid.DisplayName or LocalPlayer.DisplayName
 
 RunService.RenderStepped:Connect(function()
-    -- MOTOR SPIN BOT
-    if Config.SpinBot and RootPart then
-        RootPart.CFrame = RootPart.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
+    
+    -- SPIN BOT 
+    if Config.SpinBot and Character and Character:FindFirstChild("HumanoidRootPart") then
+        local root = Character.HumanoidRootPart
+        
+        root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
     
-    -- MOTOR HIDE NAME
+    --  HIDE NAME
     if Character and Character:FindFirstChild("Humanoid") then
         local hum = Character.Humanoid
+        
         if Config.HideName then
-            hum.DisplayName = " "
+            
+            hum.DisplayName = " " 
         else
+            
             if hum.DisplayName == " " then
-                hum.DisplayName = originalDisplayName
+                hum.DisplayName = originalDisplayName 
             end
         end
     end
+    
 end)
     
