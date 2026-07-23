@@ -1507,12 +1507,18 @@ RunService.RenderStepped:Connect(function()
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
 
-    -- HIDE NAME
-    if Config.HideName and Character then
-        for _, desc in pairs(Character:GetDescendants()) do
-            -
-            if desc:IsA("BillboardGui") or desc:IsA("SurfaceGui") then
-                desc:Destroy() 
+     
+    -- Ocultar etiqueta de nombre localmente
+    if Character and Character:FindFirstChild("Head") then
+        local head = Character.Head
+        for _, child in ipairs(head:GetChildren()) do
+            
+            if child:IsA("BillboardGui") the
+                if Config.HideName then
+                    child.Enabled = false
+                else
+                    child.Enabled = true
+                end
             end
         end
     end
