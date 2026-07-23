@@ -1039,12 +1039,13 @@ RunService.RenderStepped:Connect(function()
         if objetivo then
             FOVCircle.Color = Color3.fromRGB(0, 255, 0) -- Verde = Detectado
             
-            if Config.AimbotEnabled and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
-                -- Método directo de CFrame con orientación de la cámara actual para mantener la fluidez
+            
+            if Config.AimbotEnabled then
+                
                 local currentPos = Camera.CFrame.Position
                 local targetCFrame = CFrame.new(currentPos, objetivo.Position)
                 
-                -- Aplicamos el giro de forma suave
+                
                 Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.3)
             end
         else
@@ -1052,6 +1053,7 @@ RunService.RenderStepped:Connect(function()
         end
     end
 end)
+
 
 
 
