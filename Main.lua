@@ -976,7 +976,9 @@ local function VerificarParedVisibilidad(objetivoParte)
     local origen = Camera.CFrame.Position
     local destino = objetivoParte.Position
     local raycastParams = RaycastParams.new()
-    raycastParams.FilterType = RaycastParamsFilterType.Exclude
+    
+    -- CORRECCIÓN: Se debe usar Enum.RaycastFilterType
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
     raycastParams.FilterDescendantsInstances = {LocalPlayer.Character, objetivoParte.Parent}
 
     local resultado = workspace:Raycast(origen, destino - origen, raycastParams)
