@@ -24,7 +24,7 @@ pcall(function()
     FOVCircle.Thickness = 1.5
     FOVCircle.Color = Color3.fromRGB(255, 255, 255)
     FOVCircle.Filled = false
-end)
+end
 
 
 
