@@ -15,6 +15,15 @@ end
 LocalPlayer.CharacterAdded:Connect(function(newChar)
     Character = newChar
 end)
+local Camera = workspace.CurrentCamera
+
+-- Construcción del FOV Circle
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Visible = false
+FOVCircle.Thickness = 1.5
+FOVCircle.Color = Color3.fromRGB(255, 255, 255)
+FOVCircle.Filled = false
+
 
 
 -- Configuración de Estado General
@@ -959,26 +968,6 @@ AddSlider(TabCombat, "FOV Radio", 30, 300, 100, "FOVRadius", Theme.Combat)
 AddToggle(TabCombat, "Show FOV Anillo", "FOVEnabled", Theme.Combat)
 AddToggle(TabCombat, "Silent Aim", "SilentAim", Theme.Combat)
 
---AQUI PONES LA LÓGICA DEL AIMBOT Y FOV🗣️🔥🔥🔥🔥🔥
-
-    -- Asegurar que la cámara siempre exista
-    if not Camera or not workspace.CurrentCamera then
-        Camera = workspace.CurrentCamera
-        return
-    end
-
-    -- 1. Actualiza el FOV de forma fija al centro de la pantalla
-    if Config.FOVEnabled then
-        FOVCircle.Visible = true
-        FOVCircle.Radius = Config.FOVRadius
-        FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-    else
-        FOVCircle.Visible = false
-    end
-
-    -- El resto de tu lógica de Aimbot y colores...
-end)
-
 
 
 -- VISOR CHECK 
@@ -1025,14 +1014,15 @@ local function ObtenerEnemigoMasCercano()
 end
 
 -- MOTOR PRINCIPAL 
-RunService.RenderStepped:Connect(function()
 
+RunService.RenderStepped:Connect(function()
+    -- Actualizar cámara si el jugador reaparece
     if not Camera or not workspace.CurrentCamera then
         Camera = workspace.CurrentCamera
         return
     end
-
     
+    -- Control visual del FOV a través del Slider
     if Config.FOVEnabled then
         FOVCircle.Visible = true
         FOVCircle.Radius = Config.FOVRadius
@@ -1040,22 +1030,21 @@ RunService.RenderStepped:Connect(function()
     else
         FOVCircle.Visible = false
     end
-
     
+    -- Lógica de Aimbot y cambio de colores
     if Config.AimbotEnabled or Config.FOVEnabled then
         local objetivo = ObtenerEnemigoMasCercano()
         
         if objetivo then
-        
-            FOVCircle.Color = Color3.fromRGB(0, 255, 0)
+            FOVCircle.Color = Color3.fromRGB(0, 255, 0) -- Verde si hay objetivo en la mira
             
             if Config.AimbotEnabled then
                 local targetCFrame = CFrame.new(Camera.CFrame.Position, objetivo.Position)
+                -- Suavizado del aimbot (Lerp)
                 Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.5) 
             end
         else
-        
-            FOVCircle.Color = Color3.fromRGB(255, 0, 0)
+            FOVCircle.Color = Color3.fromRGB(255, 0, 0) -- Rojo si está vacío
         end
     end
 end)
