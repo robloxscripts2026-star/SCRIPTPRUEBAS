@@ -1507,14 +1507,29 @@ RunService.RenderStepped:Connect(function()
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
 
--- 2. HIDE NAME SEGURO
-    if Character and Character:FindFirstChild("Humanoid") then
+    -- 2. HIDE NAME DIRECTO
+    if Character and Character:FindFirstChild("Humanoid") and Character:FindFirstChild("Head") then
         local hum = Character.Humanoid
+        local head = Character.Head
         
         if Config.HideName then
-            hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+            
+            hum.DisplayName = " "
+            
+            
+            for _, child in ipairs(head:GetChildren()) do
+                if child:IsA("BillboardGui") then
+                    child.Enabled = false
+                end
+            end
         else
-            hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+            -- Si se apaga el toggle
+            hum.DisplayName = LocalPlayer.Name
+            for _, child in ipairs(head:GetChildren()) do
+                if child:IsA("BillboardGui") then
+                    child.Enabled = true
+                end
+            end
         end
     end
     
