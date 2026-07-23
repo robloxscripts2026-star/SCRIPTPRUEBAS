@@ -33,7 +33,10 @@ local Config = {
     SpeedEnabled = false, 
     InfJump = false, 
     Noclip = false, 
-    Fly = false,
+    Fly = false, 
+    SpinBot = false,      
+    SpinSpeed = 30,       
+    HideName = false,     
     
     -- Combat
     AimbotEnabled = false,
@@ -957,12 +960,15 @@ NewsBody.TextYAlignment = Enum.TextYAlignment.Top
 NewsBody.BackgroundTransparency = 1
 NewsBody.Parent = NewsCard
 
-
 AddToggle(TabCheats, "Speed Hack", "SpeedEnabled", Theme.Main)
 AddSlider(TabCheats, "Speed Power", 16, 300, 16, "SpeedValue", Theme.Main)
 AddToggle(TabCheats, "Infinity Jump", "InfJump", Theme.Main)
 AddToggle(TabCheats, "Noclip", "Noclip", Theme.Main)
-AddToggle(TabCheats, "Fly (Vuelo)", "Fly", Theme.Main)
+AddToggle(TabCheats, "Fly (Vuelo)", "Fly", Theme.Main
+AddToggle(TabCheats, "Hide Name 👤", "HideName", Theme.Main)
+AddToggle(TabCheats, "Spin Bot 🌀", "SpinBot", Theme.Main)
+AddSlider(TabCheats, "Spin Speed", 10, 150, 30, "SpinSpeed", Theme.Main)
+
   
 AddToggle(TabCombat, "Aimbot", "AimbotEnabled", Theme.Combat)
 AddSlider(TabCombat, "FOV Radio", 30, 300, 100, "FOVRadius", Theme.Combat)
@@ -978,7 +984,7 @@ local function VerificarParedVisibilidad(objetivoParte)
     local destino = objetivoParte.Position
     local raycastParams = RaycastParams.new()
     
-    -- CORRECCIÓN: Se debe usar Enum.RaycastFilterType
+
     raycastParams.FilterType = Enum.RaycastFilterType.Exclude
     raycastParams.FilterDescendantsInstances = {LocalPlayer.Character, objetivoParte.Parent}
 
@@ -995,7 +1001,7 @@ local function ObtenerEnemigoMasCercano()
     for _, jugador in ipairs(Players:GetPlayers()) do
         if jugador ~= LocalPlayer and jugador.Character and jugador.Character:FindFirstChild("Humanoid") and jugador.Character.Humanoid.Health > 0 then
             
-            -- Buscamos primero la parte configurada, si falla intentamos con la cabeza por seguridad
+        
             local parteObjetivo = jugador.Character:FindFirstChild(Config.TargetPart) or jugador.Character:FindFirstChild("Head")
             
             if parteObjetivo then
@@ -1485,3 +1491,26 @@ UserInputService.JumpRequest:Connect(function()
 end)
 
 
+
+-- LOGICA DEL SPIN BOT Y HIDE NAME 
+local originalDisplayName = Humanoid and Humanoid.DisplayName or LocalPlayer.DisplayName
+
+RunService.RenderStepped:Connect(function()
+    -- MOTOR SPIN BOT
+    if Config.SpinBot and RootPart then
+        RootPart.CFrame = RootPart.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
+    end
+    
+    -- MOTOR HIDE NAME
+    if Character and Character:FindFirstChild("Humanoid") then
+        local hum = Character.Humanoid
+        if Config.HideName then
+            hum.DisplayName = " "
+        else
+            if hum.DisplayName == " " then
+                hum.DisplayName = originalDisplayName
+            end
+        end
+    end
+end)
+    
