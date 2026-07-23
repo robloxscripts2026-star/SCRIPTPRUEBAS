@@ -1508,18 +1508,15 @@ RunService.RenderStepped:Connect(function()
     end
 
      
-    -- Ocultar etiqueta de nombre localmente
-    if Character and Character:FindFirstChild("Head") then
-        local head = Character.Head
-        for _, child in ipairs(head:GetChildren()) do
-            
-            if child:IsA("BillboardGui") the
-                if Config.HideName then
-                    child.Enabled = false
-                else
-                    child.Enabled = true
+      
+    -- 2. Ocultar Nombre Local Sin Errores
+    pcall(function()
+        if Character and Character:FindFirstChild("Head") then
+            for _, v in pairs(Character.Head:GetChildren()) do
+                if v:IsA("BillboardGui") then
+                    v.Enabled = not Config.HideName
                 end
             end
         end
-    end
+    end)
 end)
