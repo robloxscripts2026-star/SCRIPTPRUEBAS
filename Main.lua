@@ -16,13 +16,16 @@ LocalPlayer.CharacterAdded:Connect(function(newChar)
     Character = newChar
 end)
 local Camera = workspace.CurrentCamera
+-- Construcción del FOV Circle 
+local FOVCircle
+pcall(function()
+    FOVCircle = Drawing.new("Circle")
+    FOVCircle.Visible = false
+    FOVCircle.Thickness = 1.5
+    FOVCircle.Color = Color3.fromRGB(255, 255, 255)
+    FOVCircle.Filled = false
+end)
 
--- Construcción del FOV Circle
-local FOVCircle = Drawing.new("Circle")
-FOVCircle.Visible = false
-FOVCircle.Thickness = 1.5
-FOVCircle.Color = Color3.fromRGB(255, 255, 255)
-FOVCircle.Filled = false
 
 
 
