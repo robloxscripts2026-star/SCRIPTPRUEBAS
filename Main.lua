@@ -1506,21 +1506,35 @@ RunService.RenderStepped:Connect(function()
         
         root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(Config.SpinSpeed), 0)
     end
+
+--HIDE NAME 
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+if value then
     
-    --  HIDE NAME
-    if Character and Character:FindFirstChild("Humanoid") then
-        local hum = Character.Humanoid
-        
-        if Config.HideName then
-            
-            hum.DisplayName = " " 
-        else
-            
-            if hum.DisplayName == " " then
-                hum.DisplayName = originalDisplayName 
+    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+    
+
+    local head = character:FindFirstChild("Head")
+    if head then
+        for _, child in ipairs(head:GetChildren()) do
+            if child:IsA("BillboardGui") then
+                child.Enabled = false
             end
         end
     end
-    
-end)
-    
+else
+    -- Restaurar al desactivar
+    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+    local head = character:FindFirstChild("Head")
+    if head then
+        for _, child in ipairs(head:GetChildren()) do
+            if child:IsA("BillboardGui") then
+                child.Enabled = true
+            end
+        end
+    end
+        end
+        
