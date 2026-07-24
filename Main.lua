@@ -1379,12 +1379,11 @@ Players.PlayerAdded:Connect(function(player)
         end
     end)
 end)
-)
 
 
--- ==========================================
--- BYPASS Y MOVIMIENTO MEJORADO (ANTI-BAN) 🛡️
--- ==========================================
+
+
+-- BYPASS Y MOVIMIENTO MEJORADO
 
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
