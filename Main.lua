@@ -1026,7 +1026,7 @@ local function ObtenerEnemigoMasCercano()
 end
 
 
--- LÓGICAPRINCIPAL 
+-- LÓGICA PRINCIPAL MEJORADA 🔥
 RunService.RenderStepped:Connect(function()
     if not Camera or not workspace.CurrentCamera then
         Camera = workspace.CurrentCamera
@@ -1049,12 +1049,17 @@ RunService.RenderStepped:Connect(function()
         if objetivo then
             FOVCircle.Color = Color3.fromRGB(0, 255, 0) 
             
-            
             if Config.AimbotEnabled then
-                
                 local currentPos = Camera.CFrame.Position
-                local targetCFrame = CFrame.new(currentPos, objetivo.Position)
                 
+                
+                local distancia = (objetivo.Position - currentPos).Magnitude
+                
+                local compensacionY = distancia * 0.015 
+                
+                local posicionAjustada = objetivo.Position + Vector3.new(0, compensacionY, 0)
+            
+                local targetCFrame = CFrame.lookAt(currentPos, posicionAjustada)
                 
                 Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 1.0)
             end
@@ -1292,7 +1297,7 @@ local function CreateESP(player)
                         healthBar.Visible = false
                     end
 
-                    -- 6. TRACES
+                    --  TRACES
                     if Config.Traces then
                         traceLine.Visible = true
                         traceLine.From = Vector2.new(camera.ViewportSize.X / 2, 0)
@@ -1374,14 +1379,21 @@ Players.PlayerAdded:Connect(function(player)
         end
     end)
 end)
+)
 
--- BYPASS ULTRA MEGA PRO MAX 🗣️🔥🔥🔥
 
+-- ==========================================
+-- BYPASS Y MOVIMIENTO MEJORADO (ANTI-BAN) 🛡️
+-- ==========================================
 
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character:WaitForChild("HumanoidRootPart")
-
 
 LocalPlayer.CharacterAdded:Connect(function(char)
     Character = char
@@ -1389,50 +1401,49 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     RootPart = char:WaitForChild("HumanoidRootPart")
 end)
 
-task.spawn(function()
-    while task.wait(0.1) do
-        if Character and Humanoid and RootPart then
-            if Config.Fly or Config.SpeedEnabled then
+-- 🛡️ BYPASS MEJORADO 
+RunService.Heartbeat:Connect(function()
+    if not (Character and Humanoid and RootPart) then return end
+    
+    if Config.Fly or Config.SpeedEnabled then
         
-                Humanoid:ChangeState(Enum.HumanoidStateType.Running)
-                
-                
-                local velocity = RootPart.AssemblyLinearVelocity
-                if velocity.Magnitude > 350 then
-                    RootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                end
-            end
+        if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
+            Humanoid:ChangeState(Enum.HumanoidStateType.Running)
+        end
+        
+        
+        local velocity = RootPart.AssemblyLinearVelocity
+        if velocity.Magnitude > 250 then
+            RootPart.AssemblyLinearVelocity = Vector3.new(velocity.X, math.clamp(velocity.Y, -250, 250), velocity.Z)
         end
     end
 end)
 
--- CONTROL DEL SPEED HACK 
+--  SPEED HACK 
 RunService.Heartbeat:Connect(function()
     if Character and Humanoid and RootPart and Config.SpeedEnabled then
-        local MoveDirection = Humanoid.MoveDirection
-        if MoveDirection.Magnitude > 0 then
-            
-            local speed = math.clamp(Config.SpeedValue, 60, 100)
+        local moveDir = Humanoid.MoveDirection
+        if moveDir.Magnitude > 0 then
         
-            RootPart.CFrame = RootPart.CFrame + (MoveDirection * (speed / 100))
+            local currentY = RootPart.AssemblyLinearVelocity.Y
+            local newVelocity = moveDir * Config.SpeedValue
+            RootPart.AssemblyLinearVelocity = Vector3.new(newVelocity.X, currentY, newVelocity.Z)
         end
     end
 end)
 
-
---  CONTROL FLY
+-- ✈️CONTROL FLY 
 local FlyAttachment, AlignOri, LinearVel
 
 RunService.RenderStepped:Connect(function()
     if Config.Fly and Character and RootPart and Humanoid then
-
-        if not FlyAttachment or not FlyAttachment.Parent then
+        if not FlyAttachment then
             FlyAttachment = Instance.new("Attachment")
-            FlyAttachment.Name = "EnforceFlyAttachment"
+            FlyAttachment.Name = "ViceFlyAtt" 
             FlyAttachment.Parent = RootPart
             
             AlignOri = Instance.new("AlignOrientation")
-            AlignOri.Name = "EnforceFlyAlign"
+            AlignOri.Name = "ViceFlyOri"
             AlignOri.Mode = Enum.OrientationAlignmentMode.OneAttachment
             AlignOri.Attachment0 = FlyAttachment
             AlignOri.MaxTorque = 9e9
@@ -1440,7 +1451,7 @@ RunService.RenderStepped:Connect(function()
             AlignOri.Parent = RootPart
             
             LinearVel = Instance.new("LinearVelocity")
-            LinearVel.Name = "EnforceFlyVelocity"
+            LinearVel.Name = "ViceFlyVel"
             LinearVel.Attachment0 = FlyAttachment
             LinearVel.MaxForce = 9e9
             LinearVel.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
@@ -1448,12 +1459,10 @@ RunService.RenderStepped:Connect(function()
         end
         
         local camera = workspace.CurrentCamera
-        
         AlignOri.CFrame = camera.CFrame
         
         local moveDirection = Humanoid.MoveDirection
         if moveDirection.Magnitude > 0 then
-            
             local lookVector = camera.CFrame.LookVector
             local targetVelocity = moveDirection * 50 
             
@@ -1466,18 +1475,18 @@ RunService.RenderStepped:Connect(function()
             LinearVel.VectorVelocity = Vector3.new(0, 0, 0)
         end
     else
-        if RootPart:FindFirstChild("EnforceFlyAttachment") then RootPart.EnforceFlyAttachment:Destroy() end
-        if RootPart:FindFirstChild("EnforceFlyAlign") then RootPart.EnforceFlyAlign:Destroy() end
-        if RootPart:FindFirstChild("EnforceFlyVelocity") then RootPart.EnforceFlyVelocity:Destroy() end
+        -- Limpieza segura
+        if FlyAttachment then FlyAttachment:Destroy() end
+        if AlignOri then AlignOri:Destroy() end
+        if LinearVel then LinearVel:Destroy() end
         FlyAttachment, AlignOri, LinearVel = nil, nil, nil
     end
 end)
 
-
---  NOCLIP 
+--  NOCLIP SEGURO 
 RunService.Stepped:Connect(function()
     if Config.Noclip and Character then
-        for _, part in pairs(Character:GetChildren()) do
+        for _, part in pairs(Character:GetDescendants()) do
             if part:IsA("BasePart") and part.CanCollide then
                 part.CanCollide = false
             end
@@ -1485,10 +1494,9 @@ RunService.Stepped:Connect(function()
     end
 end)
 
--- INFINITY JUMP 
+-- 🦘 INFINITY JUMP
 UserInputService.JumpRequest:Connect(function()
     if Config.InfJump and Character and Humanoid then
-        
         Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
     end
 end)
