@@ -1026,7 +1026,7 @@ local function ObtenerEnemigoMasCercano()
 end
 
 
--- LÓGICA PRINCIPAL MEJORADA 🔥
+-- LÓGICA PRINCIPAL  🔥
 RunService.RenderStepped:Connect(function()
     if not Camera or not workspace.CurrentCamera then
         Camera = workspace.CurrentCamera
@@ -1053,15 +1053,10 @@ RunService.RenderStepped:Connect(function()
                 local currentPos = Camera.CFrame.Position
                 
                 
-                local distancia = (objetivo.Position - currentPos).Magnitude
+                local targetCFrame = CFrame.lookAt(currentPos, objetivo.Position)
                 
-                local compensacionY = distancia * 0.015 
                 
-                local posicionAjustada = objetivo.Position + Vector3.new(0, compensacionY, 0)
-            
-                local targetCFrame = CFrame.lookAt(currentPos, posicionAjustada)
-                
-                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 1.0)
+                Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.6)
             end
         else
             FOVCircle.Color = Color3.fromRGB(255, 0, 0) 
@@ -1075,13 +1070,14 @@ end)
 
 
 
+
 AddToggle(TabVisuals, "ESP Box", "ESPBox", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Name", "ESPName", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Distancia", "ESPDist", Theme.Visuals)
 AddToggle(TabVisuals, "ESP Health", "ESPHealth", Theme.Visuals)
 AddToggle(TabVisuals, "Traces", "Traces", Theme.Visuals)
-AddToggle(TabVisuals, "ESP Gun", "ESPGun", Theme.Visuals) -- 👈 Nuevo Toggle
-AddToggle(TabVisuals, "ESP Gun Distancia", "ESPGunDist", Theme.Visuals) -- 👈 Nuevo Toggle
+AddToggle(TabVisuals, "ESP Gun", "ESPGun", Theme.Visuals) 
+AddToggle(TabVisuals, "ESP Gun Distancia", "ESPGunDist", Theme.Visuals) 
 
 local BtnServerHop = AddButton(TabMisc, "Server Hop 🌐", Theme.Misc)
 local BtnRejoin = AddButton(TabMisc, "Rejoin Server 🔄", Theme.Misc)
