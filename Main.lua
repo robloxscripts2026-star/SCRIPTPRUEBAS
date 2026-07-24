@@ -964,7 +964,7 @@ NewsBody.BackgroundTransparency = 1
 NewsBody.Parent = NewsCard
 
 AddToggle(TabCheats, "Speed Hack", "SpeedEnabled", Theme.Main)
-AddSlider(TabCheats, "Speed Power", 16, 300, 16, "SpeedValue", Theme.Main)
+AddSlider(TabCheats, "Speed Power", 16, 100, 16, "SpeedValue", Theme.Main)
 AddToggle(TabCheats, "Infinity Jump", "InfJump", Theme.Main)
 AddToggle(TabCheats, "Noclip", "Noclip", Theme.Main)
 AddToggle(TabCheats, "Fly (Vuelo)", "Fly", Theme.Main)
